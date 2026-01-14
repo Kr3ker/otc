@@ -9,7 +9,7 @@ Parameters
 
 Licensor:             Warp Code llc under Authors: Paula Rosan <paula@warpcode.io>, Jure Granić-Skender <jure@warpcode.io>
 
-Licensed Work:        All software within this repository - programs, front-ends, executables
+Licensed Work:        All software and works within this repository - programs, front-ends, executables, images, etc.
                       The Licensed Work is (c) 2026 Warp Code llc
 
 Additional Use Grant: None
