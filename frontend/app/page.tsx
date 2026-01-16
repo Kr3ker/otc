@@ -155,8 +155,34 @@ export default function OTCPage() {
     parseFloat(expiresIn) > 0;
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-900">
+      {/* Navbar */}
+      <nav className="border-b border-gray-700 bg-gray-800/50">
+        <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            {/* Logo */}
+            <div className="text-white font-semibold text-lg">OTC Desk</div>
+            {/* Nav Links */}
+            <div className="flex gap-4 text-sm">
+              <a href="#" className="text-white font-medium">
+                Trade
+              </a>
+              <a href="#" className="text-gray-400 hover:text-gray-200 transition-colors">
+                History
+              </a>
+              <a href="#" className="text-gray-400 hover:text-gray-200 transition-colors">
+                Settings
+              </a>
+            </div>
+          </div>
+          {/* Connect Wallet Button */}
+          <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded font-medium text-sm transition-colors">
+            Connect Wallet
+          </button>
+        </div>
+      </nav>
+
+      <div className="max-w-5xl mx-auto p-6 space-y-6">
         {/* Create Deal Form */}
         <div className="max-w-md mx-auto">
           <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6">
