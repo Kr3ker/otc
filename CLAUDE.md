@@ -102,6 +102,13 @@ See `arcium-findings.md` for full details. Quick reference:
 
 ## Testing
 
+**To run tests properly, always kill the validator first:**
+```bash
+./kill-validator.sh && arcium test
+```
+
+The `kill-validator.sh` script kills any running solana-test-validator (port 8899) and stops/removes arcium docker containers. This ensures a clean state before running tests.
+
 Tests require Arcium localnet running (configured in `Arcium.toml`):
 - 2 nodes
 - 60 second timeout

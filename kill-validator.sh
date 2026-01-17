@@ -14,7 +14,7 @@ CONTAINERS=$(docker ps -a -q --filter "name=arx" 2>/dev/null)
 if [ -n "$CONTAINERS" ]; then
   docker stop $CONTAINERS 2>/dev/null
   docker rm $CONTAINERS 2>/dev/null
-  echo "Stopped and removed arcium containers"
+  echo "Stomped arcium containers"
 else
   echo "No arcium containers found"
 fi
