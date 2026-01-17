@@ -75,6 +75,24 @@ const cipher = new RescueCipher(sharedSecret);
 const ciphertext = cipher.encrypt(plaintext, nonce);
 ```
 
+### ArgBuilder Patterns (Critical)
+
+See `arcium-findings.md` for full details. Quick reference:
+
+| Parameter Type | ArgBuilder Calls |
+|----------------|------------------|
+| `Mxe` (marker) | `.plaintext_u128(nonce)` |
+| `Shared` (marker) | `.x25519_pubkey(pubkey)` + `.plaintext_u128(nonce)` |
+| `Enc<Mxe, &T>` (by ref) | `.plaintext_u128(stored_nonce)` + `.account(key, ciphertext_offset, ciphertext_len)` |
+| `Enc<Shared, T>` (by value) | `.x25519_pubkey()` + `.plaintext_u128(nonce)` + `.encrypted_*()` per field |
+
+**Key points:**
+- For `Enc<Mxe, &T>` by reference: pass nonce separately, then reference only ciphertext portion (offset 24 = skip 8-byte discriminator + 16-byte nonce)
+- Arguments must match parameter order in the encrypted instruction
+- Decryption uses `x25519.getSharedSecret(yourPrivateKey, mxePublicKey)` - NOT the `encryption_key` from events (that's your pubkey echoed back)
+- "Unknown action 'undefined'" = ArgBuilder args don't match instruction signature
+- "InvalidArguments" (6301) = wrong argument format/offsets
+
 ## Key Dependencies
 
 - **Anchor** 0.32.1 - Solana framework

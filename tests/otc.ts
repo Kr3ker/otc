@@ -44,17 +44,23 @@ function getClusterAccount(): PublicKey {
 describe("Otc", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
-  const program = anchor.workspace
-    .Otc as Program<Otc>;
+  const program = anchor.workspace.Otc as Program<Otc>;
   const provider = anchor.getProvider();
 
   type Event = anchor.IdlEvents<(typeof program)["idl"]>;
   const awaitEvent = async <E extends keyof Event>(
     eventName: E,
+    timeoutMs: number = 15000
   ): Promise<Event[E]> => {
     let listenerId: number;
-    const event = await new Promise<Event[E]>((res) => {
+    const event = await new Promise<Event[E]>((res, rej) => {
+      const timeout = setTimeout(() => {
+        program.removeEventListener(listenerId);
+        rej(new Error(`Event '${String(eventName)}' timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+
       listenerId = program.addEventListener(eventName, (event) => {
+        clearTimeout(timeout);
         res(event);
       });
     });
@@ -65,25 +71,24 @@ describe("Otc", () => {
 
   const arciumEnv = getArciumEnv();
   const clusterAccount = getClusterAccount();
+  const owner = readKpJson(`${os.homedir()}/.config/solana/id.json`);
 
-  it("Is initialized!", async () => {
-    const owner = readKpJson(`${os.homedir()}/.config/solana/id.json`);
-
+  it("Add together initialized", async () => {
     console.log("Initializing add together computation definition");
     const initATSig = await initAddTogetherCompDef(
       program,
       owner,
       false,
-      false,
+      false
     );
     console.log(
-      "Add together computation definition initialized with signature",
-      initATSig,
+      "Add Together computation definition initialized with signature",
+      initATSig
     );
 
     const mxePublicKey = await getMXEPublicKeyWithRetry(
       provider as anchor.AnchorProvider,
-      program.programId,
+      program.programId
     );
 
     console.log("MXE x25519 pubkey is", mxePublicKey);
@@ -110,22 +115,22 @@ describe("Otc", () => {
         Array.from(ciphertext[0]),
         Array.from(ciphertext[1]),
         Array.from(publicKey),
-        new anchor.BN(deserializeLE(nonce).toString()),
+        new anchor.BN(deserializeLE(nonce).toString())
       )
       .accountsPartial({
         computationAccount: getComputationAccAddress(
           arciumEnv.arciumClusterOffset,
-          computationOffset,
+          computationOffset
         ),
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
         executingPool: getExecutingPoolAccAddress(
-          arciumEnv.arciumClusterOffset,
+          arciumEnv.arciumClusterOffset
         ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
-          Buffer.from(getCompDefAccOffset("add_together")).readUInt32LE(),
+          Buffer.from(getCompDefAccOffset("add_together")).readUInt32LE()
         ),
       })
       .rpc({ skipPreflight: true, commitment: "confirmed" });
@@ -135,29 +140,211 @@ describe("Otc", () => {
       provider as anchor.AnchorProvider,
       computationOffset,
       program.programId,
-      "confirmed",
+      "confirmed"
     );
     console.log("Finalize sig is ", finalizeSig);
 
     const sumEvent = await sumEventPromise;
-    const decrypted = cipher.decrypt([sumEvent.sum], sumEvent.nonce)[0];
+    const decrypted = cipher.decrypt([sumEvent.sum], Uint8Array.from(sumEvent.nonce))[0];
     expect(decrypted).to.equal(val1 + val2);
+  });
+
+  it("Init Counter initialized", async () => {
+    const initCompDefSig = await initInitCounterCompDef(
+      program,
+      owner,
+      false,
+      false
+    );
+
+    console.log(
+      "Init Counter computation definition initialized with signature",
+      initCompDefSig
+    );
+  });
+
+  it("Increment Counter initialized", async () => {
+    const initCompDefSig = await initIncrementCounterCompDef(
+      program,
+      owner,
+      false,
+      false
+    );
+
+    console.log(
+      "Increment Counter computation definition initialized with signature",
+      initCompDefSig
+    );
+  });
+
+  it("Get Counter initialized", async () => {
+    const initCompDefSig = await initGetCounterCompDef(
+      program,
+      owner,
+      false,
+      false
+    );
+
+    console.log(
+      "Get Counter computation definition initialized with signature",
+      initCompDefSig
+    );
+  });
+
+  it("Succesfully initializes, increments, and reads a counter", async () => {
+    const mxePublicKey = await getMXEPublicKeyWithRetry(
+      provider as anchor.AnchorProvider,
+      program.programId
+    );
+
+    console.log("MXE x25519 pubkey is", mxePublicKey);
+
+    // Generate keypair for get_counter re-encryption
+    const privateKey = x25519.utils.randomSecretKey();
+    const publicKey = x25519.getPublicKey(privateKey);
+
+    const computationOffset = new anchor.BN(randomBytes(8), "hex");
+    const initNonce = randomBytes(16);
+
+    const counterAddr = getCounterAddress(owner.publicKey);
+
+    // Step 1: Initialize the counter (Mxe marker needs nonce for output encryption)
+    const queueInitSig = await program.methods
+      .initCounter(
+        computationOffset,
+        new anchor.BN(deserializeLE(initNonce).toString())
+      )
+      .accountsPartial({
+        computationAccount: getComputationAccAddress(
+          arciumEnv.arciumClusterOffset,
+          computationOffset
+        ),
+        clusterAccount,
+        mxeAccount: getMXEAccAddress(program.programId),
+        mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
+        compDefAccount: getCompDefAccAddress(
+          program.programId,
+          Buffer.from(getCompDefAccOffset("init_counter")).readUInt32LE()
+        ),
+        counter: counterAddr,
+      })
+      .rpc({ skipPreflight: true, commitment: "confirmed" });
+    console.log("Queue init sig is ", queueInitSig);
+
+    const finalizeInitSig = await awaitComputationFinalization(
+      provider as anchor.AnchorProvider,
+      computationOffset,
+      program.programId,
+      "confirmed"
+    );
+    console.log("Finalize init sig is ", finalizeInitSig);
+
+    // Step 2: Increment the counter (reads encrypted state from account)
+    const incrementComputationOffset = new anchor.BN(randomBytes(8), "hex");
+
+    const queueIncrementSig = await program.methods
+      .incrementCounter(incrementComputationOffset)
+      .accountsPartial({
+        computationAccount: getComputationAccAddress(
+          arciumEnv.arciumClusterOffset,
+          incrementComputationOffset
+        ),
+        clusterAccount,
+        mxeAccount: getMXEAccAddress(program.programId),
+        mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
+        compDefAccount: getCompDefAccAddress(
+          program.programId,
+          Buffer.from(getCompDefAccOffset("increment_counter")).readUInt32LE()
+        ),
+        counter: counterAddr,
+      })
+      .rpc({ skipPreflight: false, commitment: "confirmed" });
+    console.log("Queue increment sig is ", queueIncrementSig);
+
+    const finalizeIncrementSig = await awaitComputationFinalization(
+      provider as anchor.AnchorProvider,
+      incrementComputationOffset,
+      program.programId,
+      "confirmed"
+    );
+    console.log("Finalize increment sig is ", finalizeIncrementSig);
+
+    // Step 3: Read the counter using get_counter (re-encrypts for us)
+    const getComputationOffset = new anchor.BN(randomBytes(8), "hex");
+    const recipientNonce = randomBytes(16);
+
+    const counterValueEventPromise = awaitEvent("counterValueEvent");
+
+    const queueGetSig = await program.methods
+      .getCounter(
+        getComputationOffset,
+        Array.from(publicKey),
+        new anchor.BN(deserializeLE(recipientNonce).toString())
+      )
+      .accountsPartial({
+        computationAccount: getComputationAccAddress(
+          arciumEnv.arciumClusterOffset,
+          getComputationOffset
+        ),
+        clusterAccount,
+        mxeAccount: getMXEAccAddress(program.programId),
+        mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
+        compDefAccount: getCompDefAccAddress(
+          program.programId,
+          Buffer.from(getCompDefAccOffset("get_counter")).readUInt32LE()
+        ),
+        counter: counterAddr,
+      })
+      .rpc({ skipPreflight: true, commitment: "confirmed" });
+    console.log("Queue get sig is ", queueGetSig);
+
+    const finalizeGetSig = await awaitComputationFinalization(
+      provider as anchor.AnchorProvider,
+      getComputationOffset,
+      program.programId,
+      "confirmed"
+    );
+    console.log("Finalize get sig is ", finalizeGetSig);
+
+    // Wait for the event and decrypt the value
+    const counterValueEvent = await counterValueEventPromise;
+
+    // Create cipher with shared secret using the MXE public key
+    const sharedSecret = x25519.getSharedSecret(privateKey, mxePublicKey);
+    const cipher = new RescueCipher(sharedSecret);
+
+    const decrypted = cipher.decrypt(
+      [counterValueEvent.ciphertext],
+      Uint8Array.from(counterValueEvent.nonce)
+    );
+
+    // After init (0) + increment (1) = 1
+    expect(decrypted[0]).to.equal(BigInt(1));
   });
 
   async function initAddTogetherCompDef(
     program: Program<Otc>,
     owner: anchor.web3.Keypair,
     uploadRawCircuit: boolean,
-    offchainSource: boolean,
+    offchainSource: boolean
   ): Promise<string> {
     const baseSeedCompDefAcc = getArciumAccountBaseSeed(
-      "ComputationDefinitionAccount",
+      "ComputationDefinitionAccount"
     );
     const offset = getCompDefAccOffset("add_together");
 
     const compDefPDA = PublicKey.findProgramAddressSync(
       [baseSeedCompDefAcc, program.programId.toBuffer(), offset],
-      getArciumProgramId(),
+      getArciumProgramId()
     )[0];
 
     console.log("Comp def pda is ", compDefPDA);
@@ -183,13 +370,13 @@ describe("Otc", () => {
         "add_together",
         program.programId,
         rawCircuit,
-        true,
+        true
       );
     } else if (!offchainSource) {
       const finalizeTx = await buildFinalizeCompDefTx(
         provider as anchor.AnchorProvider,
         Buffer.from(offset).readUInt32LE(),
-        program.programId,
+        program.programId
       );
 
       const latestBlockhash = await provider.connection.getLatestBlockhash();
@@ -202,13 +389,199 @@ describe("Otc", () => {
     }
     return sig;
   }
+
+  async function initInitCounterCompDef(
+    program: Program<Otc>,
+    owner: anchor.web3.Keypair,
+    uploadRawCircuit: boolean,
+    offchainSource: boolean
+  ): Promise<string> {
+    const baseSeedCompDefAcc = getArciumAccountBaseSeed(
+      "ComputationDefinitionAccount"
+    );
+    const offset = getCompDefAccOffset("init_counter");
+
+    const compDefPDA = PublicKey.findProgramAddressSync(
+      [baseSeedCompDefAcc, program.programId.toBuffer(), offset],
+      getArciumProgramId()
+    )[0];
+
+    console.log("Comp def pda is ", compDefPDA);
+
+    const sig = await program.methods
+      .initInitCounterCompDef()
+      .accounts({
+        compDefAccount: compDefPDA,
+        payer: owner.publicKey,
+        mxeAccount: getMXEAccAddress(program.programId),
+      })
+      .signers([owner])
+      .rpc({
+        commitment: "confirmed",
+      });
+    console.log("Init Counter computation definition transaction", sig);
+
+    if (uploadRawCircuit) {
+      const rawCircuit = fs.readFileSync("build/init_counter.arcis");
+
+      await uploadCircuit(
+        provider as anchor.AnchorProvider,
+        "init_counter",
+        program.programId,
+        rawCircuit,
+        true
+      );
+    } else if (!offchainSource) {
+      await finalizeCompDefWithRetry(provider as anchor.AnchorProvider, offset, program.programId, owner);
+    }
+    return sig;
+  }
+
+  async function finalizeCompDefWithRetry(
+    provider: anchor.AnchorProvider,
+    offset: Uint8Array,
+    programId: PublicKey,
+    owner: anchor.web3.Keypair,
+    maxRetries: number = 3
+  ): Promise<void> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const finalizeTx = await buildFinalizeCompDefTx(
+          provider,
+          Buffer.from(offset).readUInt32LE(),
+          programId
+        );
+
+        const latestBlockhash = await provider.connection.getLatestBlockhash();
+        finalizeTx.recentBlockhash = latestBlockhash.blockhash;
+        finalizeTx.lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
+
+        finalizeTx.sign(owner);
+
+        await provider.sendAndConfirm(finalizeTx, [], {
+          skipPreflight: true,
+          commitment: "confirmed",
+        });
+        return;
+      } catch (error) {
+        console.log(`Attempt ${attempt} failed:`, error);
+        if (attempt < maxRetries) {
+          console.log(`Retrying in 500ms...`);
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
+
+  async function initIncrementCounterCompDef(
+    program: Program<Otc>,
+    owner: anchor.web3.Keypair,
+    uploadRawCircuit: boolean,
+    offchainSource: boolean
+  ): Promise<string> {
+    const baseSeedCompDefAcc = getArciumAccountBaseSeed(
+      "ComputationDefinitionAccount"
+    );
+    const offset = getCompDefAccOffset("increment_counter");
+
+    const compDefPDA = PublicKey.findProgramAddressSync(
+      [baseSeedCompDefAcc, program.programId.toBuffer(), offset],
+      getArciumProgramId()
+    )[0];
+
+    console.log("Comp def pda is ", compDefPDA);
+
+    const sig = await program.methods
+      .initIncrementCounterCompDef()
+      .accounts({
+        compDefAccount: compDefPDA,
+        payer: owner.publicKey,
+        mxeAccount: getMXEAccAddress(program.programId),
+      })
+      .signers([owner])
+      .rpc({
+        commitment: "confirmed",
+      });
+    console.log("Increment Counter computation definition transaction", sig);
+
+    if (uploadRawCircuit) {
+      const rawCircuit = fs.readFileSync("build/increment_counter.arcis");
+
+      await uploadCircuit(
+        provider as anchor.AnchorProvider,
+        "increment_counter",
+        program.programId,
+        rawCircuit,
+        true
+      );
+    } else if (!offchainSource) {
+      await finalizeCompDefWithRetry(provider as anchor.AnchorProvider, offset, program.programId, owner);
+    }
+    return sig;
+  }
+
+  async function initGetCounterCompDef(
+    program: Program<Otc>,
+    owner: anchor.web3.Keypair,
+    uploadRawCircuit: boolean,
+    offchainSource: boolean
+  ): Promise<string> {
+    const baseSeedCompDefAcc = getArciumAccountBaseSeed(
+      "ComputationDefinitionAccount"
+    );
+    const offset = getCompDefAccOffset("get_counter");
+
+    const compDefPDA = PublicKey.findProgramAddressSync(
+      [baseSeedCompDefAcc, program.programId.toBuffer(), offset],
+      getArciumProgramId()
+    )[0];
+
+    console.log("Comp def pda is ", compDefPDA);
+
+    const sig = await program.methods
+      .initGetCounterCompDef()
+      .accounts({
+        compDefAccount: compDefPDA,
+        payer: owner.publicKey,
+        mxeAccount: getMXEAccAddress(program.programId),
+      })
+      .signers([owner])
+      .rpc({
+        commitment: "confirmed",
+      });
+    console.log("Get Counter computation definition transaction", sig);
+
+    if (uploadRawCircuit) {
+      const rawCircuit = fs.readFileSync("build/get_counter.arcis");
+
+      await uploadCircuit(
+        provider as anchor.AnchorProvider,
+        "get_counter",
+        program.programId,
+        rawCircuit,
+        true
+      );
+    } else if (!offchainSource) {
+      await finalizeCompDefWithRetry(provider as anchor.AnchorProvider, offset, program.programId, owner);
+    }
+    return sig;
+  }
+
+  function getCounterAddress(owner: PublicKey): PublicKey {
+    return PublicKey.findProgramAddressSync(
+      [Buffer.from("counter"), owner.toBuffer()],
+      program.programId
+    )[0];
+  }
 });
 
 async function getMXEPublicKeyWithRetry(
   provider: anchor.AnchorProvider,
   programId: PublicKey,
   maxRetries: number = 20,
-  retryDelayMs: number = 500,
+  retryDelayMs: number = 500
 ): Promise<Uint8Array> {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -222,20 +595,20 @@ async function getMXEPublicKeyWithRetry(
 
     if (attempt < maxRetries) {
       console.log(
-        `Retrying in ${retryDelayMs}ms... (attempt ${attempt}/${maxRetries})`,
+        `Retrying in ${retryDelayMs}ms... (attempt ${attempt}/${maxRetries})`
       );
       await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
     }
   }
 
   throw new Error(
-    `Failed to fetch MXE public key after ${maxRetries} attempts`,
+    `Failed to fetch MXE public key after ${maxRetries} attempts`
   );
 }
 
 function readKpJson(path: string): anchor.web3.Keypair {
   const file = fs.readFileSync(path);
   return anchor.web3.Keypair.fromSecretKey(
-    new Uint8Array(JSON.parse(file.toString())),
+    new Uint8Array(JSON.parse(file.toString()))
   );
 }
