@@ -9,7 +9,7 @@ pub use error::ErrorCode;
 pub use instructions::*;
 pub use state::Counter;
 
-declare_id!("DvLY17y6UfZSiNPKnavbW2aJBVWo8N6vbNXgf7ym95mE");
+declare_id!("CfwbKvb1wuJbi6h2B1MoRmGU6YWEUHTPL82TvHtcrV1");
 
 #[arcium_program]
 pub mod otc {
