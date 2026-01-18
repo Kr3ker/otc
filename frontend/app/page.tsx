@@ -167,7 +167,7 @@ export default function OTCPage() {
         <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-6">
             {/* Logo */}
-            <div className="text-white font-semibold text-lg">OTC Desk</div>
+            <div className="text-white font-semibold text-lg">Veil OTC</div>
             {/* Nav Links */}
             <div className="flex gap-4 text-sm">
               <a href="#" className="text-white font-medium">
@@ -175,6 +175,9 @@ export default function OTCPage() {
               </a>
               <a href="#" className="text-gray-400 hover:text-gray-200 transition-colors">
                 History
+              </a>
+              <a href="#" className="text-gray-400 hover:text-gray-200 transition-colors">
+                FAQ
               </a>
               <a href="#" className="text-gray-400 hover:text-gray-200 transition-colors">
                 Settings
