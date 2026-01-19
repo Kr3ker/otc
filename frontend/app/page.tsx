@@ -470,7 +470,7 @@ export default function OTCPage() {
                           </td>
                           <td className="py-3 text-right">
                             {deal.isPartial && deal.status === "open" && (
-                              <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 px-3 py-1 text-sm rounded font-medium transition-colors">
+                              <button className="bg-success/20 hover:bg-success/30 text-success border border-success/50 px-3 py-1 text-sm rounded font-medium transition-colors">
                                 Execute
                               </button>
                             )}
