@@ -16,7 +16,7 @@
   --muted-foreground: 0 0% 55%;    /* #8c8c8c - dimmed text */
   --accent: 0 0% 22%;              /* #383838 - active/selected state */
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 72% 51%;        /* red - sell */
+  --destructive: 0 65% 45%;        /* muted red - sell */
   --destructive-foreground: 0 0% 98%;
   --success: 158 64% 42%;          /* teal - buy */
   --success-foreground: 0 0% 100%;

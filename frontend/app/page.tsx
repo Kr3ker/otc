@@ -197,7 +197,7 @@ export default function OTCPage() {
         <div className="w-[440px] shrink-0 border-r border-border p-4 overflow-y-auto">
           <div className="bg-card/50 border border-border rounded-lg p-4">
             <h2 className="text-lg font-semibold text-foreground mb-4">
-              Request for quote
+              Create private OTC deal
             </h2>
 
             {/* Buy/Sell Toggle + Pair Selector Row */}
@@ -307,8 +307,8 @@ export default function OTCPage() {
 
               {/* Helper text */}
               <p className="text-muted-foreground/70 text-sm">
-                Market makers will respond with quotes. Trades auto-execute when
-                fully filled{allowPartial ? ", or partial fills execute at expiry" : ""}.
+                Market makers will respond with private quotes. Trades auto-execute
+                when fully filled{allowPartial ? " or partial fills execute at expiry" : " with private viable quotes"}.
               </p>
 
               {/* Total cost */}
