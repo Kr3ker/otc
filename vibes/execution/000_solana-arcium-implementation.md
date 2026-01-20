@@ -61,6 +61,22 @@ pub fn create_deal(
 
 ---
 
+## Deal Mechanics
+
+The protocol uses a simplified single-direction model:
+
+- **Creator** deposits `base` tokens and specifies a minimum `price` (in quote tokens per base token)
+- **Offerors** deposit `quote` tokens and specify their `price` (what they'll pay per base token)
+- **Settlement**: Creator receives quote tokens, offerors receive base tokens
+
+This removes the need for a BUY/SELL flag in the protocol. The UI can present deals from either perspective:
+- "Sell 100 SOL for at least 150 USDC each" → creator sells base (SOL), receives quote (USDC)
+- "Buy 100 SOL for up to 150 USDC each" → UI swaps the token labels, but protocol logic is identical
+
+**Price comparison**: An offer passes if `offer.price >= deal.price` (offeror willing to pay at least the creator's minimum).
+
+---
+
 ## Encryption Flow
 
 ### Deal Creation
@@ -119,6 +135,29 @@ Crank                           MPC                           On-chain
 
 ---
 
+## Price Representation
+
+Prices use **X64.64 fixed-point** format (128 bits total):
+- Upper 64 bits: integer part
+- Lower 64 bits: fractional part (precision to ~5.4 × 10⁻²⁰)
+
+```rust
+// X64.64 constants
+const ONE: u128 = 1u128 << 64;           // 1.0
+const HALF: u128 = 1u128 << 63;          // 0.5
+
+// Multiplication: (amount * price) >> 64
+fn calculate_quote(amount: u64, price: u128) -> u64 {
+    ((amount as u128 * price) >> 64) as u64
+}
+```
+
+### MXE-Computed Amounts
+
+Final quote amounts (`amount × price`) are computed inside the MXE using the encrypted values, not trusted from the client. This ensures the settlement math is verified cryptographically — clients cannot lie about what they owe or are owed.
+
+---
+
 ## Account Structures
 
 ### DealAccount
@@ -131,9 +170,8 @@ pub struct DealAccount {
     pub create_key: Pubkey,          // Ephemeral signer (PDA uniqueness)
     pub controller: Pubkey,          // Derived ed25519 pubkey (signing authority)
     pub encryption_pubkey: [u8; 32], // Derived x25519 pubkey (event routing)
-    pub base_mint: Pubkey,           // Token being bought/sold
-    pub quote_mint: Pubkey,          // Token used for pricing/payment
-    pub side: u8,                    // BUY = 0, SELL = 1
+    pub base_mint: Pubkey,           // Token the creator is selling
+    pub quote_mint: Pubkey,          // Token the creator receives in return
     pub expires_at: i64,             // Unix timestamp
     pub status: u8,                  // OPEN = 0, EXECUTED = 1, EXPIRED = 2
     pub allow_partial: bool,         // Execute partial fills at expiry?
@@ -142,7 +180,7 @@ pub struct DealAccount {
 
     // === MXE-encrypted (raw bytes) ===
     pub nonce: u128,              // 16 bytes
-    pub ciphertexts: [u8; 128],   // 4 fields × 32 bytes
+    pub ciphertexts: [u8; 96],    // 3 fields × 32 bytes
 }
 ```
 
@@ -151,13 +189,10 @@ pub struct DealAccount {
 struct EncryptedDealState {
     // Operational data
     amount: u64,                  // Base asset amount
-    price: u64,                   // Threshold price
+    price: u128,                  // Threshold price (X64.64 fixed-point)
     fill_amount: u64,             // Running sum of amt_to_execute across offers
-
-    // Settlement tracking
-    num_settled: u32,             // Incremented as each offer is settled
 }
-// Total: 4 ciphertexts × 32 bytes = 128 bytes
+// Total: 3 ciphertexts × 32 bytes = 96 bytes
 ```
 
 **Account closure:** When `num_settled == num_offers` and creator is settled, deal account can be closed.
@@ -188,7 +223,7 @@ pub struct OfferAccount {
 ```rust
 struct EncryptedOfferState {
     // Offer data
-    price: u64,                   // Offeror's price
+    price: u128,                  // Offeror's price (X64.64 fixed-point)
     amount: u64,                  // Amount willing to fill
     amt_to_execute: u64,          // Amount that will actually execute
 }
@@ -228,7 +263,6 @@ pub struct DealCreated {
     pub deal: Pubkey,
     pub base_mint: Pubkey,
     pub quote_mint: Pubkey,
-    pub side: u8,
     pub expires_at: i64,
     pub allow_partial: bool,
 
@@ -240,10 +274,8 @@ pub struct DealCreated {
 **Blob contents** (decryptable by creator):
 ```rust
 struct DealCreatedBlob {
-    creator: Pubkey,              // Verification field
     amount: u64,
-    price: u64,
-    total: u64,                   // amount × price
+    price: u128,                  // X64.64 fixed-point
     created_at: i64,
 }
 ```
@@ -266,8 +298,7 @@ pub struct OfferCreated {
 **Blob contents**:
 ```rust
 struct OfferCreatedBlob {
-    offeror: Pubkey,              // Verification field
-    price: u64,
+    price: u128,                  // X64.64 fixed-point
     amount: u64,
     submitted_at: i64,
 }
@@ -290,9 +321,9 @@ pub struct DealSettled {
 **Blob contents** (decryptable by creator):
 ```rust
 struct DealSettledBlob {
-    creator: Pubkey,              // Verification field
     total_filled: u64,            // Actual amount executed
-    refund_amt: u64,              // Creator's escrowed funds returned
+    creator_receives: u64,        // What creator gets
+    creator_refund: u64,          // Creator's unfilled portion returned
 }
 ```
 
@@ -313,10 +344,9 @@ pub struct OfferSettled {
 **Blob contents** (decryptable by offeror):
 ```rust
 struct OfferSettledBlob {
-    offeror: Pubkey,              // Verification field
-    outcome: u8,                  // PASSED = 0, PARTIAL = 1, FAILED = 2
+    outcome: u8,                  // EXECUTED = 0, PARTIAL = 1, FAILED = 2
     executed_amt: u64,            // Amount that was executed
-    refund_amt: u64,              // Offeror's escrowed funds returned
+    refund_amt: u64,              // Offeror's unfilled portion returned
 }
 ```
 
@@ -379,15 +409,9 @@ for (const event of events) {
 
 ## Open Questions
 
-1. **Escrow token accounts** — Structure for holding escrowed funds:
-   - Single vault per deal vs separate PDAs per party
-   - How creator escrow works (quote for BUY, base for SELL)
-   - How offeror escrow works (base for BUY, quote for SELL)
-   - Transfer logic at settlement (distribution + refunds)
+1. **Token transfers** — Deferred until we decide on a private transfer protocol. The MXE computes the amounts; the transfer mechanism is separate.
 
-2. **Settlement trigger** — Permissionless crank at expiry? Auto-trigger when filled?
-
-3. **Blob size in events** — `SharedEncryptedStruct<N>` includes:
+2. **Blob size in events** — `SharedEncryptedStruct<N>` includes:
    - `encryption_key`: 32 bytes (client's x25519 pubkey echoed back)
    - `nonce`: 16 bytes (u128)
    - `ciphertexts`: N × 32 bytes
@@ -396,9 +420,9 @@ for (const event of events) {
 
    | Blob | Fields | Ciphertext Size | Total Size |
    |------|--------|-----------------|------------|
-   | DealCreatedBlob | 4 (amount + price + total + created_at) | 128 bytes | 176 bytes |
+   | DealCreatedBlob | 3 (amount + price + created_at) | 96 bytes | 144 bytes |
    | OfferCreatedBlob | 3 (price + amount + submitted_at) | 96 bytes | 144 bytes |
-   | DealSettledBlob | 2 (total_filled + refund_amt) | 64 bytes | 112 bytes |
+   | DealSettledBlob | 3 (total_filled + receives + refund) | 96 bytes | 144 bytes |
    | OfferSettledBlob | 3 (outcome + executed_amt + refund_amt) | 96 bytes | 144 bytes |
 
-   Note: Creator/offeror identity no longer needed in blobs — recipient is identified by `encryption_pubkey` on the account.
+   Note: Recipient is identified by `encryption_pubkey` on the account, not in the blob.
