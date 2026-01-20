@@ -128,15 +128,16 @@ PDA seeds: `["deal", create_key.key()]`
 ```rust
 pub struct DealAccount {
     // === Public (plaintext) ===
-    pub create_key: Pubkey,       // Ephemeral signer (prevents front-running, enables pre-funding)
-    pub encryption_pubkey: [u8; 32], // Creator's x25519 pubkey (for event routing)
-    pub base_mint: Pubkey,        // Token being bought/sold
-    pub quote_mint: Pubkey,       // Token used for pricing/payment
-    pub side: u8,                 // BUY = 0, SELL = 1
-    pub expires_at: i64,          // Unix timestamp
-    pub status: u8,               // OPEN = 0, EXECUTED = 1, EXPIRED = 2
-    pub allow_partial: bool,      // Execute partial fills at expiry?
-    pub num_offers: u32,          // Counter, incremented by MPC at offer submission
+    pub create_key: Pubkey,          // Ephemeral signer (PDA uniqueness)
+    pub controller: Pubkey,          // Derived ed25519 pubkey (signing authority)
+    pub encryption_pubkey: [u8; 32], // Derived x25519 pubkey (event routing)
+    pub base_mint: Pubkey,           // Token being bought/sold
+    pub quote_mint: Pubkey,          // Token used for pricing/payment
+    pub side: u8,                    // BUY = 0, SELL = 1
+    pub expires_at: i64,             // Unix timestamp
+    pub status: u8,                  // OPEN = 0, EXECUTED = 1, EXPIRED = 2
+    pub allow_partial: bool,         // Execute partial fills at expiry?
+    pub num_offers: u32,             // Counter, incremented by MPC at offer submission
     pub bump: u8,
 
     // === MXE-encrypted (raw bytes) ===
@@ -170,10 +171,11 @@ PDA seeds: `["offer", deal.key(), create_key.key()]`
 ```rust
 pub struct OfferAccount {
     // === Public ===
-    pub create_key: Pubkey,       // Ephemeral signer (prevents front-running, enables pre-funding)
-    pub encryption_pubkey: [u8; 32], // Offeror's x25519 pubkey (for event routing)
+    pub create_key: Pubkey,          // Ephemeral signer (PDA uniqueness)
+    pub controller: Pubkey,          // Derived ed25519 pubkey (signing authority)
+    pub encryption_pubkey: [u8; 32], // Derived x25519 pubkey (event routing)
     pub deal: Pubkey,
-    pub offer_index: u32,         // FIFO sequence, assigned by MPC (not in PDA seeds)
+    pub offer_index: u32,            // FIFO sequence, assigned by MPC (not in PDA seeds)
     pub bump: u8,
 
     // === MXE-encrypted ===
@@ -353,12 +355,19 @@ for (const event of events) {
 
 ## Design Decisions
 
-1. **Signature-derived x25519 keys** — Clients derive x25519 keys deterministically from a wallet signature (see `vibes/ideation/001_deterministic-encryption-keys.md`). This means:
-   - User signs a deterministic message → hash signature → x25519 private key
-   - Same wallet + same message = same keypair, every time (regenerable on any device)
-   - x25519 pubkey stored publicly on accounts (`encryption_pubkey` field) for event routing
-   - Crank reads pubkey from account, passes to MPC for output encryption
-   - No need for MPC to derive keys — pubkey is plaintext, private key stays client-side
+1. **Signature-derived keypairs** — Clients derive two keypairs deterministically from wallet signatures (see `vibes/ideation/001_deterministic-encryption-keys.md`):
+
+   **Controller (ed25519)** — for signing authority:
+   - User signs `"otc:controller:v1"` → hash → ed25519 private key
+   - `controller` pubkey stored on accounts, used to authorize transactions
+   - One controller per user, can control multiple deals/offers
+   - Breaks on-chain link between user's main wallet and their accounts
+
+   **Encryption (x25519)** — for event routing:
+   - User signs `"otc:encryption:v1"` → hash → x25519 private key
+   - `encryption_pubkey` stored on accounts for event routing
+   - Crank reads pubkey, passes to MPC for output encryption
+   - User decrypts events with derived private key
 
 2. **createKey pattern** — Both deals and offers use an ephemeral signer (`create_key`) for PDA derivation. This:
    - Prevents front-running (attacker can't produce valid signature)

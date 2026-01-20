@@ -8,18 +8,21 @@ In a permissionless system, "cranks" (any external caller) can trigger state cha
 
 ## Solution: Store x25519 Pubkey Publicly on Accounts
 
-Any account that needs to receive encrypted events should store its owner's x25519 public key as public (unencrypted) account data.
+Any account that needs to receive encrypted events should store the owner's derived public keys as public (unencrypted) account data.
 
 ```
 ┌─────────────────────────────────┐
 │  Crankable Account              │
 ├─────────────────────────────────┤
-│  owner: Pubkey                  │ ← Solana wallet (ownership/authority)
-│  encryption_pubkey: [u8; 32]    │ ← x25519 pubkey (event routing)
+│  create_key: Pubkey             │ ← ephemeral (PDA uniqueness)
+│  controller: Pubkey             │ ← derived ed25519 (signing authority)
+│  encryption_pubkey: [u8; 32]    │ ← derived x25519 (event routing)
 │  nonce: [u8; 16]                │ ← MXE encryption nonce
 │  ...encrypted state...          │ ← MXE-encrypted data
 └─────────────────────────────────┘
 ```
+
+Both `controller` and `encryption_pubkey` are derived deterministically from wallet signatures (see 001_deterministic-encryption-keys.md).
 
 ### Why This Works
 
@@ -37,8 +40,9 @@ Both Offers and Deals are crankable accounts with a **single owner** who receive
 ┌─────────────────────────────────┐
 │  Deal                           │
 ├─────────────────────────────────┤
-│  create_key: Pubkey             │ ← PDA derivation
-│  encryption_pubkey: [u8; 32]    │ ← creator's x25519 pubkey
+│  create_key: Pubkey             │ ← ephemeral (PDA uniqueness)
+│  controller: Pubkey             │ ← creator's derived ed25519
+│  encryption_pubkey: [u8; 32]    │ ← creator's derived x25519
 │  base_mint: Pubkey              │
 │  quote_mint: Pubkey             │
 │  ...public fields...            │
@@ -56,9 +60,10 @@ Events for the **creator**:
 ┌─────────────────────────────────┐
 │  Offer                          │
 ├─────────────────────────────────┤
-│  create_key: Pubkey             │ ← PDA derivation
+│  create_key: Pubkey             │ ← ephemeral (PDA uniqueness)
+│  controller: Pubkey             │ ← offeror's derived ed25519
+│  encryption_pubkey: [u8; 32]    │ ← offeror's derived x25519
 │  deal: Pubkey                   │ ← which deal this offer is for
-│  encryption_pubkey: [u8; 32]    │ ← offeror's x25519 pubkey
 │  ...public fields...            │
 │  nonce: [u8; 16]                │
 │  encrypted_state: [u8; N]       │ ← MXE-encrypted (price, amount, etc.)
