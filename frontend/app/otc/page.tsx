@@ -371,29 +371,42 @@ export default function OTCPage() {
 
                 {/* Buy/Sell Toggle + Pair Selector Row */}
                 <div className="flex gap-2 mb-6">
-                  <button
-                    onClick={() => !isLocked && setMode("buy")}
-                    disabled={isLocked}
-                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      mode === "buy"
-                        ? "bg-success text-success-foreground"
-                        : "bg-secondary text-muted-foreground"
-                    }`}
-                  >
-                    Buy
-                  </button>
-                  <button
-                    onClick={() => !isLocked && setMode("sell")}
-                    disabled={isLocked}
-                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      mode === "sell"
-                        ? "bg-destructive text-destructive-foreground"
-                        : "bg-secondary text-muted-foreground"
-                    }`}
-                  >
-                    Sell
-                  </button>
-                  <div className="flex-1 bg-input rounded-md px-3 py-1.5 text-foreground/80 text-sm border border-transparent hover:border-border transition-colors">
+                  {/* Segmented Control Container */}
+                  <div className="relative flex bg-secondary rounded-lg p-1">
+                    {/* Animated sliding background */}
+                    <div
+                      className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-md transition-all duration-200 ease-out ${
+                        mode === "buy"
+                          ? "left-1 bg-success"
+                          : "left-[calc(50%)] bg-destructive"
+                      }`}
+                    />
+                    {/* Buy button */}
+                    <button
+                      onClick={() => !isLocked && setMode("buy")}
+                      disabled={isLocked}
+                      className={`relative z-10 px-6 py-2 text-sm font-medium transition-colors duration-200 ${
+                        mode === "buy"
+                          ? "text-success-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Buy
+                    </button>
+                    {/* Sell button */}
+                    <button
+                      onClick={() => !isLocked && setMode("sell")}
+                      disabled={isLocked}
+                      className={`relative z-10 px-6 py-2 text-sm font-medium transition-colors duration-200 ${
+                        mode === "sell"
+                          ? "text-destructive-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Sell
+                    </button>
+                  </div>
+                  <div className="flex-1 bg-input rounded-md px-3 text-foreground/80 text-sm border border-transparent hover:border-border transition-colors flex items-center">
                     {selectedPair.label}
                   </div>
                 </div>
@@ -453,14 +466,26 @@ export default function OTCPage() {
                     </div>
                   </div>
 
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={allowPartial}
-                      onChange={(e) => !isLocked && setAllowPartial(e.target.checked)}
-                      disabled={isLocked}
-                      className="w-4 h-4 rounded border-border bg-input text-primary focus:ring-ring focus:ring-offset-background"
-                    />
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        checked={allowPartial}
+                        onChange={(e) => !isLocked && setAllowPartial(e.target.checked)}
+                        disabled={isLocked}
+                        className="peer sr-only"
+                      />
+                      <div className="w-4 h-4 rounded border border-muted-foreground bg-input group-hover:border-transparent peer-checked:bg-primary peer-checked:border-primary group-hover:peer-checked:border-primary peer-focus-visible:ring-1 peer-focus-visible:ring-primary/30 transition-colors" />
+                      <svg
+                        className="absolute top-0.5 left-0.5 w-3 h-3 text-primary-foreground opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth={3}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
                     <span className="text-muted-foreground text-sm">Allow partial fill at expiry</span>
                   </label>
 
