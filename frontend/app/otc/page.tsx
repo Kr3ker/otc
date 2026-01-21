@@ -831,11 +831,11 @@ export default function OTCPage() {
                                     )}
                                   </td>
                                   <td className="py-3 text-right">
-                                    {deal.status === "open" && deal.offerCount && deal.offerCount > 0 && (
+                                    {deal.status === "open" && deal.offerCount != null && deal.offerCount > 0 ? (
                                       <button className="bg-success/20 hover:bg-success/30 text-success border border-success/50 px-3 py-1 text-sm rounded-md font-medium transition-colors">
                                         Execute
                                       </button>
-                                    )}
+                                    ) : null}
                                   </td>
                                 </tr>
                               );
