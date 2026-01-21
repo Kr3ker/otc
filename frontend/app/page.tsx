@@ -31,7 +31,7 @@ export default function HomePage() {
           {/* CTA Button */}
           <Link
             href="/otc"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded font-medium text-sm transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)]"
+            className="btn-primary-glow text-primary-foreground px-5 py-2 rounded-lg font-medium text-sm"
           >
             Open app →
           </Link>
@@ -48,19 +48,14 @@ export default function HomePage() {
             Execute large trades with complete privacy. No slippage, no front-running,
             no information leakage.
           </p>
-          <div className="flex gap-4 justify-center pt-4">
+          <div className="pt-4">
             <Link
               href="/otc"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded font-medium transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)]"
+              className="btn-primary-glow text-primary-foreground px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2 group"
             >
               Start Trading
+              <span className="text-lg transition-transform duration-200 group-hover:translate-x-1">→</span>
             </Link>
-            <a
-              href="#"
-              className="bg-secondary hover:bg-secondary/80 text-secondary-foreground px-6 py-3 rounded font-medium transition-colors"
-            >
-              Learn More
-            </a>
           </div>
         </div>
       </main>
