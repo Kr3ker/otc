@@ -19,6 +19,92 @@ mod circuits {
     }
 
     // ============================================
+    // DEAL STRUCTS
+    // ============================================
+
+    /// Input from creator (Shared-encrypted)
+    pub struct DealInput {
+        /// Base asset amount the creator is selling
+        amount: u64,
+        /// X64.64 fixed-point price (quote per base)
+        price: u128,
+    }
+
+    /// State stored on-chain (MXE-encrypted)
+    #[derive(Copy, Clone)]
+    pub struct DealState {
+        /// Base asset amount
+        amount: u64,
+        /// X64.64 fixed-point price
+        price: u128,
+        /// Running total of filled amount
+        fill_amount: u64,
+    }
+
+    /// Event blob sealed to creator (emitted on DealCreated)
+    #[derive(Copy, Clone)]
+    pub struct DealCreatedBlob {
+        /// Base asset amount
+        amount: u64,
+        /// X64.64 fixed-point price
+        price: u128,
+    }
+
+    /// Settlement blob sealed to creator (emitted on DealSettled)
+    #[derive(Copy, Clone)]
+    pub struct DealSettledBlob {
+        /// Total amount filled across all offers
+        total_filled: u64,
+        /// Quote tokens the creator receives
+        creator_receives: u64,
+        /// Base tokens refunded to creator (unfilled)
+        creator_refund: u64,
+    }
+
+    // ============================================
+    // OFFER STRUCTS
+    // ============================================
+
+    /// Input from offeror (Shared-encrypted)
+    pub struct OfferInput {
+        /// X64.64 fixed-point price (max price willing to pay)
+        price: u128,
+        /// Amount of base asset to buy
+        amount: u64,
+    }
+
+    /// State stored on-chain (MXE-encrypted)
+    #[derive(Copy, Clone)]
+    pub struct OfferState {
+        /// X64.64 fixed-point price
+        price: u128,
+        /// Amount of base asset to buy
+        amount: u64,
+        /// Amount to execute (computed at submission based on deal availability)
+        amt_to_execute: u64,
+    }
+
+    /// Event blob sealed to offeror (emitted on OfferCreated)
+    #[derive(Copy, Clone)]
+    pub struct OfferCreatedBlob {
+        /// X64.64 fixed-point price
+        price: u128,
+        /// Amount of base asset to buy
+        amount: u64,
+    }
+
+    /// Settlement blob sealed to offeror (emitted on OfferSettled)
+    #[derive(Copy, Clone)]
+    pub struct OfferSettledBlob {
+        /// Outcome: EXECUTED(0), PARTIAL(1), FAILED(2)
+        outcome: u8,
+        /// Amount of base asset executed
+        executed_amt: u64,
+        /// Quote tokens refunded to offeror
+        refund_amt: u64,
+    }
+
+    // ============================================
     // INSTRUCTIONS
     // ============================================
 

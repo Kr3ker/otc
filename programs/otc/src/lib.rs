@@ -1,4 +1,5 @@
 mod error;
+mod events;
 mod instructions;
 mod state;
 
@@ -6,8 +7,9 @@ use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 
 pub use error::ErrorCode;
+pub use events::*;
 pub use instructions::*;
-pub use state::Counter;
+pub use state::*;
 
 declare_id!("CfwbKvb1wuJbi6h2B1MoRmGU6YWEUHTPL82TvHtcrV1");
 
