@@ -4,31 +4,37 @@ export default function HomePage() {
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Navbar */}
-      <nav className="border-b border-border bg-card/50 shrink-0">
-        <div className="px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            {/* Logo */}
+      <nav className="bg-background py-4 shrink-0 border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <span className="text-primary text-xl">⬡</span>
             <span className="text-foreground font-semibold text-lg">Veil OTC</span>
-            {/* Nav Links */}
-            <div className="flex gap-4 text-sm">
-              <Link href="/otc" className="text-muted-foreground hover:text-foreground transition-colors">
-                Trade
-              </Link>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                History
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                FAQ
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                Settings
-              </a>
-            </div>
           </div>
-          {/* Connect Wallet Button */}
-          <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 px-3 py-1.5 rounded font-medium text-sm transition-colors">
-            Connect Wallet
-          </button>
+
+          {/* Center Nav Links */}
+          <div className="flex gap-8 text-sm">
+            <a href="#product" className="text-muted-foreground hover:text-foreground transition-colors">
+              Product
+            </a>
+            <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
+              How it works
+            </a>
+            <a href="#security" className="text-muted-foreground hover:text-foreground transition-colors">
+              Security
+            </a>
+            <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors">
+              FAQ
+            </a>
+          </div>
+
+          {/* CTA Button */}
+          <Link
+            href="/otc"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded font-medium text-sm transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)]"
+          >
+            Open app →
+          </Link>
         </div>
       </nav>
 
@@ -45,7 +51,7 @@ export default function HomePage() {
           <div className="flex gap-4 justify-center pt-4">
             <Link
               href="/otc"
-              className="bg-primary hover:bg-primary/80 text-primary-foreground px-6 py-3 rounded font-medium transition-colors"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded font-medium transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.5)]"
             >
               Start Trading
             </Link>
