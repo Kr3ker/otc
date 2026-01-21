@@ -796,7 +796,7 @@ export default function OTCPage() {
                               <th className="text-right py-3 font-medium">Total</th>
                               <th className="text-center py-3 font-medium">Expires</th>
                               <th className="text-left py-3 font-medium">Status</th>
-                              <th className="py-3"></th>
+                              <th className="text-right py-3 font-medium w-px whitespace-nowrap">Action</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -830,7 +830,7 @@ export default function OTCPage() {
                                       <span className="text-muted-foreground">{deal.status}</span>
                                     )}
                                   </td>
-                                  <td className="py-3 text-right">
+                                  <td className="py-3 text-right w-px whitespace-nowrap">
                                     {deal.status === "open" && deal.offerCount != null && deal.offerCount > 0 ? (
                                       <button className="bg-success/20 hover:bg-success/30 text-success border border-success/50 px-3 py-1 text-sm rounded-md font-medium transition-colors">
                                         Execute
