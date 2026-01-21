@@ -13,6 +13,34 @@ const PAIRS = [
 
 type Pair = (typeof PAIRS)[number];
 
+// Token icon component
+const TokenIcon = ({ token, className = "w-4 h-4" }: { token: Token; className?: string }) => {
+  const icons: Record<Token, JSX.Element> = {
+    META: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4 4h4l4 12 4-12h4v16h-3V8.5L13.5 20h-3L7 8.5V20H4V4z" />
+      </svg>
+    ),
+    ETH: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 1.5l-8 13 8 4.5 8-4.5-8-13zM12 22.5l-8-5.5 8 11 8-11-8 5.5z" />
+      </svg>
+    ),
+    SOL: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4 17.5h13.5l2.5-2.5H6.5L4 17.5zM4 6.5L6.5 4H20l-2.5 2.5H4zM17.5 12L20 9.5H6.5L4 12l2.5 2.5H20L17.5 12z" />
+      </svg>
+    ),
+    USDC: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />
+        <path d="M12 6v2m0 8v2m-2-10.5c2 0 3.5 1 3.5 2.5s-1.5 2.5-3.5 2.5-3.5 1-3.5 2.5 1.5 2.5 3.5 2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  };
+  return icons[token];
+};
+
 // Your Deals - deals created by user
 interface Deal {
   id: string;
@@ -351,7 +379,7 @@ export default function OTCPage() {
                 <div className="space-y-4">
                   {/* Amount */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Amount
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -369,7 +397,7 @@ export default function OTCPage() {
 
                   {/* Price */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Your price per {getPairFromLabel(selectedMarketDeal.pair).base}
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -387,7 +415,7 @@ export default function OTCPage() {
 
                   {/* Total */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Total
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border transition-colors">
@@ -432,7 +460,7 @@ export default function OTCPage() {
                 <div className="space-y-4">
                   {/* You sell */}
                   <div>
-                    <label className="text-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       You sell
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between items-center border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -455,15 +483,16 @@ export default function OTCPage() {
                             }
                           }}
                           disabled={isLocked}
-                          className="flex items-center gap-1 text-foreground hover:text-primary transition-colors"
+                          className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors"
                         >
+                          <TokenIcon token={sellToken} className="w-4 h-4" />
                           <span>{sellToken}</span>
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                           </svg>
                         </button>
                         {sellTokenDropdownOpen && (
-                          <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg z-10 min-w-[80px]">
+                          <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg z-10 min-w-[100px]">
                             {TOKENS.filter(t => t !== quoteToken).map((token) => (
                               <button
                                 key={token}
@@ -471,10 +500,11 @@ export default function OTCPage() {
                                   setSellToken(token);
                                   setSellTokenDropdownOpen(false);
                                 }}
-                                className={`w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors ${
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors flex items-center gap-2 ${
                                   token === sellToken ? "text-primary" : "text-foreground"
                                 }`}
                               >
+                                <TokenIcon token={token} className="w-4 h-4" />
                                 {token}
                               </button>
                             ))}
@@ -486,7 +516,7 @@ export default function OTCPage() {
 
                   {/* Price per sell token */}
                   <div>
-                    <label className="text-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Price per {sellToken}
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between items-center border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -509,15 +539,16 @@ export default function OTCPage() {
                             }
                           }}
                           disabled={isLocked}
-                          className="flex items-center gap-1 text-foreground hover:text-primary transition-colors"
+                          className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors"
                         >
+                          <TokenIcon token={quoteToken} className="w-4 h-4" />
                           <span>{quoteToken}</span>
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                           </svg>
                         </button>
                         {quoteTokenDropdownOpen && (
-                          <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg z-10 min-w-[80px]">
+                          <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg z-10 min-w-[100px]">
                             {TOKENS.filter(t => t !== sellToken).map((token) => (
                               <button
                                 key={token}
@@ -525,10 +556,11 @@ export default function OTCPage() {
                                   setQuoteToken(token);
                                   setQuoteTokenDropdownOpen(false);
                                 }}
-                                className={`w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors ${
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors flex items-center gap-2 ${
                                   token === quoteToken ? "text-primary" : "text-foreground"
                                 }`}
                               >
+                                <TokenIcon token={token} className="w-4 h-4" />
                                 {token}
                               </button>
                             ))}
@@ -540,7 +572,7 @@ export default function OTCPage() {
 
                   {/* Expires in */}
                   <div>
-                    <label className="text-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Expires in
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -587,7 +619,7 @@ export default function OTCPage() {
 
                   {/* You receive (read-only) */}
                   <div>
-                    <label className="text-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       You receive
                     </label>
                     <div className="bg-input/50 rounded-md px-3 py-2 flex justify-between items-center border border-transparent">
