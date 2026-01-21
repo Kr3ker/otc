@@ -1,11 +1,13 @@
 use anchor_lang::prelude::*;
 
 // OfferAccount data layout (after 8-byte discriminator):
-// - nonce: [u8; 16] at offset 8
-// - ciphertexts: [[u8; 32]; 3] at offset 24
+// MXE-encrypted fields FIRST for stable offsets:
+//   nonce: [u8; 16] at offset 8
+//   ciphertexts: [[u8; 32]; 3] at offset 24
+// Then plaintext fields follow.
 // OfferState has 3 fields: price (u128), amount (u64), amt_to_execute (u64)
 // For account references, we pass just the ciphertext portion
-pub const OFFER_CIPHERTEXT_OFFSET: u32 = 24; // Skip discriminator (8) + nonce (16)
+pub const OFFER_CIPHERTEXT_OFFSET: u32 = 24; // discriminator (8) + nonce (16)
 pub const OFFER_CIPHERTEXT_LENGTH: u32 = 96; // 3 x 32 bytes
 
 /// OfferAccount represents an offer made on an OTC deal.
@@ -14,6 +16,12 @@ pub const OFFER_CIPHERTEXT_LENGTH: u32 = 96; // 3 x 32 bytes
 #[account]
 #[derive(InitSpace)]
 pub struct OfferAccount {
+    // === MXE-encrypted (raw bytes) - MUST BE FIRST for stable offsets ===
+    /// Nonce for MXE encryption
+    pub nonce: [u8; 16],
+    /// 3 encrypted fields: price (u128), amount (u64), amt_to_execute (u64)
+    pub ciphertexts: [[u8; 32]; 3],
+
     // === Public (plaintext) ===
     /// Ephemeral signer used for PDA uniqueness
     pub create_key: Pubkey,
@@ -31,10 +39,4 @@ pub struct OfferAccount {
     pub status: u8,
     /// PDA bump seed
     pub bump: u8,
-
-    // === MXE-encrypted (raw bytes) ===
-    /// Nonce for MXE encryption
-    pub nonce: [u8; 16],
-    /// 3 encrypted fields: price (u128), amount (u64), amt_to_execute (u64)
-    pub ciphertexts: [[u8; 32]; 3],
 }

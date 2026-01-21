@@ -1,17 +1,14 @@
 use anchor_lang::prelude::*;
 
 // DealAccount data layout (after 8-byte discriminator):
-// Plaintext fields first:
-//   create_key (32) + controller (32) + encryption_pubkey (32) +
-//   base_mint (32) + quote_mint (32) + created_at (8) + expires_at (8) +
-//   status (1) + allow_partial (1) + num_offers (4) + bump (1) = 183 bytes
-// Then MXE-encrypted fields:
-//   nonce: [u8; 16] at offset 8 + 183 = 191
-//   ciphertexts: [[u8; 32]; 3] at offset 191 + 16 = 207
+// MXE-encrypted fields FIRST for stable offsets:
+//   nonce: [u8; 16] at offset 8
+//   ciphertexts: [[u8; 32]; 3] at offset 24
+// Then plaintext fields follow.
 // DealState has 3 fields: amount (u64), price (u128), fill_amount (u64)
 // For account references, we pass just the ciphertext portion
-pub const DEAL_CIPHERTEXT_OFFSET: u32 = 207; // Skip discriminator (8) + plaintext fields (183) + nonce (16)
-pub const DEAL_CIPHERTEXT_LENGTH: u32 = 96;  // 3 x 32 bytes
+pub const DEAL_CIPHERTEXT_OFFSET: u32 = 24; // discriminator (8) + nonce (16)
+pub const DEAL_CIPHERTEXT_LENGTH: u32 = 96; // 3 x 32 bytes
 
 /// DealAccount represents an OTC deal created by a seller.
 ///
@@ -19,6 +16,12 @@ pub const DEAL_CIPHERTEXT_LENGTH: u32 = 96;  // 3 x 32 bytes
 #[account]
 #[derive(InitSpace)]
 pub struct DealAccount {
+    // === MXE-encrypted (raw bytes) - MUST BE FIRST for stable offsets ===
+    /// Nonce for MXE encryption
+    pub nonce: [u8; 16],
+    /// 3 encrypted fields: amount (u64), price (u128), fill_amount (u64)
+    pub ciphertexts: [[u8; 32]; 3],
+
     // === Public (plaintext) ===
     /// Ephemeral signer used for PDA uniqueness
     pub create_key: Pubkey,
@@ -42,10 +45,4 @@ pub struct DealAccount {
     pub num_offers: u32,
     /// PDA bump seed
     pub bump: u8,
-
-    // === MXE-encrypted (raw bytes) ===
-    /// Nonce for MXE encryption
-    pub nonce: [u8; 16],
-    /// 3 encrypted fields: amount (u64), price (u128), fill_amount (u64)
-    pub ciphertexts: [[u8; 32]; 3],
 }
