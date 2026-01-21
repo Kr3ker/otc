@@ -63,13 +63,12 @@ Registers the `create_deal` computation definition. Called once per program depl
 **Instruction Data:**
 - `computation_offset: u64`
 - `controller: Pubkey` — Derived ed25519 pubkey for signing authority
-- `encryption_pubkey: [u8; 32]` — x25519 pubkey for event routing
+- `encryption_pubkey: [u8; 32]` — Creator's x25519 pubkey (for input decryption and output encryption)
+- `nonce: u128`
 - `expires_at: i64`
 - `allow_partial: bool`
 - `encrypted_amount: [u8; 32]` — Shared-encrypted (u64)
 - `encrypted_price: [u8; 64]` — Shared-encrypted (u128, X64.64)
-- `pubkey: [u8; 32]` — Creator's x25519 pubkey
-- `nonce: u128`
 
 **Actions:**
 1. Initialize `DealAccount` with plaintext fields
@@ -84,7 +83,8 @@ Registers the `create_deal` computation definition. Called once per program depl
 **Actions:**
 1. Verify output signature
 2. Store `Enc<Mxe, DealState>` ciphertexts in deal account
-3. Emit `DealCreated` event with sealed blob for creator
+3. Set `deal.created_at = Clock::get().unix_timestamp` (plaintext, set at callback time)
+4. Emit `DealCreated` event with sealed blob for creator
 
 ### Encrypted Instruction: `create_deal`
 
@@ -106,14 +106,12 @@ pub struct DealState {
 pub struct DealCreatedBlob {
     amount: u64,
     price: u128,
-    created_at: i64,
 }
 
 #[instruction]
 pub fn create_deal(
     deal_data: Enc<Shared, DealInput>,
     creator: Shared,
-    created_at: i64,  // From Clock::get() in Solana ix
 ) -> (Enc<Mxe, DealState>, Enc<Shared, DealCreatedBlob>) {
     let input = deal_data.to_arcis();
 
@@ -126,7 +124,6 @@ pub fn create_deal(
     let blob = DealCreatedBlob {
         amount: input.amount,
         price: input.price,
-        created_at,
     };
 
     (Mxe::get().from_arcis(state), creator.from_arcis(blob))
@@ -165,11 +162,10 @@ Registers the `submit_offer` computation definition.
 **Instruction Data:**
 - `computation_offset: u64`
 - `controller: Pubkey`
-- `encryption_pubkey: [u8; 32]`
+- `encryption_pubkey: [u8; 32]` — Offeror's x25519 pubkey (for input decryption and output encryption)
+- `nonce: u128`
 - `encrypted_price: [u8; 64]` — Shared-encrypted (u128, X64.64)
 - `encrypted_amount: [u8; 32]` — Shared-encrypted (u64)
-- `pubkey: [u8; 32]` — Offeror's x25519 pubkey
-- `nonce: u128`
 
 **Constraints:**
 - `deal.status == OPEN`
@@ -192,7 +188,8 @@ Registers the `submit_offer` computation definition.
 1. Verify output signature
 2. Update deal's encrypted state (fill_amount changed)
 3. Store offer's encrypted state (including amt_to_execute)
-4. Emit `OfferCreated` event with sealed blob for offeror
+4. Set `offer.submitted_at = Clock::get().unix_timestamp` (plaintext, set at callback time)
+5. Emit `OfferCreated` event with sealed blob for offeror
 
 ### Encrypted Instruction: `submit_offer`
 
@@ -214,7 +211,6 @@ pub struct OfferState {
 pub struct OfferCreatedBlob {
     price: u128,
     amount: u64,
-    submitted_at: i64,
 }
 
 #[instruction]
@@ -222,7 +218,6 @@ pub fn submit_offer(
     deal_state: Enc<Mxe, &DealState>,
     offer_data: Enc<Shared, OfferInput>,
     offeror: Shared,
-    submitted_at: i64,  // From Clock::get()
 ) -> (Enc<Mxe, DealState>, Enc<Mxe, OfferState>, Enc<Shared, OfferCreatedBlob>) {
     let deal = *(deal_state.to_arcis());
     let offer = offer_data.to_arcis();
@@ -256,7 +251,6 @@ pub fn submit_offer(
     let blob = OfferCreatedBlob {
         price: offer.price,
         amount: offer.amount,
-        submitted_at,
     };
 
     (
@@ -499,8 +493,8 @@ pub fn crank_offer(
 
 | # | Instruction | Inputs | Outputs |
 |---|-------------|--------|---------|
-| 1 | `create_deal` | `Enc<Shared, DealInput>`, `Shared`, `i64` | `Enc<Mxe, DealState>`, `Enc<Shared, DealCreatedBlob>` |
-| 2 | `submit_offer` | `Enc<Mxe, &DealState>`, `Enc<Shared, OfferInput>`, `Shared`, `i64` | `Enc<Mxe, DealState>`, `Enc<Mxe, OfferState>`, `Enc<Shared, OfferCreatedBlob>` |
+| 1 | `create_deal` | `Enc<Shared, DealInput>`, `Shared` | `Enc<Mxe, DealState>`, `Enc<Shared, DealCreatedBlob>` |
+| 2 | `submit_offer` | `Enc<Mxe, &DealState>`, `Enc<Shared, OfferInput>`, `Shared` | `Enc<Mxe, DealState>`, `Enc<Mxe, OfferState>`, `Enc<Shared, OfferCreatedBlob>` |
 | 3 | `crank_deal` | `Enc<Mxe, &DealState>`, `Shared`, `bool`, `bool` | `Enc<Shared, DealSettledBlob>`, `u8` |
 | 4 | `crank_offer` | `Enc<Mxe, &OfferState>`, `Shared`, `bool` | `Enc<Shared, OfferSettledBlob>` |
 

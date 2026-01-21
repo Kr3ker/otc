@@ -4,21 +4,29 @@ use arcis_imports::*;
 mod circuits {
     use arcis_imports::*;
 
+    // ============================================
+    // STATE
+    // ============================================
+
     pub struct InputValues {
         v1: u8,
         v2: u8,
     }
+
+    #[derive(Copy, Clone)]
+    pub struct CounterState {
+        counter: u64,
+    }
+
+    // ============================================
+    // INSTRUCTIONS
+    // ============================================
 
     #[instruction]
     pub fn add_together(input_ctxt: Enc<Shared, InputValues>) -> Enc<Shared, u16> {
         let input = input_ctxt.to_arcis();
         let sum = input.v1 as u16 + input.v2 as u16;
         input_ctxt.owner.from_arcis(sum)
-    }
-
-    #[derive(Copy, Clone)]
-    pub struct CounterState {
-        counter: u64,
     }
 
     /// Initialize a new counter with value 0, encrypted for the MXE only.
