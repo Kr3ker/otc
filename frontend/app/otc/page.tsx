@@ -789,14 +789,14 @@ export default function OTCPage() {
                         <table className="w-full">
                           <thead>
                             <tr className="text-muted-foreground text-sm border-b border-border">
-                              <th className="text-left py-3 font-medium">Selling (you receive)</th>
-                              <th className="text-left py-3 font-medium">Buying (you send)</th>
-                              <th className="text-right py-3 font-medium">Amount</th>
-                              <th className="text-right py-3 font-medium">Price</th>
-                              <th className="text-right py-3 font-medium">Total</th>
-                              <th className="text-center py-3 font-medium">Expires</th>
-                              <th className="text-left py-3 font-medium">Status</th>
-                              <th className="text-center py-3 font-medium w-px whitespace-nowrap">Action</th>
+                              <th className="text-left py-3 pr-4 font-medium">Selling (you receive)</th>
+                              <th className="text-left py-3 pr-4 font-medium">Buying (you send)</th>
+                              <th className="text-right py-3 pr-4 font-medium">Amount</th>
+                              <th className="text-right py-3 pr-4 font-medium">Price</th>
+                              <th className="text-right py-3 pr-4 font-medium">Total</th>
+                              <th className="text-center py-3 pr-4 font-medium">Expires</th>
+                              <th className="text-left py-3 pr-4 font-medium">Status</th>
+                              <th className="text-center py-3 pl-4 font-medium w-px whitespace-nowrap">Action</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -809,19 +809,19 @@ export default function OTCPage() {
 
                               return (
                                 <tr key={deal.id} className="border-b border-border/50">
-                                  <td className="py-3 text-foreground">{selling}</td>
-                                  <td className="py-3 text-foreground">{buying}</td>
-                                  <td className="py-3 text-right text-foreground">{deal.amount.toLocaleString()}</td>
-                                  <td className="py-3 text-right text-foreground">{deal.price.toLocaleString()}</td>
-                                  <td className="py-3 text-right text-foreground">{deal.total.toLocaleString()}</td>
-                                  <td className="py-3 text-center text-muted-foreground">
+                                  <td className="py-3 pr-4 text-foreground">{selling}</td>
+                                  <td className="py-3 pr-4 text-foreground">{buying}</td>
+                                  <td className="py-3 pr-4 text-right text-foreground">{deal.amount.toLocaleString()}</td>
+                                  <td className="py-3 pr-4 text-right text-foreground">{deal.price.toLocaleString()}</td>
+                                  <td className="py-3 pr-4 text-right text-foreground">{deal.total.toLocaleString()}</td>
+                                  <td className="py-3 pr-4 text-center text-muted-foreground">
                                     {deal.status === "executed" ? "—" : formatTimeRemaining(deal.expiresAt)}
                                   </td>
-                                  <td className="py-3 text-left">
+                                  <td className="py-3 pr-4 text-left">
                                     {deal.status === "open" ? (
                                       <span className="text-muted-foreground">
                                         Open{deal.offerCount != null && deal.offerCount > 0 ? (
-                                          <> · <span className="text-foreground font-medium">{deal.offerCount} {deal.offerCount === 1 ? "offer" : "offers"}</span></>
+                                          <> · <span className="text-foreground">{deal.offerCount} {deal.offerCount === 1 ? "offer" : "offers"}</span></>
                                         ) : null}
                                       </span>
                                     ) : deal.status === "executed" ? (
@@ -830,7 +830,7 @@ export default function OTCPage() {
                                       <span className="text-muted-foreground">{deal.status}</span>
                                     )}
                                   </td>
-                                  <td className="py-3 text-center align-middle w-px whitespace-nowrap">
+                                  <td className="py-3 pl-4 text-center align-middle w-px whitespace-nowrap">
                                     {deal.status === "open" && deal.offerCount != null && deal.offerCount > 0 ? (
                                       <button className="bg-success/20 hover:bg-success/30 text-success border border-success/50 px-3 py-1 text-sm rounded-md font-medium transition-colors">
                                         Execute

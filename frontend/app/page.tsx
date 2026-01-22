@@ -353,14 +353,6 @@ export default function HomePage() {
                     Twitter
                   </a>
                 </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Discord
-                  </a>
-                </li>
               </ul>
             </div>
           </div>
