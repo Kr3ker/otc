@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { type Deal, type MarketDeal, type Offer } from "./_lib/types";
 import { MOCK_DEALS, MOCK_MARKET_DEALS, MOCK_OFFERS } from "./_lib/constants";
 import { FAQPanel } from "./_components/FAQPanel";
-import { TabNavigation, type TabId } from "./_components/TabNavigation";
+import { TabNavigation } from "./_components/TabNavigation";
 import { Navbar } from "./_components/Navbar";
 import { DealsTable } from "./_components/DealsTable";
 import { MarketTable } from "./_components/MarketTable";
@@ -12,17 +12,25 @@ import { OffersTable } from "./_components/OffersTable";
 import { DealDetails } from "./_components/DealDetails";
 import { MakeOfferForm } from "./_components/MakeOfferForm";
 import { CreateDealForm } from "./_components/CreateDealForm";
+import { DealNotFound } from "./_components/DealNotFound";
+import { useUrlState } from "./_hooks/useUrlState";
 
-export default function OTCPage() {
-  // Tab state
-  const [activeTab, setActiveTab] = useState<TabId>("market");
+function OTCPageContent() {
+  const { state, setView, navigateToDeal, navigateBack } = useUrlState();
+
+  // Data state
   const [deals, setDeals] = useState<Deal[]>(MOCK_DEALS);
   const [marketDeals] = useState<MarketDeal[]>(MOCK_MARKET_DEALS);
   const [offers] = useState<Offer[]>(MOCK_OFFERS);
   const [pairFilter, setPairFilter] = useState<string>("all");
 
-  // Selected market deal for expanded view
-  const [selectedMarketDeal, setSelectedMarketDeal] = useState<MarketDeal | null>(null);
+  // Derive selected deal from URL
+  const selectedMarketDeal = state.dealId
+    ? marketDeals.find((d) => d.id === state.dealId) ?? null
+    : null;
+
+  // Check if deal ID is in URL but deal not found
+  const dealNotFound = state.dealId !== null && selectedMarketDeal === null;
 
   // Real-time countdown state for DealDetails
   const [, setTick] = useState(0);
@@ -41,24 +49,24 @@ export default function OTCPage() {
 
   // Handle row click
   const handleMarketDealClick = (deal: MarketDeal) => {
-    setSelectedMarketDeal(deal);
+    navigateToDeal(deal.id);
   };
 
   // Collapse back to table
   const handleCollapse = () => {
-    setSelectedMarketDeal(null);
+    navigateBack();
   };
 
   // Handle new deal created
   const handleDealCreated = (newDeal: Deal) => {
     setDeals((prev) => [newDeal, ...prev]);
-    setActiveTab("deals");
+    setView("deals");
   };
 
   // Handle offer placed
   const handleOfferPlaced = () => {
-    setSelectedMarketDeal(null);
-    setActiveTab("offers");
+    navigateBack();
+    setView("offers");
   };
 
   return (
@@ -87,18 +95,20 @@ export default function OTCPage() {
         {/* Center Panel - Tables or Deal Details */}
         <div className="flex-1 p-4 overflow-y-auto">
           <div className="bg-card/50 border border-border rounded-lg">
-            {/* Show Deal Details when a market deal is selected */}
-            {selectedMarketDeal ? (
+            {/* Show Deal Not Found error */}
+            {dealNotFound ? (
+              <DealNotFound dealId={state.dealId!} onBack={handleCollapse} />
+            ) : selectedMarketDeal ? (
               <DealDetails deal={selectedMarketDeal} onBack={handleCollapse} />
             ) : (
               <>
                 {/* Tab Navigation */}
-                <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+                <TabNavigation activeTab={state.view} onTabChange={setView} />
 
                 {/* Tab Content */}
                 <div className="p-4">
-                  {activeTab === "deals" && <DealsTable deals={deals} />}
-                  {activeTab === "market" && (
+                  {state.view === "deals" && <DealsTable deals={deals} />}
+                  {state.view === "market" && (
                     <MarketTable
                       deals={marketDeals}
                       filteredDeals={filteredMarketDeals}
@@ -107,7 +117,7 @@ export default function OTCPage() {
                       onDealClick={handleMarketDealClick}
                     />
                   )}
-                  {activeTab === "offers" && <OffersTable offers={offers} />}
+                  {state.view === "offers" && <OffersTable offers={offers} />}
                 </div>
               </>
             )}
@@ -121,5 +131,19 @@ export default function OTCPage() {
       {/* Footer border */}
       <div className="border-t border-border h-3 shrink-0" />
     </div>
+  );
+}
+
+export default function OTCPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-screen flex items-center justify-center bg-background">
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      }
+    >
+      <OTCPageContent />
+    </Suspense>
   );
 }
