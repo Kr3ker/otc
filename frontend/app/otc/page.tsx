@@ -2,6 +2,9 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 
+const TOKENS = ["META", "ETH", "SOL", "USDC"] as const;
+type Token = (typeof TOKENS)[number];
+
 const PAIRS = [
   { base: "META", quote: "USDC", label: "META/USDC" },
   { base: "ETH", quote: "USDC", label: "ETH/USDC" },
@@ -9,6 +12,34 @@ const PAIRS = [
 ] as const;
 
 type Pair = (typeof PAIRS)[number];
+
+// Token icon component
+const TokenIcon = ({ token, className = "w-4 h-4" }: { token: Token; className?: string }) => {
+  const icons: Record<Token, JSX.Element> = {
+    META: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4 4h4l4 12 4-12h4v16h-3V8.5L13.5 20h-3L7 8.5V20H4V4z" />
+      </svg>
+    ),
+    ETH: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 1.5l-8 13 8 4.5 8-4.5-8-13zM12 22.5l-8-5.5 8 11 8-11-8 5.5z" />
+      </svg>
+    ),
+    SOL: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4 17.5h13.5l2.5-2.5H6.5L4 17.5zM4 6.5L6.5 4H20l-2.5 2.5H4zM17.5 12L20 9.5H6.5L4 12l2.5 2.5H20L17.5 12z" />
+      </svg>
+    ),
+    USDC: (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />
+        <path d="M12 6v2m0 8v2m-2-10.5c2 0 3.5 1 3.5 2.5s-1.5 2.5-3.5 2.5-3.5 1-3.5 2.5 1.5 2.5 3.5 2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  };
+  return icons[token];
+};
 
 // Your Deals - deals created by user
 interface Deal {
@@ -23,6 +54,7 @@ interface Deal {
   allowPartial: boolean;
   expiresAt: number;
   createdAt: number;
+  offerCount?: number;
 }
 
 // Open Market - other users' deals (no price shown)
@@ -52,9 +84,9 @@ interface Offer {
 
 // Mock data
 const MOCK_DEALS: Deal[] = [
-  { id: "d1", type: "buy", pair: "META/USDC", amount: 4444, price: 444, total: 1973136, status: "open", isPartial: false, allowPartial: true, expiresAt: Date.now() + 83640000, createdAt: Date.now() },
-  { id: "d2", type: "sell", pair: "ETH/USDC", amount: 10, price: 3200, total: 32000, status: "open", isPartial: true, allowPartial: true, expiresAt: Date.now() + 20520000, createdAt: Date.now() - 3600000 },
-  { id: "d3", type: "buy", pair: "META/USDC", amount: 1000, price: 450, total: 450000, status: "executed", isPartial: true, allowPartial: false, expiresAt: 0, createdAt: Date.now() - 86400000 },
+  { id: "d1", type: "buy", pair: "META/USDC", amount: 4444, price: 444, total: 1973136, status: "open", isPartial: false, allowPartial: true, expiresAt: Date.now() + 83640000, createdAt: Date.now(), offerCount: 0 },
+  { id: "d2", type: "sell", pair: "ETH/USDC", amount: 10, price: 3200, total: 32000, status: "open", isPartial: true, allowPartial: true, expiresAt: Date.now() + 20520000, createdAt: Date.now() - 3600000, offerCount: 3 },
+  { id: "d3", type: "buy", pair: "META/USDC", amount: 1000, price: 450, total: 450000, status: "executed", isPartial: true, allowPartial: false, expiresAt: 0, createdAt: Date.now() - 86400000, offerCount: 2 },
 ];
 
 const MOCK_MARKET_DEALS: MarketDeal[] = [
@@ -75,14 +107,16 @@ const MOCK_OFFERS: Offer[] = [
 
 export default function OTCPage() {
   // Create Deal form state
-  const [mode, setMode] = useState<"buy" | "sell">("buy");
-  const [selectedPair, setSelectedPair] = useState<Pair>(PAIRS[0]);
-  const [baseAmount, setBaseAmount] = useState("4444");
+  const [sellToken, setSellToken] = useState<Token>("META");
+  const [quoteToken, setQuoteToken] = useState<Token>("USDC");
+  const [sellAmount, setSellAmount] = useState("4444");
   const [pricePerUnit, setPricePerUnit] = useState("444");
   const [expiresIn, setExpiresIn] = useState("24");
   const [allowPartial, setAllowPartial] = useState(true);
   const [isLocked, setIsLocked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [sellTokenDropdownOpen, setSellTokenDropdownOpen] = useState(false);
+  const [quoteTokenDropdownOpen, setQuoteTokenDropdownOpen] = useState(false);
 
   // Tab state
   const [activeTab, setActiveTab] = useState<"deals" | "market" | "offers">("market");
@@ -126,6 +160,24 @@ export default function OTCPage() {
     }
   }, [activeTab]);
 
+  // Refs for click-outside detection
+  const sellDropdownRef = useRef<HTMLDivElement>(null);
+  const quoteDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sellDropdownRef.current && !sellDropdownRef.current.contains(e.target as Node)) {
+        setSellTokenDropdownOpen(false);
+      }
+      if (quoteDropdownRef.current && !quoteDropdownRef.current.contains(e.target as Node)) {
+        setQuoteTokenDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // FAQ data for negotiation panel
   const faqItems = [
     {
@@ -148,10 +200,10 @@ export default function OTCPage() {
 
   // Calculate totals
   const calculatedTotal = useMemo(() => {
-    const base = parseFloat(baseAmount) || 0;
+    const amount = parseFloat(sellAmount) || 0;
     const price = parseFloat(pricePerUnit) || 0;
-    return base * price;
-  }, [baseAmount, pricePerUnit]);
+    return amount * price;
+  }, [sellAmount, pricePerUnit]);
 
   const offerTotal = useMemo(() => {
     const amount = parseFloat(offerAmount) || 0;
@@ -176,9 +228,9 @@ export default function OTCPage() {
       setIsLoading(false);
       const newDeal: Deal = {
         id: crypto.randomUUID().slice(0, 8),
-        type: mode,
-        pair: selectedPair.label,
-        amount: parseFloat(baseAmount),
+        type: "sell",
+        pair: `${sellToken}/${quoteToken}`,
+        amount: parseFloat(sellAmount),
         price: parseFloat(pricePerUnit),
         total: calculatedTotal,
         status: "open",
@@ -243,12 +295,13 @@ export default function OTCPage() {
 
   const canSubmit =
     !isLocked &&
-    baseAmount &&
+    sellAmount &&
     pricePerUnit &&
     expiresIn &&
-    parseFloat(baseAmount) > 0 &&
+    parseFloat(sellAmount) > 0 &&
     parseFloat(pricePerUnit) > 0 &&
-    parseFloat(expiresIn) > 0;
+    parseFloat(expiresIn) > 0 &&
+    sellToken !== quoteToken;
 
   const canPlaceOffer =
     offerAmount &&
@@ -327,7 +380,7 @@ export default function OTCPage() {
                 <div className="space-y-4">
                   {/* Amount */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Amount
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -345,7 +398,7 @@ export default function OTCPage() {
 
                   {/* Price */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Your price per {getPairFromLabel(selectedMarketDeal.pair).base}
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -363,7 +416,7 @@ export default function OTCPage() {
 
                   {/* Total */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Total
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border transition-colors">
@@ -405,72 +458,69 @@ export default function OTCPage() {
                   Create private OTC deal
                 </h2>
 
-                {/* Buy/Sell Toggle + Pair Selector Row */}
-                <div className="flex gap-2 mb-6">
-                  {/* Segmented Control Container */}
-                  <div className="relative flex bg-secondary rounded-lg p-1">
-                    {/* Animated sliding background */}
-                    <div
-                      className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-md transition-all duration-200 ease-out ${
-                        mode === "buy"
-                          ? "left-1 bg-success"
-                          : "left-[calc(50%)] bg-destructive"
-                      }`}
-                    />
-                    {/* Buy button */}
-                    <button
-                      onClick={() => !isLocked && setMode("buy")}
-                      disabled={isLocked}
-                      className={`relative z-10 px-6 py-2 text-sm font-medium transition-colors duration-200 ${
-                        mode === "buy"
-                          ? "text-success-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      Buy
-                    </button>
-                    {/* Sell button */}
-                    <button
-                      onClick={() => !isLocked && setMode("sell")}
-                      disabled={isLocked}
-                      className={`relative z-10 px-6 py-2 text-sm font-medium transition-colors duration-200 ${
-                        mode === "sell"
-                          ? "text-destructive-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      Sell
-                    </button>
-                  </div>
-                  <div className="flex-1 bg-input rounded-md px-3 text-foreground/80 text-sm border border-transparent hover:border-border transition-colors flex items-center">
-                    {selectedPair.label}
-                  </div>
-                </div>
-
                 <div className="space-y-4">
+                  {/* You sell */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
-                      {mode === "buy" ? "Buy" : "Sell"} amount
+                    <label className="text-muted-foreground text-base mb-1 block">
+                      You sell
                     </label>
-                    <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
+                    <div className="bg-input rounded-md px-3 py-2 flex justify-between items-center border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
                       <input
                         type="text"
                         inputMode="decimal"
-                        value={baseAmount}
-                        onChange={(e) => handleNumberInput(e.target.value, setBaseAmount)}
+                        value={sellAmount}
+                        onChange={(e) => handleNumberInput(e.target.value, setSellAmount)}
                         placeholder="0"
                         disabled={isLocked}
                         className="flex-1 bg-transparent text-foreground outline-none"
                       />
-                      <span className="text-muted-foreground">{selectedPair.base}</span>
+                      <div className="relative" ref={sellDropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!isLocked) {
+                              setSellTokenDropdownOpen(!sellTokenDropdownOpen);
+                              setQuoteTokenDropdownOpen(false);
+                            }
+                          }}
+                          disabled={isLocked}
+                          className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors"
+                        >
+                          <TokenIcon token={sellToken} className="w-4 h-4" />
+                          <span>{sellToken}</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {sellTokenDropdownOpen && (
+                          <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg z-10 min-w-[100px]">
+                            {TOKENS.filter(t => t !== quoteToken).map((token) => (
+                              <button
+                                key={token}
+                                onClick={() => {
+                                  setSellToken(token);
+                                  setSellTokenDropdownOpen(false);
+                                }}
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors flex items-center gap-2 ${
+                                  token === sellToken ? "text-primary" : "text-foreground"
+                                }`}
+                              >
+                                <TokenIcon token={token} className="w-4 h-4" />
+                                {token}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
+                  {/* Price per sell token */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
-                      Price per {selectedPair.base}
+                    <label className="text-muted-foreground text-base mb-1 block">
+                      Price per {sellToken}
                     </label>
-                    <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
+                    <div className="bg-input rounded-md px-3 py-2 flex justify-between items-center border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
                       <input
                         type="text"
                         inputMode="decimal"
@@ -480,12 +530,50 @@ export default function OTCPage() {
                         disabled={isLocked}
                         className="flex-1 bg-transparent text-foreground outline-none"
                       />
-                      <span className="text-muted-foreground">{selectedPair.quote}</span>
+                      <div className="relative" ref={quoteDropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!isLocked) {
+                              setQuoteTokenDropdownOpen(!quoteTokenDropdownOpen);
+                              setSellTokenDropdownOpen(false);
+                            }
+                          }}
+                          disabled={isLocked}
+                          className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors"
+                        >
+                          <TokenIcon token={quoteToken} className="w-4 h-4" />
+                          <span>{quoteToken}</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {quoteTokenDropdownOpen && (
+                          <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg z-10 min-w-[100px]">
+                            {TOKENS.filter(t => t !== sellToken).map((token) => (
+                              <button
+                                key={token}
+                                onClick={() => {
+                                  setQuoteToken(token);
+                                  setQuoteTokenDropdownOpen(false);
+                                }}
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors flex items-center gap-2 ${
+                                  token === quoteToken ? "text-primary" : "text-foreground"
+                                }`}
+                              >
+                                <TokenIcon token={token} className="w-4 h-4" />
+                                {token}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
+                  {/* Expires in */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
+                    <label className="text-muted-foreground text-base mb-1 block">
                       Expires in
                     </label>
                     <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
@@ -530,15 +618,16 @@ export default function OTCPage() {
                     when fully filled{allowPartial ? " or partial fills execute at expiry" : " with private viable quotes"}.
                   </p>
 
+                  {/* You receive (read-only) */}
                   <div>
-                    <label className="text-muted-foreground text-sm mb-1 block">
-                      {mode === "buy" ? "Total cost" : "You receive"}
+                    <label className="text-muted-foreground text-base mb-1 block">
+                      You receive
                     </label>
-                    <div className="bg-input rounded-md px-3 py-2 flex justify-between border border-transparent hover:border-border transition-colors">
+                    <div className="bg-input/50 rounded-md px-3 py-2 flex justify-between items-center border border-transparent">
                       <span className={calculatedTotal > 0 ? "text-foreground" : "text-muted-foreground"}>
                         {calculatedTotal > 0 ? calculatedTotal.toLocaleString() : "—"}
                       </span>
-                      <span className="text-muted-foreground">{selectedPair.quote}</span>
+                      <span className="text-muted-foreground">{quoteToken}</span>
                     </div>
                   </div>
 
@@ -700,14 +789,14 @@ export default function OTCPage() {
                         <table className="w-full">
                           <thead>
                             <tr className="text-muted-foreground text-sm border-b border-border">
-                              <th className="text-left py-3 font-medium">Selling (you receive)</th>
-                              <th className="text-left py-3 font-medium">Buying (you send)</th>
-                              <th className="text-right py-3 font-medium">Amount</th>
-                              <th className="text-right py-3 font-medium">Price</th>
-                              <th className="text-right py-3 font-medium">Total</th>
-                              <th className="text-center py-3 font-medium">Expires</th>
-                              <th className="text-center py-3 font-medium">Status</th>
-                              <th className="py-3"></th>
+                              <th className="text-left py-3 pr-4 font-medium">Selling (you receive)</th>
+                              <th className="text-left py-3 pr-4 font-medium">Buying (you send)</th>
+                              <th className="text-right py-3 pr-4 font-medium">Amount</th>
+                              <th className="text-right py-3 pr-4 font-medium">Price</th>
+                              <th className="text-right py-3 pr-4 font-medium">Total</th>
+                              <th className="text-center py-3 pr-4 font-medium">Expires</th>
+                              <th className="text-left py-3 pr-4 font-medium">Status</th>
+                              <th className="text-center py-3 pl-4 font-medium w-px whitespace-nowrap">Action</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -720,36 +809,33 @@ export default function OTCPage() {
 
                               return (
                                 <tr key={deal.id} className="border-b border-border/50">
-                                  <td className="py-3 text-foreground">{selling}</td>
-                                  <td className="py-3 text-foreground">{buying}</td>
-                                  <td className="py-3 text-right text-foreground">{deal.amount.toLocaleString()}</td>
-                                  <td className="py-3 text-right text-foreground">{deal.price.toLocaleString()}</td>
-                                  <td className="py-3 text-right text-foreground">{deal.total.toLocaleString()}</td>
-                                  <td className="py-3 text-center text-muted-foreground">
+                                  <td className="py-3 pr-4 text-foreground">{selling}</td>
+                                  <td className="py-3 pr-4 text-foreground">{buying}</td>
+                                  <td className="py-3 pr-4 text-right text-foreground">{deal.amount.toLocaleString()}</td>
+                                  <td className="py-3 pr-4 text-right text-foreground">{deal.price.toLocaleString()}</td>
+                                  <td className="py-3 pr-4 text-right text-foreground">{deal.total.toLocaleString()}</td>
+                                  <td className="py-3 pr-4 text-center text-muted-foreground">
                                     {deal.status === "executed" ? "—" : formatTimeRemaining(deal.expiresAt)}
                                   </td>
-                                  <td className="py-3 text-center">
-                                    <div className="flex items-center justify-center gap-1">
-                                      {deal.status === "open" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-sky-500/20 text-sky-400 border border-sky-500/30">open</span>
-                                      )}
-                                      {deal.status === "executed" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-success/20 text-success border border-success/30">executed</span>
-                                      )}
-                                      {deal.status === "expired" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">expired</span>
-                                      )}
-                                      {deal.isPartial && deal.status === "open" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">has offers</span>
-                                      )}
-                                    </div>
+                                  <td className="py-3 pr-4 text-left">
+                                    {deal.status === "open" ? (
+                                      <span className="text-muted-foreground">
+                                        Open{deal.offerCount != null && deal.offerCount > 0 ? (
+                                          <> · <span className="text-foreground">{deal.offerCount} {deal.offerCount === 1 ? "offer" : "offers"}</span></>
+                                        ) : null}
+                                      </span>
+                                    ) : deal.status === "executed" ? (
+                                      <span className="text-green-500">Executed</span>
+                                    ) : (
+                                      <span className="text-muted-foreground">{deal.status}</span>
+                                    )}
                                   </td>
-                                  <td className="py-3 text-right">
-                                    {deal.isPartial && deal.status === "open" && (
+                                  <td className="py-3 pl-4 text-center align-middle w-px whitespace-nowrap">
+                                    {deal.status === "open" && deal.offerCount != null && deal.offerCount > 0 ? (
                                       <button className="bg-success/20 hover:bg-success/30 text-success border border-success/50 px-3 py-1 text-sm rounded-md font-medium transition-colors">
                                         Execute
                                       </button>
-                                    )}
+                                    ) : null}
                                   </td>
                                 </tr>
                               );
@@ -790,7 +876,7 @@ export default function OTCPage() {
                             <tr className="text-muted-foreground text-sm border-b border-border">
                               <th className="text-left py-3 font-medium">Selling (you receive)</th>
                               <th className="text-left py-3 font-medium">Buying (you send)</th>
-                              <th className="text-center py-3 font-medium">Status</th>
+                              <th className="text-left py-3 font-medium">Status</th>
                               <th className="text-center py-3 font-medium">Expires</th>
                             </tr>
                           </thead>
@@ -810,15 +896,11 @@ export default function OTCPage() {
                                 >
                                   <td className="py-3 text-foreground">{selling}</td>
                                   <td className="py-3 text-foreground">{buying}</td>
-                                  <td className="py-3 text-center">
-                                    {deal.offerCount && deal.offerCount > 0 ? (
-                                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-                                        has offers
-                                      </span>
+                                  <td className="py-3 text-left">
+                                    {deal.offerCount != null && deal.offerCount > 0 ? (
+                                      <span className="text-foreground">{deal.offerCount} {deal.offerCount === 1 ? "offer" : "offers"}</span>
                                     ) : (
-                                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-sky-500/20 text-sky-400 border border-sky-500/30">
-                                        open
-                                      </span>
+                                      <span className="text-muted-foreground">Open</span>
                                     )}
                                   </td>
                                   <td className="py-3 text-center">
@@ -857,8 +939,7 @@ export default function OTCPage() {
                                 <th className="text-right py-3 font-medium">You send</th>
                                 <th className="text-right py-3 font-medium">You receive</th>
                                 <th className="text-center py-3 font-medium">Submitted</th>
-                                <th className="text-center py-3 font-medium">Deal status</th>
-                                <th className="text-center py-3 font-medium">Your offer</th>
+                                <th className="text-left py-3 font-medium">Status</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -873,36 +954,24 @@ export default function OTCPage() {
                                   : `${offer.amount} ${base}`;
 
                                 return (
-                                  <tr key={offer.id} className="border-b border-border/50">
+                                  <tr key={offer.id} className={`border-b border-border/50 ${offer.dealStatus === "expired" && offer.offerStatus === "failed" ? "opacity-50" : ""}`}>
                                     <td className="py-3 text-foreground">{base}</td>
                                     <td className="py-3 text-foreground">{quote}</td>
                                     <td className="py-3 text-right text-foreground">{offer.yourPrice.toLocaleString()}</td>
                                     <td className="py-3 text-right text-foreground">{youSend}</td>
                                     <td className="py-3 text-right text-foreground">{youReceive}</td>
                                     <td className="py-3 text-center text-muted-foreground">{offer.submittedAt}</td>
-                                    <td className="py-3 text-center">
-                                      {offer.dealStatus === "open" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-sky-500/20 text-sky-400 border border-sky-500/30">open</span>
-                                      )}
-                                      {offer.dealStatus === "executed" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-success/20 text-success border border-success/30">executed</span>
-                                      )}
-                                      {offer.dealStatus === "expired" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">expired</span>
-                                      )}
-                                    </td>
-                                    <td className="py-3 text-center">
-                                      {offer.offerStatus === "pending" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">pending</span>
-                                      )}
-                                      {offer.offerStatus === "passed" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-success/20 text-success border border-success/30">passed</span>
-                                      )}
-                                      {offer.offerStatus === "partial" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">partial</span>
-                                      )}
-                                      {offer.offerStatus === "failed" && (
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">failed</span>
+                                    <td className="py-3 text-left">
+                                      {offer.dealStatus === "open" && offer.offerStatus === "pending" ? (
+                                        <span className="text-muted-foreground">Pending</span>
+                                      ) : offer.dealStatus === "executed" && offer.offerStatus === "passed" ? (
+                                        <span className="text-green-500">Filled</span>
+                                      ) : offer.dealStatus === "executed" && offer.offerStatus === "partial" ? (
+                                        <span className="text-yellow-500">Partial</span>
+                                      ) : offer.dealStatus === "expired" && offer.offerStatus === "failed" ? (
+                                        <span className="text-muted-foreground/50">Unfilled</span>
+                                      ) : (
+                                        <span className="text-muted-foreground">{offer.offerStatus}</span>
                                       )}
                                     </td>
                                   </tr>
