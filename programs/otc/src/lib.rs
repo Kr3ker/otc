@@ -1,17 +1,25 @@
+mod error;
+mod events;
+mod instructions;
+mod state;
+
 use anchor_lang::prelude::*;
 use arcium_anchor::prelude::*;
 
-const COMP_DEF_OFFSET_ADD_TOGETHER: u32 = comp_def_offset("add_together");
+pub use error::ErrorCode;
+pub use events::*;
+pub use instructions::*;
+pub use state::*;
 
-declare_id!("DvLY17y6UfZSiNPKnavbW2aJBVWo8N6vbNXgf7ym95mE");
+declare_id!("CfwbKvb1wuJbi6h2B1MoRmGU6YWEUHTPL82TvHtcrV1");
 
 #[arcium_program]
 pub mod otc {
     use super::*;
 
+    // Add Together
     pub fn init_add_together_comp_def(ctx: Context<InitAddTogetherCompDef>) -> Result<()> {
-        init_comp_def(ctx.accounts, None, None)?;
-        Ok(())
+        instructions::add_together::init_comp_def_handler(ctx)
     }
 
     pub fn add_together(
@@ -22,28 +30,14 @@ pub mod otc {
         pubkey: [u8; 32],
         nonce: u128,
     ) -> Result<()> {
-        ctx.accounts.sign_pda_account.bump = ctx.bumps.sign_pda_account;
-        let args = ArgBuilder::new()
-            .x25519_pubkey(pubkey)
-            .plaintext_u128(nonce)
-            .encrypted_u8(ciphertext_0)
-            .encrypted_u8(ciphertext_1)
-            .build();
-
-        queue_computation(
-            ctx.accounts,
+        instructions::add_together::handler(
+            ctx,
             computation_offset,
-            args,
-            None,
-            vec![AddTogetherCallback::callback_ix(
-                computation_offset,
-                &ctx.accounts.mxe_account,
-                &[]
-            )?],
-            1,
-            0,
-        )?;
-        Ok(())
+            ciphertext_0,
+            ciphertext_1,
+            pubkey,
+            nonce,
+        )
     }
 
     #[arcium_callback(encrypted_ix = "add_together")]
@@ -51,129 +45,201 @@ pub mod otc {
         ctx: Context<AddTogetherCallback>,
         output: SignedComputationOutputs<AddTogetherOutput>,
     ) -> Result<()> {
-        let o = match output.verify_output(&ctx.accounts.cluster_account, &ctx.accounts.computation_account) {
-            Ok(AddTogetherOutput { field_0 }) => field_0,
-            Err(_) => return Err(ErrorCode::AbortedComputation.into()),
-        };
-
-        emit!(SumEvent {
-            sum: o.ciphertexts[0],
-            nonce: o.nonce.to_le_bytes(),
-        });
-        Ok(())
+        instructions::add_together::callback_handler(ctx, output)
     }
-}
 
-#[queue_computation_accounts("add_together", payer)]
-#[derive(Accounts)]
-#[instruction(computation_offset: u64)]
-pub struct AddTogether<'info> {
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    #[account(
-        init_if_needed,
-        space = 9,
-        payer = payer,
-        seeds = [&SIGN_PDA_SEED],
-        bump,
-        address = derive_sign_pda!(),
-    )]
-    pub sign_pda_account: Account<'info, SignerAccount>,
-    #[account(
-        address = derive_mxe_pda!()
-    )]
-    pub mxe_account: Account<'info, MXEAccount>,
-    #[account(
-        mut,
-        address = derive_mempool_pda!(mxe_account, ErrorCode::ClusterNotSet)
-    )]
-    /// CHECK: mempool_account, checked by the arcium program.
-    pub mempool_account: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_execpool_pda!(mxe_account, ErrorCode::ClusterNotSet)
-    )]
-    /// CHECK: executing_pool, checked by the arcium program.
-    pub executing_pool: UncheckedAccount<'info>,
-    #[account(
-        mut,
-        address = derive_comp_pda!(computation_offset, mxe_account, ErrorCode::ClusterNotSet)
-    )]
-    /// CHECK: computation_account, checked by the arcium program.
-    pub computation_account: UncheckedAccount<'info>,
-    #[account(
-        address = derive_comp_def_pda!(COMP_DEF_OFFSET_ADD_TOGETHER)
-    )]
-    pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
-    #[account(
-        mut,
-        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
-    )]
-    pub cluster_account: Account<'info, Cluster>,
-    #[account(
-        mut,
-        address = ARCIUM_FEE_POOL_ACCOUNT_ADDRESS,
-    )]
-    pub pool_account: Account<'info, FeePool>,
-    #[account(
-        address = ARCIUM_CLOCK_ACCOUNT_ADDRESS
-    )]
-    pub clock_account: Account<'info, ClockAccount>,
-    pub system_program: Program<'info, System>,
-    pub arcium_program: Program<'info, Arcium>,
-}
+    // Init Counter
+    pub fn init_init_counter_comp_def(ctx: Context<InitInitCounterCompDef>) -> Result<()> {
+        instructions::init_counter::init_comp_def_handler(ctx)
+    }
 
-#[callback_accounts("add_together")]
-#[derive(Accounts)]
-pub struct AddTogetherCallback<'info> {
-    pub arcium_program: Program<'info, Arcium>,
-    #[account(
-        address = derive_comp_def_pda!(COMP_DEF_OFFSET_ADD_TOGETHER)
-    )]
-    pub comp_def_account: Account<'info, ComputationDefinitionAccount>,
-    #[account(
-        address = derive_mxe_pda!()
-    )]
-    pub mxe_account: Account<'info, MXEAccount>,
-    /// CHECK: computation_account, checked by arcium program via constraints in the callback context.
-    pub computation_account: UncheckedAccount<'info>,
-    #[account(
-        address = derive_cluster_pda!(mxe_account, ErrorCode::ClusterNotSet)
-    )]
-    pub cluster_account: Account<'info, Cluster>,
-    #[account(address = ::anchor_lang::solana_program::sysvar::instructions::ID)]
-    /// CHECK: instructions_sysvar, checked by the account constraint
-    pub instructions_sysvar: AccountInfo<'info>,
-}
+    pub fn init_counter(
+        ctx: Context<InitCounter>,
+        computation_offset: u64,
+        nonce: u128,
+    ) -> Result<()> {
+        instructions::init_counter::handler(ctx, computation_offset, nonce)
+    }
 
-#[init_computation_definition_accounts("add_together", payer)]
-#[derive(Accounts)]
-pub struct InitAddTogetherCompDef<'info> {
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    #[account(
-        mut,
-        address = derive_mxe_pda!()
-    )]
-    pub mxe_account: Box<Account<'info, MXEAccount>>,
-    #[account(mut)]
-    /// CHECK: comp_def_account, checked by arcium program.
-    /// Can't check it here as it's not initialized yet.
-    pub comp_def_account: UncheckedAccount<'info>,
-    pub arcium_program: Program<'info, Arcium>,
-    pub system_program: Program<'info, System>,
-}
+    #[arcium_callback(encrypted_ix = "init_counter")]
+    pub fn init_counter_callback(
+        ctx: Context<InitCounterCallback>,
+        output: SignedComputationOutputs<InitCounterOutput>,
+    ) -> Result<()> {
+        instructions::init_counter::callback_handler(ctx, output)
+    }
 
-#[event]
-pub struct SumEvent {
-    pub sum: [u8; 32],
-    pub nonce: [u8; 16],
-}
+    // Increment Counter
+    pub fn init_increment_counter_comp_def(
+        ctx: Context<InitIncrementCounterCompDef>,
+    ) -> Result<()> {
+        instructions::increment_counter::init_comp_def_handler(ctx)
+    }
 
-#[error_code]
-pub enum ErrorCode {
-    #[msg("The computation was aborted")]
-    AbortedComputation,
-    #[msg("Cluster not set")]
-    ClusterNotSet,
+    pub fn increment_counter(ctx: Context<IncrementCounter>, computation_offset: u64) -> Result<()> {
+        instructions::increment_counter::handler(ctx, computation_offset)
+    }
+
+    #[arcium_callback(encrypted_ix = "increment_counter")]
+    pub fn increment_counter_callback(
+        ctx: Context<IncrementCounterCallback>,
+        output: SignedComputationOutputs<IncrementCounterOutput>,
+    ) -> Result<()> {
+        instructions::increment_counter::callback_handler(ctx, output)
+    }
+
+    // Get Counter
+    pub fn init_get_counter_comp_def(ctx: Context<InitGetCounterCompDef>) -> Result<()> {
+        instructions::get_counter::init_comp_def_handler(ctx)
+    }
+
+    pub fn get_counter(
+        ctx: Context<GetCounter>,
+        computation_offset: u64,
+        recipient_pubkey: [u8; 32],
+        recipient_nonce: u128,
+        pubkey_hi: u128,
+        pubkey_lo: u128,
+    ) -> Result<()> {
+        instructions::get_counter::handler(
+            ctx,
+            computation_offset,
+            recipient_pubkey,
+            recipient_nonce,
+            pubkey_hi,
+            pubkey_lo,
+        )
+    }
+
+    #[arcium_callback(encrypted_ix = "get_counter")]
+    pub fn get_counter_callback(
+        ctx: Context<GetCounterCallback>,
+        output: SignedComputationOutputs<GetCounterOutput>,
+    ) -> Result<()> {
+        instructions::get_counter::callback_handler(ctx, output)
+    }
+
+    // Create Deal
+    pub fn init_create_deal_comp_def(ctx: Context<InitCreateDealCompDef>) -> Result<()> {
+        instructions::create_deal::init_comp_def_handler(ctx)
+    }
+
+    pub fn create_deal(
+        ctx: Context<CreateDeal>,
+        computation_offset: u64,
+        controller: Pubkey,
+        encryption_pubkey: [u8; 32],
+        nonce: u128,
+        expires_at: i64,
+        allow_partial: bool,
+        encrypted_amount: [u8; 32],
+        encrypted_price: [u8; 32],
+    ) -> Result<()> {
+        instructions::create_deal::handler(
+            ctx,
+            computation_offset,
+            controller,
+            encryption_pubkey,
+            nonce,
+            expires_at,
+            allow_partial,
+            encrypted_amount,
+            encrypted_price,
+        )
+    }
+
+    #[arcium_callback(encrypted_ix = "create_deal")]
+    pub fn create_deal_callback(
+        ctx: Context<CreateDealCallback>,
+        output: SignedComputationOutputs<CreateDealOutput>,
+    ) -> Result<()> {
+        instructions::create_deal::callback_handler(ctx, output)
+    }
+
+    // Submit Offer
+    pub fn init_submit_offer_comp_def(ctx: Context<InitSubmitOfferCompDef>) -> Result<()> {
+        instructions::submit_offer::init_comp_def_handler(ctx)
+    }
+
+    pub fn submit_offer(
+        ctx: Context<SubmitOffer>,
+        computation_offset: u64,
+        controller: Pubkey,
+        encryption_pubkey: [u8; 32],
+        nonce: u128,
+        encrypted_price: [u8; 32],
+        encrypted_amount: [u8; 32],
+    ) -> Result<()> {
+        instructions::submit_offer::handler(
+            ctx,
+            computation_offset,
+            controller,
+            encryption_pubkey,
+            nonce,
+            encrypted_price,
+            encrypted_amount,
+        )
+    }
+
+    #[arcium_callback(encrypted_ix = "submit_offer")]
+    pub fn submit_offer_callback(
+        ctx: Context<SubmitOfferCallback>,
+        output: SignedComputationOutputs<SubmitOfferOutput>,
+    ) -> Result<()> {
+        instructions::submit_offer::callback_handler(ctx, output)
+    }
+
+    // Crank Deal
+    pub fn init_crank_deal_comp_def(ctx: Context<InitCrankDealCompDef>) -> Result<()> {
+        instructions::crank_deal::init_comp_def_handler(ctx)
+    }
+
+    pub fn crank_deal(
+        ctx: Context<CrankDeal>,
+        computation_offset: u64,
+        creator_encryption_pubkey: [u8; 32],
+        creator_nonce: u128,
+    ) -> Result<()> {
+        instructions::crank_deal::handler(
+            ctx,
+            computation_offset,
+            creator_encryption_pubkey,
+            creator_nonce,
+        )
+    }
+
+    #[arcium_callback(encrypted_ix = "crank_deal")]
+    pub fn crank_deal_callback(
+        ctx: Context<CrankDealCallback>,
+        output: SignedComputationOutputs<CrankDealOutput>,
+    ) -> Result<()> {
+        instructions::crank_deal::callback_handler(ctx, output)
+    }
+
+    // Crank Offer
+    pub fn init_crank_offer_comp_def(ctx: Context<InitCrankOfferCompDef>) -> Result<()> {
+        instructions::crank_offer::init_comp_def_handler(ctx)
+    }
+
+    pub fn crank_offer(
+        ctx: Context<CrankOffer>,
+        computation_offset: u64,
+        offeror_encryption_pubkey: [u8; 32],
+        offeror_nonce: u128,
+    ) -> Result<()> {
+        instructions::crank_offer::handler(
+            ctx,
+            computation_offset,
+            offeror_encryption_pubkey,
+            offeror_nonce,
+        )
+    }
+
+    #[arcium_callback(encrypted_ix = "crank_offer")]
+    pub fn crank_offer_callback(
+        ctx: Context<CrankOfferCallback>,
+        output: SignedComputationOutputs<CrankOfferOutput>,
+    ) -> Result<()> {
+        instructions::crank_offer::callback_handler(ctx, output)
+    }
 }
