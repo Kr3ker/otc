@@ -267,7 +267,7 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col bg-background">
       {/* Navbar */}
       <nav className="bg-background py-4 shrink-0 border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <span className="text-primary text-xl">⬡</span>
@@ -309,32 +309,34 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex flex-col items-start justify-center px-6 overflow-hidden">
+      <section className="relative min-h-[70vh] flex flex-col justify-center overflow-hidden">
         {/* Background Pattern */}
         <BackgroundPattern
           activeLines={activeLines}
           onLineHover={handleLineHover}
         />
 
-        {/* Hero Content - positioned left on larger screens */}
-        <div className="relative z-10 max-w-2xl text-left ml-[6%] lg:ml-[10%] space-y-6 -mt-[5vh]">
-          <h1 className="text-4xl font-bold text-foreground">
-            Private OTC Trading
-          </h1>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            Execute large trades with complete privacy. No slippage, no
-            front-running, no information leakage.
-          </p>
-          <div className="pt-2">
-            <Link
-              href="/otc"
-              className="btn-primary-glow text-primary-foreground px-4 py-2 rounded-lg font-medium text-sm inline-flex items-center gap-2 group"
-            >
-              Start Trading
-              <span className="text-base transition-transform duration-200 group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
+        {/* Hero Content - aligned with navbar container */}
+        <div className="relative z-10 max-w-6xl mx-auto px-6 w-full -mt-[5vh]">
+          <div className="max-w-2xl space-y-6">
+            <h1 className="text-4xl font-bold text-foreground">
+              Private OTC Trading
+            </h1>
+            <p className="text-base text-muted-foreground leading-relaxed">
+              Execute large trades with complete privacy. No slippage, no
+              front-running, no information leakage.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/otc"
+                className="btn-primary-glow text-primary-foreground px-4 py-2 rounded-lg font-medium text-sm inline-flex items-center gap-2 group"
+              >
+                Start Trading
+                <span className="text-base transition-transform duration-200 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
