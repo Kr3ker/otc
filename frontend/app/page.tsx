@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 
 const faqs = [
   {
@@ -158,31 +158,47 @@ function BackgroundPattern({
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight);
+    }
+  }, [answer]);
 
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-6 py-5 flex items-center justify-between text-left"
+        className="w-full px-8 py-6 flex items-center justify-between text-left"
       >
         <span
-          className={`font-medium ${
+          className={`font-medium transition-colors duration-200 ${
             isOpen ? "text-primary" : "text-foreground"
           }`}
         >
           {question}
         </span>
-        <span
-          className={`text-muted-foreground transition-transform duration-200 ${
+        <svg
+          className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ease-out ${
             isOpen ? "rotate-180" : ""
           }`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
         >
-          ↓
-        </span>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
       </button>
-      {isOpen && (
-        <div className="px-6 pb-5 text-muted-foreground">{answer}</div>
-      )}
+      <div
+        ref={contentRef}
+        className="overflow-hidden transition-all duration-300 ease-out"
+        style={{ maxHeight: isOpen ? contentHeight : 0 }}
+      >
+        <div className="px-8 pb-6 text-muted-foreground">{answer}</div>
+      </div>
     </div>
   );
 }
@@ -284,15 +300,15 @@ export default function HomePage() {
         />
 
         {/* Hero Content - positioned left on larger screens */}
-        <div className="relative z-10 max-w-2xl text-center lg:text-left lg:mr-auto lg:ml-[10%] space-y-6">
+        <div className="relative z-10 max-w-2xl text-center lg:text-left lg:mr-auto lg:ml-[10%] space-y-8">
           <h1 className="text-5xl font-bold text-foreground">
             Private OTC Trading
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-muted-foreground leading-relaxed">
             Execute large trades with complete privacy. No slippage, no
             front-running, no information leakage.
           </p>
-          <div className="pt-4">
+          <div className="pt-6">
             <Link
               href="/otc"
               className="btn-primary-glow text-primary-foreground px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2 group"
@@ -307,49 +323,49 @@ export default function HomePage() {
       </section>
 
       {/* How it works Section */}
-      <section id="how-it-works" className="py-24 px-6">
+      <section id="how-it-works" className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-foreground text-center mb-16">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-20">
             Why Veil OTC?
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-10">
             {/* Feature 1 */}
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+            <div className="bg-card border border-border rounded-xl p-10">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                 <span className="text-primary text-2xl">🔒</span>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-3">
                 Complete Privacy
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground leading-relaxed">
                 Encrypted order matching. Your trade intentions stay hidden
                 until execution.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+            <div className="bg-card border border-border rounded-xl p-10">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                 <span className="text-primary text-2xl">⚡</span>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-3">
                 Zero Slippage
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground leading-relaxed">
                 Fixed price execution. No price impact, no MEV, no
                 front-running.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+            <div className="bg-card border border-border rounded-xl p-10">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                 <span className="text-primary text-2xl">🔗</span>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-3">
                 Trustless Settlement
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground leading-relaxed">
                 On-chain atomic swaps. No counterparty risk, no custodians.
               </p>
             </div>
@@ -358,65 +374,65 @@ export default function HomePage() {
       </section>
 
       {/* Security Section */}
-      <section id="security" className="py-24 px-6 border-t border-border">
+      <section id="security" className="py-32 px-6 border-t border-border">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-foreground text-center mb-4">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-6">
             Built for Security
           </h2>
-          <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-16">
+          <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-20">
             Powered by Arcium&apos;s confidential computing network. Your trades
             are encrypted and processed using multi-party computation—no single
             party ever sees your data.
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
             {/* Security Item 1 */}
             <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <span className="text-primary text-xl">🛡️</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">
+              <h3 className="font-semibold text-foreground mb-2">
                 MPC Protected
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Multi-party computation ensures no single point of failure
               </p>
             </div>
 
             {/* Security Item 2 */}
             <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <span className="text-primary text-xl">🔐</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">
+              <h3 className="font-semibold text-foreground mb-2">
                 End-to-End Encrypted
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Data encrypted from submission to settlement
               </p>
             </div>
 
             {/* Security Item 3 */}
             <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <span className="text-primary text-xl">📜</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">
+              <h3 className="font-semibold text-foreground mb-2">
                 Open Source
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Fully auditable contracts on Solana
               </p>
             </div>
 
             {/* Security Item 4 */}
             <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <span className="text-primary text-xl">🔑</span>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">
+              <h3 className="font-semibold text-foreground mb-2">
                 Non-Custodial
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 You control your assets at all times
               </p>
             </div>
@@ -425,15 +441,15 @@ export default function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-24 px-6 border-t border-border">
+      <section id="faq" className="py-32 px-6 border-t border-border">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-foreground text-center mb-4">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-6">
             FAQ
           </h2>
-          <p className="text-muted-foreground text-center mb-12">
+          <p className="text-muted-foreground text-center mb-16">
             Everything you need to know about Veil OTC
           </p>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {faqs.map((faq, index) => (
               <FAQItem
                 key={index}
@@ -446,9 +462,9 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-12 px-6">
+      <footer className="border-t border-border py-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Brand */}
             <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
@@ -464,8 +480,8 @@ export default function HomePage() {
 
             {/* Product Links */}
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h4 className="font-semibold text-foreground mb-6">Product</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
                 <li>
                   <a
                     href="#how-it-works"
@@ -495,8 +511,8 @@ export default function HomePage() {
 
             {/* Resources Links */}
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h4 className="font-semibold text-foreground mb-6">Resources</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
                 <li>
                   <a
                     href="#"
@@ -518,8 +534,8 @@ export default function HomePage() {
 
             {/* Social Links */}
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Community</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <h4 className="font-semibold text-foreground mb-6">Community</h4>
+              <ul className="space-y-3 text-sm text-muted-foreground">
                 <li>
                   <a
                     href="#"
@@ -533,7 +549,7 @@ export default function HomePage() {
           </div>
 
           {/* Bottom bar */}
-          <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+          <div className="pt-12 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>© 2025 Veil OTC. All rights reserved.</p>
             <p>Built on Solana • Powered by Arcium</p>
           </div>
