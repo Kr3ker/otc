@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from "react";
 import { type Deal, type MarketDeal, type Offer } from "./_lib/types";
 import { MOCK_DEALS, MOCK_MARKET_DEALS, MOCK_OFFERS } from "./_lib/constants";
-import { getTokenSymbol } from "./_lib/tokens";
 import { FAQPanel } from "./_components/FAQPanel";
 import { TabNavigation } from "./_components/TabNavigation";
 import { Navbar } from "./_components/Navbar";
@@ -23,7 +22,7 @@ function OTCPageContent() {
   const [deals, setDeals] = useState<Deal[]>(MOCK_DEALS);
   const [marketDeals] = useState<MarketDeal[]>(MOCK_MARKET_DEALS);
   const [offers] = useState<Offer[]>(MOCK_OFFERS);
-  const [pairFilter, setPairFilter] = useState<string>("all");
+  const [baseMintFilter, setBaseMintFilter] = useState<string | null>(null);
 
   // Derive selected deal from URL
   const selectedMarketDeal = state.dealId
@@ -44,9 +43,9 @@ function OTCPageContent() {
 
   // Filter market deals
   const filteredMarketDeals =
-    pairFilter === "all"
+    baseMintFilter === null
       ? marketDeals
-      : marketDeals.filter((d) => getTokenSymbol(d.baseMint) === pairFilter);
+      : marketDeals.filter((d) => d.baseMint === baseMintFilter);
 
   // Handle row click
   const handleMarketDealClick = (deal: MarketDeal) => {
@@ -113,8 +112,8 @@ function OTCPageContent() {
                     <MarketTable
                       deals={marketDeals}
                       filteredDeals={filteredMarketDeals}
-                      pairFilter={pairFilter}
-                      onPairFilterChange={setPairFilter}
+                      baseMintFilter={baseMintFilter}
+                      onBaseMintFilterChange={setBaseMintFilter}
                       onDealClick={handleMarketDealClick}
                     />
                   )}

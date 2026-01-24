@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { type Token, type Deal } from "../_lib/types";
+import { type Deal } from "../_lib/types";
 import { sanitizeNumberInput } from "../_lib/format";
-import { getMintFromSymbol } from "../_lib/tokens";
+import { MINTS, getTokenSymbol } from "../_lib/tokens";
 import { TokenDropdown } from "./TokenDropdown";
 
 interface CreateDealFormProps {
@@ -11,8 +11,8 @@ interface CreateDealFormProps {
 }
 
 export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
-  const [sellToken, setSellToken] = useState<Token>("META");
-  const [quoteToken, setQuoteToken] = useState<Token>("USDC");
+  const [sellMint, setSellMint] = useState<string>(MINTS.META);
+  const [quoteMint, setQuoteMint] = useState<string>(MINTS.USDC);
   const [sellAmount, setSellAmount] = useState("4444");
   const [pricePerUnit, setPricePerUnit] = useState("444");
   const [expiresIn, setExpiresIn] = useState("24");
@@ -34,7 +34,7 @@ export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
     parseFloat(sellAmount) > 0 &&
     parseFloat(pricePerUnit) > 0 &&
     parseFloat(expiresIn) > 0 &&
-    sellToken !== quoteToken;
+    sellMint !== quoteMint;
 
   const handleSubmit = () => {
     if (!canSubmit || isLocked) return;
@@ -45,8 +45,8 @@ export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
       setIsLoading(false);
       const newDeal: Deal = {
         id: crypto.randomUUID().slice(0, 8),
-        baseMint: getMintFromSymbol(sellToken)!,
-        quoteMint: getMintFromSymbol(quoteToken)!,
+        baseMint: sellMint,
+        quoteMint: quoteMint,
         amount: parseFloat(sellAmount),
         price: parseFloat(pricePerUnit),
         total: calculatedTotal,
@@ -87,9 +87,9 @@ export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
               className="flex-1 bg-transparent text-foreground outline-none"
             />
             <TokenDropdown
-              selected={sellToken}
-              onSelect={setSellToken}
-              exclude={quoteToken}
+              selected={sellMint}
+              onSelect={setSellMint}
+              exclude={quoteMint}
               disabled={isLocked}
             />
           </div>
@@ -98,7 +98,7 @@ export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
         {/* Price per sell token */}
         <div>
           <label className="text-muted-foreground text-base mb-1 block">
-            Price per {sellToken}
+            Price per {getTokenSymbol(sellMint)}
           </label>
           <div className="bg-input rounded-md px-3 py-2 flex justify-between items-center border border-transparent hover:border-border focus-within:border-primary hover:focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all">
             <input
@@ -114,9 +114,9 @@ export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
               className="flex-1 bg-transparent text-foreground outline-none"
             />
             <TokenDropdown
-              selected={quoteToken}
-              onSelect={setQuoteToken}
-              exclude={sellToken}
+              selected={quoteMint}
+              onSelect={setQuoteMint}
+              exclude={sellMint}
               disabled={isLocked}
             />
           </div>
@@ -197,7 +197,9 @@ export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
             >
               {calculatedTotal > 0 ? calculatedTotal.toLocaleString() : "—"}
             </span>
-            <span className="text-muted-foreground">{quoteToken}</span>
+            <span className="text-muted-foreground">
+              {getTokenSymbol(quoteMint)}
+            </span>
           </div>
         </div>
 

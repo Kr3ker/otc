@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { TOKENS, type Token } from "../_lib/types";
+import { SUPPORTED_MINTS, getTokenSymbol } from "../_lib/tokens";
 import { TokenIcon } from "./TokenIcon";
 
 interface TokenDropdownProps {
-  selected: Token;
-  onSelect: (token: Token) => void;
-  exclude?: Token;
+  selected: string; // mint address
+  onSelect: (mint: string) => void;
+  exclude?: string; // mint address
   disabled?: boolean;
 }
 
@@ -45,8 +45,8 @@ export const TokenDropdown = ({
         disabled={disabled}
         className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors"
       >
-        <TokenIcon token={selected} className="w-4 h-4" />
-        <span>{selected}</span>
+        <TokenIcon mint={selected} className="w-4 h-4" />
+        <span>{getTokenSymbol(selected)}</span>
         <svg
           className="w-4 h-4"
           fill="none"
@@ -63,19 +63,19 @@ export const TokenDropdown = ({
       </button>
       {isOpen && (
         <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-md shadow-lg z-10 min-w-[100px]">
-          {TOKENS.filter((t) => t !== exclude).map((token) => (
+          {SUPPORTED_MINTS.filter((m) => m !== exclude).map((mint) => (
             <button
-              key={token}
+              key={mint}
               onClick={() => {
-                onSelect(token);
+                onSelect(mint);
                 setIsOpen(false);
               }}
               className={`w-full px-3 py-2 text-left text-sm hover:bg-secondary transition-colors flex items-center gap-2 ${
-                token === selected ? "text-primary" : "text-foreground"
+                mint === selected ? "text-primary" : "text-foreground"
               }`}
             >
-              <TokenIcon token={token} className="w-4 h-4" />
-              {token}
+              <TokenIcon mint={mint} className="w-4 h-4" />
+              {getTokenSymbol(mint)}
             </button>
           ))}
         </div>

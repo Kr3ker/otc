@@ -1,6 +1,28 @@
 // Token registry - source: https://token.jup.ag/strict
 // Last updated: 2026-01-23
 
+// Supported token mints (the source of truth for UI dropdowns)
+export const SUPPORTED_MINTS = [
+  "So11111111111111111111111111111111111111112", // SOL
+  "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
+  "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs", // ETH
+  "META111111111111111111111111111111111111111", // META
+] as const;
+
+export type SupportedMint = (typeof SUPPORTED_MINTS)[number];
+
+// Named exports for convenience
+export const MINTS = {
+  SOL: "So11111111111111111111111111111111111111112",
+  USDC: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  ETH: "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs",
+  META: "META111111111111111111111111111111111111111",
+} as const;
+
+export function isSupportedMint(mint: string): mint is SupportedMint {
+  return SUPPORTED_MINTS.includes(mint as SupportedMint);
+}
+
 export interface TokenInfo {
   symbol: string;
   decimals: number;

@@ -1,7 +1,3 @@
-// Token types (symbols for UI dropdowns)
-export const TOKENS = ["META", "ETH", "SOL", "USDC"] as const;
-export type Token = (typeof TOKENS)[number];
-
 // Your Deals - deals created by user
 // Deal creator always offers BASE in exchange for QUOTE
 export interface Deal {

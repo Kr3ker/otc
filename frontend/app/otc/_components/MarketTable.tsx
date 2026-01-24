@@ -1,36 +1,36 @@
 import type { MarketDeal } from "../_lib/types";
 import { formatTimeRemaining, isUrgent } from "../_lib/format";
-import { getTokenSymbol } from "../_lib/tokens";
+import { SUPPORTED_MINTS, getTokenSymbol } from "../_lib/tokens";
 
 interface MarketTableProps {
   deals: MarketDeal[];
   filteredDeals: MarketDeal[];
-  pairFilter: string;
-  onPairFilterChange: (filter: string) => void;
+  baseMintFilter: string | null; // null = all
+  onBaseMintFilterChange: (mint: string | null) => void;
   onDealClick: (deal: MarketDeal) => void;
 }
 
 export const MarketTable = ({
   filteredDeals,
-  pairFilter,
-  onPairFilterChange,
+  baseMintFilter,
+  onBaseMintFilterChange,
   onDealClick,
 }: MarketTableProps) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex gap-2">
-          {["all", "META", "ETH", "SOL"].map((f) => (
+          {[null, ...SUPPORTED_MINTS].map((mint) => (
             <button
-              key={f}
-              onClick={() => onPairFilterChange(f)}
+              key={mint ?? "all"}
+              onClick={() => onBaseMintFilterChange(mint)}
               className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                pairFilter === f
+                baseMintFilter === mint
                   ? "bg-accent text-accent-foreground"
                   : "bg-secondary/50 text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f === "all" ? "All Pairs" : f}
+              {mint === null ? "All Tokens" : getTokenSymbol(mint)}
             </button>
           ))}
         </div>
