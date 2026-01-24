@@ -14,6 +14,47 @@
 
 ---
 
+## Quick Tasks
+
+### Remove buy/sell concept from frontend
+
+The OTC model only has base/quote (base is offered, quote is payment). Remove all `type: 'buy' | 'sell'` references from:
+- `frontend/app/otc/_lib/types.ts` - Deal, MarketDeal, Offer interfaces
+- `frontend/app/otc/_lib/constants.ts` - Mock data
+- `frontend/app/otc/_components/*` - Any UI showing buy/sell badges/labels
+- `vibes/frontend/004-*` - Update integration plans
+
+Also:
+- Rename `MarketDeal.isPartial` → `allowPartial` (clarity)
+- Change `Offer.offerStatus: 'passed'` → `'executed'` (match OfferOutcome enum)
+
+### Add timestamps to creation events
+
+For indexer parity with on-chain data, add timestamp fields to events:
+
+**DealCreated:**
+- `programs/otc/src/events.rs` - Add `created_at: i64` field
+- `programs/otc/src/instructions/create_deal_callback.rs` - Emit the timestamp
+
+**OfferCreated:**
+- `programs/otc/src/events.rs` - Add `submitted_at: i64` field
+- `programs/otc/src/instructions/submit_offer_callback.rs` - Emit the timestamp
+
+---
+
+### Add token registry + pair formatting
+
+Create a token registry and derive display strings from mints:
+- **First:** Determine source for initial token list (~200 most popular Solana tokens). Options:
+  - Jupiter token list API
+  - Solana token list repo
+  - CoinGecko Solana tokens
+- `frontend/app/otc/_lib/tokens.ts` - Token registry mapping mint addresses to symbols/decimals
+- `formatPair(baseMint, quoteMint)` - Returns "META/USDC" style string for display
+- Remove hardcoded `pair: string` fields from types - derive at render time
+
+---
+
 ## Next Tasks
 
 ### 1. Fix Crank Encryption Validation (Small)
@@ -26,23 +67,11 @@ See: `vibes/program/execution/002_validate-crank-encryption-pubkey.md`
 
 ---
 
-### 2. Define Complete Data Model
+### 2. Define Complete Data Model ✅
 
-**Output:** `vibes/data-model.md`
+**Output:** `vibes/datamodel/000-initial-draft.md`
 
-Before building indexer/Supabase/cranker, establish the authoritative data model:
-
-- **On-chain accounts:** DealAccount, OfferAccount (what's stored in Solana)
-- **Events:** DealCreated, OfferCreated, DealSettled, OfferSettled (what the program emits)
-- **Database schema:** How events map to Supabase tables
-- **Frontend types:** What the UI needs (public vs decrypted views)
-- **Field mappings:** On-chain → Event → DB → Frontend
-
-This consolidates scattered definitions from:
-- `programs/otc/src/state/` (Rust account structs)
-- `programs/otc/src/events.rs` (Rust event structs)
-- `vibes/indexer/000-indexer-architecture.md` (DB schema draft)
-- `vibes/frontend/004-*` (TypeScript types)
+Complete. Covers on-chain accounts, events, database schema, frontend types, and field mappings. All open questions resolved.
 
 ---
 
@@ -132,6 +161,7 @@ Architecture: `vibes/cranker/000-cranker-architecture.md`
 
 ## Quick Links
 
+- **Data model: `vibes/datamodel/000-initial-draft.md`** ← NEW
 - Instruction plan: `vibes/program/execution/001_instruction-plan.md`
 - Frontend integration: `vibes/frontend/004-solana-anchor-integration-plan.md`
 - Indexer architecture: `vibes/indexer/000-indexer-architecture.md`

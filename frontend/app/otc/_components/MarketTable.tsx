@@ -51,10 +51,7 @@ export const MarketTable = ({
           <tbody>
             {filteredDeals.map((deal) => {
               const [base, quote] = deal.pair.split("/");
-              // If deal creator is buying BASE, you're selling BASE (receiving QUOTE)
-              // If deal creator is selling BASE, you're buying BASE (sending QUOTE)
-              const selling = deal.type === "buy" ? base : quote;
-              const buying = deal.type === "buy" ? quote : base;
+              // Deal creator offers BASE in exchange for QUOTE
 
               return (
                 <tr
@@ -62,8 +59,8 @@ export const MarketTable = ({
                   className="border-b border-border/50 hover:bg-secondary/20 cursor-pointer transition-colors"
                   onClick={() => onDealClick(deal)}
                 >
-                  <td className="py-3 text-foreground">{selling}</td>
-                  <td className="py-3 text-foreground">{buying}</td>
+                  <td className="py-3 text-foreground">{base}</td>
+                  <td className="py-3 text-foreground">{quote}</td>
                   <td className="py-3 text-left">
                     {deal.offerCount != null && deal.offerCount > 0 ? (
                       <span className="text-foreground">{deal.offerCount} {deal.offerCount === 1 ? "offer" : "offers"}</span>

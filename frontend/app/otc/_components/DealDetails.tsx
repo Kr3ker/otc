@@ -49,11 +49,11 @@ export const DealDetails = ({ deal, onBack }: DealDetailsProps) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`font-medium ${deal.type === "buy" ? "text-success" : "text-destructive"}`}>
-              {deal.type === "buy" ? "Buying" : "Selling"}
+            <span className="font-medium text-success">
+              Offering {deal.pair.split("/")[0]}
             </span>
             <span className="text-muted-foreground">
-              (you {deal.type === "buy" ? "sell" : "buy"})
+              (for {deal.pair.split("/")[1]})
             </span>
           </div>
         </div>
@@ -63,7 +63,7 @@ export const DealDetails = ({ deal, onBack }: DealDetailsProps) => {
           <div className="bg-secondary/30 rounded-lg p-4">
             <p className="text-muted-foreground text-sm mb-1">Status</p>
             <div className="flex items-center gap-2">
-              {deal.isPartial ? (
+              {deal.offerCount && deal.offerCount > 0 ? (
                 <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
                   has offers
                 </span>

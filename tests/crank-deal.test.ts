@@ -22,7 +22,8 @@ import {
 } from "./harness";
 
 describe("Crank Deal", () => {
-  const { program, provider, owner, arciumEnv, clusterAccount } = getTestHarness();
+  const { program, provider, owner, arciumEnv, clusterAccount } =
+    getTestHarness();
 
   it("successfully cranks a fully-filled deal", async () => {
     // ==========================================
@@ -60,12 +61,15 @@ describe("Crank Deal", () => {
     // Generate deal creator's encryption keypair (SAVE FOR CRANK)
     const dealCreatorPrivateKey = x25519.utils.randomSecretKey();
     const dealCreatorPublicKey = x25519.getPublicKey(dealCreatorPrivateKey);
-    const dealCreatorSharedSecret = x25519.getSharedSecret(dealCreatorPrivateKey, mxePublicKey);
+    const dealCreatorSharedSecret = x25519.getSharedSecret(
+      dealCreatorPrivateKey,
+      mxePublicKey
+    );
     const dealCreatorCipher = new RescueCipher(dealCreatorSharedSecret);
 
     // Encrypt deal parameters: amount (u64), price (u128)
     const dealAmount = BigInt(1000);
-    const dealPrice = BigInt(2) << BigInt(64);  // X64.64: 2.0
+    const dealPrice = BigInt(2) << BigInt(64); // X64.64: 2.0
     const dealPlaintext = [dealAmount, dealPrice];
 
     const dealNonce = randomBytes(16);
@@ -103,7 +107,9 @@ describe("Crank Deal", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("create_deal")).readUInt32LE()
@@ -129,12 +135,15 @@ describe("Crank Deal", () => {
 
     const offerorPrivateKey = x25519.utils.randomSecretKey();
     const offerorPublicKey = x25519.getPublicKey(offerorPrivateKey);
-    const offerorSharedSecret = x25519.getSharedSecret(offerorPrivateKey, mxePublicKey);
+    const offerorSharedSecret = x25519.getSharedSecret(
+      offerorPrivateKey,
+      mxePublicKey
+    );
     const offerorCipher = new RescueCipher(offerorSharedSecret);
 
     // Offer at same price, same amount to FULLY fill the deal
-    const offerPrice = BigInt(2) << BigInt(64);  // Same price: 2.0
-    const offerAmount = BigInt(1000);            // Full amount
+    const offerPrice = BigInt(2) << BigInt(64); // Same price: 2.0
+    const offerAmount = BigInt(1000); // Full amount
     const offerPlaintext = [offerPrice, offerAmount];
 
     const offerNonce = randomBytes(16);
@@ -142,7 +151,11 @@ describe("Crank Deal", () => {
 
     const offerCreateKey = Keypair.generate();
     const offerComputationOffset = new anchor.BN(randomBytes(8), "hex");
-    const offerAddress = getOfferAddress(program, dealAddress, offerCreateKey.publicKey);
+    const offerAddress = getOfferAddress(
+      program,
+      dealAddress,
+      offerCreateKey.publicKey
+    );
 
     const offerCreatedEventPromise = awaitEvent(program, "offerCreated");
 
@@ -166,7 +179,9 @@ describe("Crank Deal", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("submit_offer")).readUInt32LE()
@@ -198,7 +213,7 @@ describe("Crank Deal", () => {
     await program.methods
       .crankDeal(
         crankComputationOffset,
-        new anchor.BN(deserializeLE(crankNonce).toString())  // Nonce for output encryption
+        new anchor.BN(deserializeLE(crankNonce).toString()) // Nonce for output encryption
       )
       .accountsPartial({
         payer: owner.publicKey,
@@ -210,7 +225,9 @@ describe("Crank Deal", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("crank_deal")).readUInt32LE()
@@ -235,7 +252,7 @@ describe("Crank Deal", () => {
     console.log("DealSettled event received");
 
     expect(dealSettledEvent.deal.toBase58()).to.equal(dealAddress.toBase58());
-    expect(dealSettledEvent.status).to.equal(1);  // EXECUTED
+    expect(dealSettledEvent.status).to.equal(1); // EXECUTED
     expect(dealSettledEvent.settledAt.toNumber()).to.be.greaterThan(0);
 
     // Decrypt the settlement blob using creator's private key
@@ -254,16 +271,16 @@ describe("Crank Deal", () => {
     console.log("  - creator_receives:", creatorReceives.toString());
     console.log("  - creator_refund:", creatorRefund.toString());
 
-    expect(totalFilled).to.equal(BigInt(1000));  // Full amount filled
+    expect(totalFilled).to.equal(BigInt(1000)); // Full amount filled
     // creator_receives = (1000 * (2 << 64)) >> 64 = 2000
     expect(creatorReceives).to.equal(BigInt(2000));
-    expect(creatorRefund).to.equal(BigInt(0));  // No refund
+    expect(creatorRefund).to.equal(BigInt(0)); // No refund
 
     // ==========================================
     // STEP 5: Verify DealAccount state
     // ==========================================
     const dealAccount = await program.account.dealAccount.fetch(dealAddress);
-    expect(dealAccount.status).to.equal(1);  // EXECUTED
+    expect(dealAccount.status).to.equal(1); // EXECUTED
     console.log("Deal status verified: EXECUTED (1)");
   });
 });

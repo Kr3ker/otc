@@ -32,15 +32,12 @@ export const DealsTable = ({ deals }: DealsTableProps) => {
         <tbody>
           {deals.map((deal) => {
             const [base, quote] = deal.pair.split("/");
-            // For your deals: "buy" means you're buying BASE (receiving it), sending QUOTE
-            // "sell" means you're selling BASE (sending it), receiving QUOTE
-            const selling = deal.type === "buy" ? base : quote;
-            const buying = deal.type === "buy" ? quote : base;
+            // Deal creator offers BASE in exchange for QUOTE
 
             return (
               <tr key={deal.id} className="border-b border-border/50">
-                <td className="py-3 pr-4 text-foreground">{selling}</td>
-                <td className="py-3 pr-4 text-foreground">{buying}</td>
+                <td className="py-3 pr-4 text-foreground">{base}</td>
+                <td className="py-3 pr-4 text-foreground">{quote}</td>
                 <td className="py-3 pr-4 text-right text-foreground">{deal.amount.toLocaleString()}</td>
                 <td className="py-3 pr-4 text-right text-foreground">{deal.price.toLocaleString()}</td>
                 <td className="py-3 pr-4 text-right text-foreground">{deal.total.toLocaleString()}</td>

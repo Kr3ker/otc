@@ -32,12 +32,9 @@ export const OffersTable = ({ offers }: OffersTableProps) => {
             {offers.map((offer) => {
               const [base, quote] = offer.pair.split("/");
               const total = offer.amount * offer.yourPrice;
-              const youSend = offer.side === "sell"
-                ? `${offer.amount} ${base}`
-                : `${total.toLocaleString()} ${quote}`;
-              const youReceive = offer.side === "sell"
-                ? `${total.toLocaleString()} ${quote}`
-                : `${offer.amount} ${base}`;
+              // When making an offer, you send QUOTE and receive BASE
+              const youSend = `${total.toLocaleString()} ${quote}`;
+              const youReceive = `${offer.amount} ${base}`;
 
               return (
                 <tr key={offer.id} className={`border-b border-border/50 ${offer.dealStatus === "expired" && offer.offerStatus === "failed" ? "opacity-50" : ""}`}>
@@ -50,7 +47,7 @@ export const OffersTable = ({ offers }: OffersTableProps) => {
                   <td className="py-3 text-left">
                     {offer.dealStatus === "open" && offer.offerStatus === "pending" ? (
                       <span className="text-muted-foreground">Pending</span>
-                    ) : offer.dealStatus === "executed" && offer.offerStatus === "passed" ? (
+                    ) : offer.dealStatus === "executed" && offer.offerStatus === "executed" ? (
                       <span className="text-green-500">Filled</span>
                     ) : offer.dealStatus === "executed" && offer.offerStatus === "partial" ? (
                       <span className="text-yellow-500">Partial</span>

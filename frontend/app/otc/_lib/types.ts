@@ -11,9 +11,9 @@ export const PAIRS = [
 export type Pair = (typeof PAIRS)[number];
 
 // Your Deals - deals created by user
+// Deal creator always offers BASE in exchange for QUOTE
 export interface Deal {
   id: string;
-  type: "buy" | "sell";
   pair: string;
   amount: number;
   price: number;
@@ -27,26 +27,26 @@ export interface Deal {
 }
 
 // Open Market - other users' deals (no price shown)
+// Deal creator always offers BASE in exchange for QUOTE
 export interface MarketDeal {
   id: string;
-  type: "buy" | "sell";
   pair: string;
   expiresAt: number;
   createdAt: number;
-  isPartial: boolean;
+  allowPartial: boolean;
   // Mock data for deal details view
   size?: number;
   offerCount?: number;
 }
 
 // Your Offers - offers submitted by user
+// When making an offer, you send QUOTE and receive BASE
 export interface Offer {
   id: string;
   pair: string;
-  side: "buy" | "sell";
   amount: number;
   yourPrice: number;
   submittedAt: string;
   dealStatus: "open" | "executed" | "expired";
-  offerStatus: "pending" | "passed" | "partial" | "failed";
+  offerStatus: "pending" | "executed" | "partial" | "failed";
 }

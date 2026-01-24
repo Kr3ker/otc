@@ -44,7 +44,6 @@ export const CreateDealForm = ({ onDealCreated }: CreateDealFormProps) => {
       setIsLoading(false);
       const newDeal: Deal = {
         id: crypto.randomUUID().slice(0, 8),
-        type: "sell",
         pair: `${sellToken}/${quoteToken}`,
         amount: parseFloat(sellAmount),
         price: parseFloat(pricePerUnit),

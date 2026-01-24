@@ -185,7 +185,9 @@ export async function awaitEvent<E extends keyof Event>(
   const event = await new Promise<Event[E]>((res, rej) => {
     const timeout = setTimeout(() => {
       program.removeEventListener(listenerId);
-      rej(new Error(`Event '${String(eventName)}' timed out after ${timeoutMs}ms`));
+      rej(
+        new Error(`Event '${String(eventName)}' timed out after ${timeoutMs}ms`)
+      );
     }, timeoutMs);
 
     listenerId = program.addEventListener(eventName, (event) => {
@@ -215,7 +217,9 @@ export async function awaitEvents<E extends keyof Event>(
       program.removeEventListener(listenerId);
       rej(
         new Error(
-          `Expected ${count} '${String(eventName)}' events, got ${events.length}`
+          `Expected ${count} '${String(eventName)}' events, got ${
+            events.length
+          }`
         )
       );
     }, timeoutMs);
@@ -238,7 +242,10 @@ export async function awaitEvents<E extends keyof Event>(
 /**
  * Derives the counter account address for a given owner.
  */
-export function getCounterAddress(program: Program<Otc>, owner: PublicKey): PublicKey {
+export function getCounterAddress(
+  program: Program<Otc>,
+  owner: PublicKey
+): PublicKey {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("counter"), owner.toBuffer()],
     program.programId
@@ -248,7 +255,10 @@ export function getCounterAddress(program: Program<Otc>, owner: PublicKey): Publ
 /**
  * Derives the deal account address for a given create_key.
  */
-export function getDealAddress(program: Program<Otc>, createKey: PublicKey): PublicKey {
+export function getDealAddress(
+  program: Program<Otc>,
+  createKey: PublicKey
+): PublicKey {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("deal"), createKey.toBuffer()],
     program.programId
@@ -258,7 +268,11 @@ export function getDealAddress(program: Program<Otc>, createKey: PublicKey): Pub
 /**
  * Derives the offer account address for a given deal and create_key.
  */
-export function getOfferAddress(program: Program<Otc>, deal: PublicKey, createKey: PublicKey): PublicKey {
+export function getOfferAddress(
+  program: Program<Otc>,
+  deal: PublicKey,
+  createKey: PublicKey
+): PublicKey {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("offer"), deal.toBuffer(), createKey.toBuffer()],
     program.programId

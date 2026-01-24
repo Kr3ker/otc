@@ -23,14 +23,19 @@ export const isUrgent = (expiresAt: number): boolean => {
   return diff > 0 && diff < 7200000;
 };
 
-export const getTimeProgress = (createdAt: number, expiresAt: number): number => {
+export const getTimeProgress = (
+  createdAt: number,
+  expiresAt: number
+): number => {
   const totalDuration = expiresAt - createdAt;
   const remaining = expiresAt - Date.now();
   if (remaining <= 0 || totalDuration <= 0) return 0;
   return Math.min(100, Math.max(0, (remaining / totalDuration) * 100));
 };
 
-export const getPairFromLabel = (label: string): { base: string; quote: string } => {
+export const getPairFromLabel = (
+  label: string
+): { base: string; quote: string } => {
   const [base, quote] = label.split("/");
   return { base, quote };
 };

@@ -774,11 +774,10 @@ export function useMarketDeals() {
         setMarketDeals(
           data.map((d) => ({
             id: d.address,
-            type: "sell" as const, // Could be derived if stored
             pair: `${getTokenSymbol(d.base_mint)}/${getTokenSymbol(d.quote_mint)}`,
             expiresAt: d.expires_at,
             createdAt: d.created_at,
-            isPartial: d.allow_partial,
+            allowPartial: d.allow_partial,
           }))
         );
       }
@@ -801,11 +800,10 @@ export function useMarketDeals() {
             setMarketDeals((prev) => [
               {
                 id: d.address,
-                type: "sell",
                 pair: `${getTokenSymbol(d.base_mint)}/${getTokenSymbol(d.quote_mint)}`,
                 expiresAt: d.expires_at,
                 createdAt: d.created_at,
-                isPartial: d.allow_partial,
+                allowPartial: d.allow_partial,
               },
               ...prev,
             ]);
@@ -1023,7 +1021,6 @@ export function useMyDeals() {
 
             return {
               id: d.address,
-              type: "sell" as const,
               pair: `${getTokenSymbol(d.base_mint)}/${getTokenSymbol(d.quote_mint)}`,
               amount: Number(amount) / 1e6,
               price,
@@ -1071,7 +1068,6 @@ export function useMyDeals() {
               setDeals((prev) => [
                 {
                   id: d.address,
-                  type: "sell",
                   pair: `${getTokenSymbol(d.base_mint)}/${getTokenSymbol(d.quote_mint)}`,
                   amount: Number(amount) / 1e6,
                   price,
@@ -1520,12 +1516,11 @@ export function useMyOffers() {
             return {
               id: o.address,
               pair: `${getTokenSymbol(o.deals.base_mint)}/${getTokenSymbol(o.deals.quote_mint)}`,
-              side: "buy" as const,
               amount: Number(amount) / 1e6,
               yourPrice: price,
               submittedAt: o.submitted_at,
               dealStatus: o.deals.status,
-              offerStatus: o.status === "settled" ? "passed" : "pending",
+              offerStatus: o.status === "settled" ? "executed" : "pending",
             };
           } catch (err) {
             console.error("Failed to decrypt offer:", o.address, err);
@@ -1571,7 +1566,6 @@ export function useMyOffers() {
                   {
                     id: o.address,
                     pair: `${getTokenSymbol(deal.base_mint)}/${getTokenSymbol(deal.quote_mint)}`,
-                    side: "buy",
                     amount: Number(amount) / 1e6,
                     yourPrice: price,
                     submittedAt: o.submitted_at,
@@ -1588,7 +1582,7 @@ export function useMyOffers() {
             setOffers((prev) =>
               prev.map((offer) =>
                 offer.id === o.address
-                  ? { ...offer, offerStatus: o.status === "settled" ? "passed" : "pending" }
+                  ? { ...offer, offerStatus: o.status === "settled" ? "executed" : "pending" }
                   : offer
               )
             );

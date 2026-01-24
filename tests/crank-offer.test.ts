@@ -22,7 +22,8 @@ import {
 } from "./harness";
 
 describe("Crank Offer", () => {
-  const { program, provider, owner, arciumEnv, clusterAccount } = getTestHarness();
+  const { program, provider, owner, arciumEnv, clusterAccount } =
+    getTestHarness();
 
   it("successfully cranks a fully-filled offer", async () => {
     // ==========================================
@@ -59,11 +60,14 @@ describe("Crank Offer", () => {
 
     const dealCreatorPrivateKey = x25519.utils.randomSecretKey();
     const dealCreatorPublicKey = x25519.getPublicKey(dealCreatorPrivateKey);
-    const dealCreatorSharedSecret = x25519.getSharedSecret(dealCreatorPrivateKey, mxePublicKey);
+    const dealCreatorSharedSecret = x25519.getSharedSecret(
+      dealCreatorPrivateKey,
+      mxePublicKey
+    );
     const dealCreatorCipher = new RescueCipher(dealCreatorSharedSecret);
 
     const dealAmount = BigInt(1000);
-    const dealPrice = BigInt(2) << BigInt(64);  // X64.64: 2.0
+    const dealPrice = BigInt(2) << BigInt(64); // X64.64: 2.0
     const dealPlaintext = [dealAmount, dealPrice];
 
     const dealNonce = randomBytes(16);
@@ -101,7 +105,9 @@ describe("Crank Offer", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("create_deal")).readUInt32LE()
@@ -127,11 +133,14 @@ describe("Crank Offer", () => {
 
     const offerorPrivateKey = x25519.utils.randomSecretKey();
     const offerorPublicKey = x25519.getPublicKey(offerorPrivateKey);
-    const offerorSharedSecret = x25519.getSharedSecret(offerorPrivateKey, mxePublicKey);
+    const offerorSharedSecret = x25519.getSharedSecret(
+      offerorPrivateKey,
+      mxePublicKey
+    );
     const offerorCipher = new RescueCipher(offerorSharedSecret);
 
-    const offerPrice = BigInt(2) << BigInt(64);  // Same price: 2.0
-    const offerAmount = BigInt(1000);            // Full amount
+    const offerPrice = BigInt(2) << BigInt(64); // Same price: 2.0
+    const offerAmount = BigInt(1000); // Full amount
     const offerPlaintext = [offerPrice, offerAmount];
 
     const offerNonce = randomBytes(16);
@@ -139,7 +148,11 @@ describe("Crank Offer", () => {
 
     const offerCreateKey = Keypair.generate();
     const offerComputationOffset = new anchor.BN(randomBytes(8), "hex");
-    const offerAddress = getOfferAddress(program, dealAddress, offerCreateKey.publicKey);
+    const offerAddress = getOfferAddress(
+      program,
+      dealAddress,
+      offerCreateKey.publicKey
+    );
 
     const offerCreatedEventPromise = awaitEvent(program, "offerCreated");
 
@@ -163,7 +176,9 @@ describe("Crank Offer", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("submit_offer")).readUInt32LE()
@@ -207,7 +222,9 @@ describe("Crank Offer", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("crank_deal")).readUInt32LE()
@@ -228,11 +245,13 @@ describe("Crank Offer", () => {
     const dealSettledEvent = await dealSettledEventPromise;
     console.log("DealSettled event received");
 
-    expect(dealSettledEvent.status).to.equal(1);  // EXECUTED
+    expect(dealSettledEvent.status).to.equal(1); // EXECUTED
 
     // Verify deal status is EXECUTED before cranking offer
-    const dealAccountBefore = await program.account.dealAccount.fetch(dealAddress);
-    expect(dealAccountBefore.status).to.equal(1);  // EXECUTED
+    const dealAccountBefore = await program.account.dealAccount.fetch(
+      dealAddress
+    );
+    expect(dealAccountBefore.status).to.equal(1); // EXECUTED
     console.log("Deal status verified: EXECUTED (1)");
 
     // ==========================================
@@ -241,8 +260,10 @@ describe("Crank Offer", () => {
     console.log("\n--- Cranking Offer ---");
 
     // Verify offer is still OPEN before cranking
-    const offerAccountBefore = await program.account.offerAccount.fetch(offerAddress);
-    expect(offerAccountBefore.status).to.equal(0);  // OPEN
+    const offerAccountBefore = await program.account.offerAccount.fetch(
+      offerAddress
+    );
+    expect(offerAccountBefore.status).to.equal(0); // OPEN
     console.log("Offer status before crank: OPEN (0)");
 
     const crankOfferComputationOffset = new anchor.BN(randomBytes(8), "hex");
@@ -266,7 +287,9 @@ describe("Crank Offer", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("crank_offer")).readUInt32LE()
@@ -291,7 +314,9 @@ describe("Crank Offer", () => {
     console.log("OfferSettled event received");
 
     expect(offerSettledEvent.deal.toBase58()).to.equal(dealAddress.toBase58());
-    expect(offerSettledEvent.offer.toBase58()).to.equal(offerAddress.toBase58());
+    expect(offerSettledEvent.offer.toBase58()).to.equal(
+      offerAddress.toBase58()
+    );
     expect(offerSettledEvent.offerIndex).to.equal(0);
 
     // Decrypt the settlement blob using offeror's private key
@@ -311,15 +336,17 @@ describe("Crank Offer", () => {
     console.log("  - refund_amt:", refundAmt.toString());
 
     // For a fully executed offer:
-    expect(outcome).to.equal(BigInt(0));  // EXECUTED
-    expect(executedAmt).to.equal(BigInt(1000));  // Full amount
-    expect(refundAmt).to.equal(BigInt(0));  // No refund
+    expect(outcome).to.equal(BigInt(0)); // EXECUTED
+    expect(executedAmt).to.equal(BigInt(1000)); // Full amount
+    expect(refundAmt).to.equal(BigInt(0)); // No refund
 
     // ==========================================
     // STEP 6: Verify OfferAccount state
     // ==========================================
-    const offerAccountAfter = await program.account.offerAccount.fetch(offerAddress);
-    expect(offerAccountAfter.status).to.equal(1);  // SETTLED
+    const offerAccountAfter = await program.account.offerAccount.fetch(
+      offerAddress
+    );
+    expect(offerAccountAfter.status).to.equal(1); // SETTLED
     console.log("Offer status verified: SETTLED (1)");
   });
 });

@@ -57,13 +57,9 @@ export const MakeOfferForm = ({ deal, onOfferPlaced, onClose }: MakeOfferFormPro
       {/* Deal context */}
       <div className="bg-secondary/30 rounded-md px-3 py-2 mb-6">
         <div className="flex items-center gap-2">
-          <span className="text-foreground font-medium">{deal.pair}</span>
-          <span className={deal.type === "buy" ? "text-success" : "text-destructive"}>
-            {deal.type === "buy" ? "Buy" : "Sell"}
-          </span>
-          <span className="text-muted-foreground text-sm">
-            (you {deal.type === "buy" ? "sell" : "buy"})
-          </span>
+          <span className="text-muted-foreground">Offering</span>
+          <span className="text-success font-medium">{base}</span>
+          <span className="text-muted-foreground">for {quote}</span>
         </div>
       </div>
 
