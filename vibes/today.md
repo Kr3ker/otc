@@ -60,12 +60,15 @@ Complete. Covers on-chain accounts, events, database schema, frontend types, and
 
 ---
 
-### 3. Supabase Setup
+### ~~3. Supabase Setup~~ ✅
 
-- Create project
-- Create schema (from data model)
-- Enable Realtime
-- Generate TypeScript types
+Done. Local Supabase running with:
+- `deals`, `offers`, `raw_events` tables
+- All indexes including `encryption_key` for "my deals/offers" queries
+- RLS enabled (anon: read-only, service_role: full access)
+- Realtime enabled for `deals` and `offers`
+
+Migrations: `supabase/migrations/`
 
 ---
 
@@ -129,10 +132,10 @@ Architecture: `vibes/cranker/000-cranker-architecture.md`
 2. Define data model ✅
         │
         ▼
-3. Supabase setup  ◄── You are here
+3. Supabase setup ✅
         │
         ▼
-4. Indexer
+4. Indexer  ◄── You are here
         │
    ┌────┴────┐
    │         │
