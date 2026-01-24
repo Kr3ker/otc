@@ -19,7 +19,8 @@ import {
 } from "./harness";
 
 describe("Counter", () => {
-  const { program, provider, owner, arciumEnv, clusterAccount } = getTestHarness();
+  const { program, provider, owner, arciumEnv, clusterAccount } =
+    getTestHarness();
 
   it("initializes, increments, and reads a counter", async () => {
     const mxePublicKey = await getMXEPublicKeyWithRetry(
@@ -119,7 +120,11 @@ describe("Counter", () => {
     const recipientNonce = randomBytes(16);
 
     // Await TWO events since get_counter now returns two encrypted outputs
-    const counterValueEventsPromise = awaitEvents(program, "counterValueEvent", 2);
+    const counterValueEventsPromise = awaitEvents(
+      program,
+      "counterValueEvent",
+      2
+    );
 
     const queueGetSig = await program.methods
       .getCounter(

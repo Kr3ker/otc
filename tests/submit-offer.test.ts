@@ -22,7 +22,8 @@ import {
 } from "./harness";
 
 describe("Submit Offer", () => {
-  const { program, provider, owner, arciumEnv, clusterAccount } = getTestHarness();
+  const { program, provider, owner, arciumEnv, clusterAccount } =
+    getTestHarness();
 
   it("submits an offer to an existing deal", async () => {
     // ==========================================
@@ -61,12 +62,15 @@ describe("Submit Offer", () => {
     // Generate deal creator's encryption keypair
     const dealCreatorPrivateKey = x25519.utils.randomSecretKey();
     const dealCreatorPublicKey = x25519.getPublicKey(dealCreatorPrivateKey);
-    const dealCreatorSharedSecret = x25519.getSharedSecret(dealCreatorPrivateKey, mxePublicKey);
+    const dealCreatorSharedSecret = x25519.getSharedSecret(
+      dealCreatorPrivateKey,
+      mxePublicKey
+    );
     const dealCreatorCipher = new RescueCipher(dealCreatorSharedSecret);
 
     // Encrypt deal parameters: amount (u64), price (u128)
-    const dealAmount = BigInt(1000);        // Base amount to sell
-    const dealPrice = BigInt(2) << BigInt(64);  // X64.64 fixed-point: 2.0 as price
+    const dealAmount = BigInt(1000); // Base amount to sell
+    const dealPrice = BigInt(2) << BigInt(64); // X64.64 fixed-point: 2.0 as price
     const dealPlaintext = [dealAmount, dealPrice];
 
     const dealNonce = randomBytes(16);
@@ -89,7 +93,7 @@ describe("Submit Offer", () => {
     const createDealSig = await program.methods
       .createDeal(
         dealComputationOffset,
-        owner.publicKey,  // controller
+        owner.publicKey, // controller
         Array.from(dealCreatorPublicKey),
         new anchor.BN(deserializeLE(dealNonce).toString()),
         expiresAt,
@@ -109,7 +113,9 @@ describe("Submit Offer", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("create_deal")).readUInt32LE()
@@ -134,7 +140,9 @@ describe("Submit Offer", () => {
     expect(dealCreatedEvent.deal.toBase58()).to.equal(dealAddress.toBase58());
 
     // Fetch deal account to verify it exists
-    const dealAccountBefore = await program.account.dealAccount.fetch(dealAddress);
+    const dealAccountBefore = await program.account.dealAccount.fetch(
+      dealAddress
+    );
     expect(dealAccountBefore.numOffers).to.equal(0);
     console.log("Deal created with numOffers:", dealAccountBefore.numOffers);
 
@@ -146,12 +154,15 @@ describe("Submit Offer", () => {
     // Generate offeror's encryption keypair (different from deal creator)
     const offerorPrivateKey = x25519.utils.randomSecretKey();
     const offerorPublicKey = x25519.getPublicKey(offerorPrivateKey);
-    const offerorSharedSecret = x25519.getSharedSecret(offerorPrivateKey, mxePublicKey);
+    const offerorSharedSecret = x25519.getSharedSecret(
+      offerorPrivateKey,
+      mxePublicKey
+    );
     const offerorCipher = new RescueCipher(offerorSharedSecret);
 
     // Encrypt offer parameters: price (u128) first, then amount (u64) - as per OfferInput struct order
-    const offerPrice = BigInt(25) << BigInt(63);  // X64.64 fixed-point: 2.5 as price (higher than deal price of 2.0)
-    const offerAmount = BigInt(500);               // Amount of base asset to buy
+    const offerPrice = BigInt(25) << BigInt(63); // X64.64 fixed-point: 2.5 as price (higher than deal price of 2.0)
+    const offerAmount = BigInt(500); // Amount of base asset to buy
 
     const offerNonce = randomBytes(16);
     // OfferInput struct order: price (u128), amount (u64) - encrypt together like create_deal does
@@ -164,18 +175,22 @@ describe("Submit Offer", () => {
 
     // Queue submit_offer computation
     const offerComputationOffset = new anchor.BN(randomBytes(8), "hex");
-    const offerAddress = getOfferAddress(program, dealAddress, offerCreateKey.publicKey);
+    const offerAddress = getOfferAddress(
+      program,
+      dealAddress,
+      offerCreateKey.publicKey
+    );
 
     const offerCreatedEventPromise = awaitEvent(program, "offerCreated");
 
     const submitOfferSig = await program.methods
       .submitOffer(
         offerComputationOffset,
-        owner.publicKey,  // controller
+        owner.publicKey, // controller
         Array.from(offerorPublicKey),
         new anchor.BN(deserializeLE(offerNonce).toString()),
-        Array.from(offerCiphertext[0]),  // encrypted price
-        Array.from(offerCiphertext[1])   // encrypted amount
+        Array.from(offerCiphertext[0]), // encrypted price
+        Array.from(offerCiphertext[1]) // encrypted amount
       )
       .accountsPartial({
         createKey: offerCreateKey.publicKey,
@@ -188,7 +203,9 @@ describe("Submit Offer", () => {
         clusterAccount,
         mxeAccount: getMXEAccAddress(program.programId),
         mempoolAccount: getMempoolAccAddress(arciumEnv.arciumClusterOffset),
-        executingPool: getExecutingPoolAccAddress(arciumEnv.arciumClusterOffset),
+        executingPool: getExecutingPoolAccAddress(
+          arciumEnv.arciumClusterOffset
+        ),
         compDefAccount: getCompDefAccAddress(
           program.programId,
           Buffer.from(getCompDefAccOffset("submit_offer")).readUInt32LE()
@@ -215,7 +232,9 @@ describe("Submit Offer", () => {
 
     // Verify public fields
     expect(offerCreatedEvent.deal.toBase58()).to.equal(dealAddress.toBase58());
-    expect(offerCreatedEvent.offer.toBase58()).to.equal(offerAddress.toBase58());
+    expect(offerCreatedEvent.offer.toBase58()).to.equal(
+      offerAddress.toBase58()
+    );
     expect(offerCreatedEvent.offerIndex).to.equal(0);
 
     // Decrypt the blob with offeror's key
@@ -234,9 +253,15 @@ describe("Submit Offer", () => {
     // ==========================================
     const offerAccount = await program.account.offerAccount.fetch(offerAddress);
 
-    expect(offerAccount.createKey.toBase58()).to.equal(offerCreateKey.publicKey.toBase58());
-    expect(offerAccount.controller.toBase58()).to.equal(owner.publicKey.toBase58());
-    expect(offerAccount.encryptionPubkey).to.deep.equal(Array.from(offerorPublicKey));
+    expect(offerAccount.createKey.toBase58()).to.equal(
+      offerCreateKey.publicKey.toBase58()
+    );
+    expect(offerAccount.controller.toBase58()).to.equal(
+      owner.publicKey.toBase58()
+    );
+    expect(offerAccount.encryptionPubkey).to.deep.equal(
+      Array.from(offerorPublicKey)
+    );
     expect(offerAccount.deal.toBase58()).to.equal(dealAddress.toBase58());
     expect(offerAccount.offerIndex).to.equal(0);
     expect(offerAccount.status).to.equal(0); // OPEN
@@ -253,8 +278,13 @@ describe("Submit Offer", () => {
     // ==========================================
     // STEP 5: Verify DealAccount.numOffers incremented
     // ==========================================
-    const dealAccountAfter = await program.account.dealAccount.fetch(dealAddress);
+    const dealAccountAfter = await program.account.dealAccount.fetch(
+      dealAddress
+    );
     expect(dealAccountAfter.numOffers).to.equal(1);
-    console.log("DealAccount.numOffers incremented to:", dealAccountAfter.numOffers);
+    console.log(
+      "DealAccount.numOffers incremented to:",
+      dealAccountAfter.numOffers
+    );
   });
 });

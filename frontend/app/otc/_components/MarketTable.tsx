@@ -1,35 +1,36 @@
 import type { MarketDeal } from "../_lib/types";
 import { formatTimeRemaining, isUrgent } from "../_lib/format";
+import { SUPPORTED_MINTS, getTokenSymbol } from "../_lib/tokens";
 
 interface MarketTableProps {
   deals: MarketDeal[];
   filteredDeals: MarketDeal[];
-  pairFilter: string;
-  onPairFilterChange: (filter: string) => void;
+  baseMintFilter: string | null; // null = all
+  onBaseMintFilterChange: (mint: string | null) => void;
   onDealClick: (deal: MarketDeal) => void;
 }
 
 export const MarketTable = ({
   filteredDeals,
-  pairFilter,
-  onPairFilterChange,
+  baseMintFilter,
+  onBaseMintFilterChange,
   onDealClick,
 }: MarketTableProps) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex gap-2">
-          {["all", "META", "ETH", "SOL"].map((f) => (
+          {[null, ...SUPPORTED_MINTS].map((mint) => (
             <button
-              key={f}
-              onClick={() => onPairFilterChange(f)}
+              key={mint ?? "all"}
+              onClick={() => onBaseMintFilterChange(mint)}
               className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                pairFilter === f
+                baseMintFilter === mint
                   ? "bg-accent text-accent-foreground"
                   : "bg-secondary/50 text-muted-foreground hover:text-foreground"
               }`}
             >
-              {f === "all" ? "All Pairs" : f}
+              {mint === null ? "All Tokens" : getTokenSymbol(mint)}
             </button>
           ))}
         </div>
@@ -42,7 +43,9 @@ export const MarketTable = ({
         <table className="w-full">
           <thead>
             <tr className="text-muted-foreground text-sm border-b border-border">
-              <th className="text-left py-3 font-medium">Selling (you receive)</th>
+              <th className="text-left py-3 font-medium">
+                Selling (you receive)
+              </th>
               <th className="text-left py-3 font-medium">Buying (you send)</th>
               <th className="text-left py-3 font-medium">Status</th>
               <th className="text-center py-3 font-medium">Expires</th>
@@ -50,11 +53,9 @@ export const MarketTable = ({
           </thead>
           <tbody>
             {filteredDeals.map((deal) => {
-              const [base, quote] = deal.pair.split("/");
-              // If deal creator is buying BASE, you're selling BASE (receiving QUOTE)
-              // If deal creator is selling BASE, you're buying BASE (sending QUOTE)
-              const selling = deal.type === "buy" ? base : quote;
-              const buying = deal.type === "buy" ? quote : base;
+              const base = getTokenSymbol(deal.baseMint);
+              const quote = getTokenSymbol(deal.quoteMint);
+              // Deal creator offers BASE in exchange for QUOTE
 
               return (
                 <tr
@@ -62,17 +63,26 @@ export const MarketTable = ({
                   className="border-b border-border/50 hover:bg-secondary/20 cursor-pointer transition-colors"
                   onClick={() => onDealClick(deal)}
                 >
-                  <td className="py-3 text-foreground">{selling}</td>
-                  <td className="py-3 text-foreground">{buying}</td>
+                  <td className="py-3 text-foreground">{base}</td>
+                  <td className="py-3 text-foreground">{quote}</td>
                   <td className="py-3 text-left">
                     {deal.offerCount != null && deal.offerCount > 0 ? (
-                      <span className="text-foreground">{deal.offerCount} {deal.offerCount === 1 ? "offer" : "offers"}</span>
+                      <span className="text-foreground">
+                        {deal.offerCount}{" "}
+                        {deal.offerCount === 1 ? "offer" : "offers"}
+                      </span>
                     ) : (
                       <span className="text-muted-foreground">Open</span>
                     )}
                   </td>
                   <td className="py-3 text-center">
-                    <span className={isUrgent(deal.expiresAt) ? "text-yellow-400" : "text-muted-foreground"}>
+                    <span
+                      className={
+                        isUrgent(deal.expiresAt)
+                          ? "text-yellow-400"
+                          : "text-muted-foreground"
+                      }
+                    >
                       {formatTimeRemaining(deal.expiresAt)}
                     </span>
                   </td>

@@ -18,7 +18,8 @@ import {
 } from "./harness";
 
 describe("Add Together", () => {
-  const { program, provider, owner, arciumEnv, clusterAccount } = getTestHarness();
+  const { program, provider, owner, arciumEnv, clusterAccount } =
+    getTestHarness();
 
   it("adds two encrypted values and returns correct sum", async () => {
     const mxePublicKey = await getMXEPublicKeyWithRetry(
@@ -80,7 +81,10 @@ describe("Add Together", () => {
     console.log("Finalize sig is ", finalizeSig);
 
     const sumEvent = await sumEventPromise;
-    const decrypted = cipher.decrypt([sumEvent.sum], Uint8Array.from(sumEvent.nonce))[0];
+    const decrypted = cipher.decrypt(
+      [sumEvent.sum],
+      Uint8Array.from(sumEvent.nonce)
+    )[0];
     expect(decrypted).to.equal(val1 + val2);
   });
 });

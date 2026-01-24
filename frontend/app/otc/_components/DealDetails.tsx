@@ -1,5 +1,6 @@
 import type { MarketDeal } from "../_lib/types";
 import { formatTimeRemaining, isUrgent, getTimeProgress } from "../_lib/format";
+import { formatPair, getTokenSymbol } from "../_lib/tokens";
 
 interface DealDetailsProps {
   deal: MarketDeal;
@@ -20,7 +21,12 @@ export const DealDetails = ({ deal, onBack }: DealDetailsProps) => {
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
         <span className="text-muted-foreground group-hover:text-foreground transition-colors text-sm">
           Back to Open Market
@@ -32,28 +38,39 @@ export const DealDetails = ({ deal, onBack }: DealDetailsProps) => {
         <div>
           <div className="flex items-center justify-between mb-1">
             <h2 className="text-xl font-semibold text-foreground">
-              {deal.pair}
+              {formatPair(deal.baseMint, deal.quoteMint)}
             </h2>
             {/* Compact time remaining */}
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground text-sm">⏳</span>
-              <span className={`text-sm font-medium ${isUrgent(deal.expiresAt) ? "text-yellow-400" : "text-foreground"}`}>
+              <span
+                className={`text-sm font-medium ${
+                  isUrgent(deal.expiresAt)
+                    ? "text-yellow-400"
+                    : "text-foreground"
+                }`}
+              >
                 {formatTimeRemaining(deal.expiresAt)}
               </span>
               <div className="w-24 h-1 bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-muted-foreground/50 rounded-full transition-all duration-1000 ease-linear"
-                  style={{ width: `${getTimeProgress(deal.createdAt, deal.expiresAt)}%` }}
+                  style={{
+                    width: `${getTimeProgress(
+                      deal.createdAt,
+                      deal.expiresAt
+                    )}%`,
+                  }}
                 />
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`font-medium ${deal.type === "buy" ? "text-success" : "text-destructive"}`}>
-              {deal.type === "buy" ? "Buying" : "Selling"}
+            <span className="font-medium text-success">
+              Offering {getTokenSymbol(deal.baseMint)}
             </span>
             <span className="text-muted-foreground">
-              (you {deal.type === "buy" ? "sell" : "buy"})
+              (for {getTokenSymbol(deal.quoteMint)})
             </span>
           </div>
         </div>
@@ -63,7 +80,7 @@ export const DealDetails = ({ deal, onBack }: DealDetailsProps) => {
           <div className="bg-secondary/30 rounded-lg p-4">
             <p className="text-muted-foreground text-sm mb-1">Status</p>
             <div className="flex items-center gap-2">
-              {deal.isPartial ? (
+              {deal.offerCount && deal.offerCount > 0 ? (
                 <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
                   has offers
                 </span>
