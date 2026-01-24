@@ -26,16 +26,21 @@ Done. Added `created_at: i64` to `DealCreated` and `submitted_at: i64` to `Offer
 
 ---
 
-### Add token registry + pair formatting
+### ~~Add token registry + pair formatting~~ ✅
 
-Create a token registry and derive display strings from mints:
-- **First:** Determine source for initial token list (~200 most popular Solana tokens). Options:
-  - Jupiter token list API
-  - Solana token list repo
-  - CoinGecko Solana tokens
-- `frontend/app/otc/_lib/tokens.ts` - Token registry mapping mint addresses to symbols/decimals
-- `formatPair(baseMint, quoteMint)` - Returns "META/USDC" style string for display
-- Remove hardcoded `pair: string` fields from types - derive at render time
+Done. Created `frontend/app/otc/_lib/tokens.ts` with:
+- `TOKEN_REGISTRY` - Mint → symbol/decimals/name mapping (~20 popular tokens)
+- `SUPPORTED_MINTS` / `MINTS` - UI dropdown tokens (SOL, USDC, ETH, META)
+- `getTokenSymbol()`, `formatPair()`, `getTokenInfo()` helpers
+- Mint-first refactor: all components now use mint addresses as source of truth
+
+See: `vibes/frontend/005-mint-first-refactor-resolved.md`
+
+---
+
+### ~~Add `settled_at` to OfferSettled event~~ ✅
+
+Done. Added `settled_at: i64` to `OfferSettled` event for consistency with `DealSettled`. Timestamp emitted via `Clock::get()?.unix_timestamp` in callback.
 
 ---
 
