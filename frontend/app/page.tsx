@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 const faqs = [
   {
@@ -36,6 +36,126 @@ const faqs = [
   },
 ];
 
+interface LineData {
+  x: number;
+  y1: number;
+  y2: number;
+  weight: "thin" | "medium" | "thick";
+  isAccent: boolean;
+}
+
+function BackgroundPattern({
+  activeLines,
+  onLineHover,
+}: {
+  activeLines: Set<string>;
+  onLineHover: (tierIdx: number, lineIdx: number) => void;
+}) {
+  const tierLines = useMemo(() => {
+    const tiers: LineData[][] = [[], [], []];
+    const tierConfigs = [
+      { yStart: 18, yEnd: 32, xOffset: 0, spacing: 1.5 },
+      { yStart: 34, yEnd: 48, xOffset: 0.75, spacing: 1.65 },
+      { yStart: 50, yEnd: 64, xOffset: 1.5, spacing: 1.35 },
+    ];
+
+    tierConfigs.forEach((config, tierIdx) => {
+      for (let x = 48; x <= 100; x += config.spacing) {
+        const rand = Math.random();
+        const weight =
+          rand < 0.6 ? "thin" : rand < 0.9 ? "medium" : "thick";
+        const isAccent = Math.random() < 0.03;
+
+        tiers[tierIdx].push({
+          x: x + config.xOffset,
+          y1: config.yStart,
+          y2: config.yEnd,
+          weight,
+          isAccent,
+        });
+      }
+    });
+    return tiers;
+  }, []);
+
+  const getLineKey = (tierIdx: number, lineIdx: number) =>
+    `${tierIdx}-${lineIdx}`;
+
+  const getOpacity = (x: number) => {
+    if (x < 48) return 0;
+    if (x < 58) return (x - 48) / 10;
+    return 1;
+  };
+
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full"
+      preserveAspectRatio="none"
+      style={{ pointerEvents: "none" }}
+    >
+      <defs>
+        <filter id="pingGlow" x="-200%" y="-200%" width="500%" height="500%">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="blur" />
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      {tierLines.map((tier, tierIdx) =>
+        tier.map((line, lineIdx) => {
+          const key = getLineKey(tierIdx, lineIdx);
+          const isActive = activeLines.has(key);
+          const opacity = getOpacity(line.x);
+
+          if (opacity === 0) return null;
+
+          const baseOpacity = opacity * 0.4;
+          let strokeColor = `rgba(255,255,255,${baseOpacity})`;
+          if (isActive) {
+            strokeColor = "#f97316";
+          } else if (line.isAccent) {
+            strokeColor = `rgba(249,115,22,${opacity * 0.6})`;
+          }
+
+          const strokeWidth = isActive
+            ? 1.2
+            : line.isAccent
+              ? 0.5
+              : line.weight === "thick"
+                ? 0.4
+                : line.weight === "medium"
+                  ? 0.28
+                  : 0.15;
+
+          return (
+            <line
+              key={key}
+              x1={`${line.x}%`}
+              y1={`${line.y1}%`}
+              x2={`${line.x}%`}
+              y2={`${line.y2}%`}
+              stroke={strokeColor}
+              strokeWidth={strokeWidth}
+              filter={isActive ? "url(#pingGlow)" : "none"}
+              style={{
+                transition:
+                  "stroke 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease",
+                cursor: "pointer",
+                pointerEvents: "auto",
+              }}
+              onMouseEnter={() => onLineHover(tierIdx, lineIdx)}
+            />
+          );
+        })
+      )}
+    </svg>
+  );
+}
+
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -68,6 +188,48 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export default function HomePage() {
+  const [activeLines, setActiveLines] = useState<Set<string>>(new Set());
+
+  const getLineKey = (tierIdx: number, lineIdx: number) =>
+    `${tierIdx}-${lineIdx}`;
+
+  const triggerPing = useCallback((key1: string, key2: string) => {
+    // First line lights up
+    setActiveLines(new Set([key1]));
+    // Second line after 150ms delay
+    setTimeout(() => {
+      setActiveLines(new Set([key1, key2]));
+    }, 150);
+    // Both fade out
+    setTimeout(() => {
+      setActiveLines(new Set());
+    }, 1800);
+  }, []);
+
+  // Auto-ping every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const t1 = Math.floor(Math.random() * 3);
+      const t2 = (t1 + 1 + Math.floor(Math.random() * 2)) % 3;
+      const l1 = Math.floor(Math.random() * 15);
+      const l2 = 20 + Math.floor(Math.random() * 15);
+      triggerPing(getLineKey(t1, l1), getLineKey(t2, l2));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [triggerPing]);
+
+  const handleLineHover = useCallback(
+    (tierIdx: number, lineIdx: number) => {
+      const otherTier = (tierIdx + 1 + Math.floor(Math.random() * 2)) % 3;
+      const partnerIdx =
+        lineIdx < 17
+          ? lineIdx + 10 + Math.floor(Math.random() * 10)
+          : Math.max(0, lineIdx - 10 - Math.floor(Math.random() * 10));
+      triggerPing(getLineKey(tierIdx, lineIdx), getLineKey(otherTier, partnerIdx));
+    },
+    [triggerPing]
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Navbar */}
@@ -114,8 +276,15 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="min-h-[80vh] flex flex-col items-center justify-center px-6">
-        <div className="max-w-2xl text-center space-y-6">
+      <section className="relative min-h-[80vh] flex flex-col items-center justify-center px-6 overflow-hidden">
+        {/* Background Pattern */}
+        <BackgroundPattern
+          activeLines={activeLines}
+          onLineHover={handleLineHover}
+        />
+
+        {/* Hero Content - positioned left on larger screens */}
+        <div className="relative z-10 max-w-2xl text-center lg:text-left lg:mr-auto lg:ml-[10%] space-y-6">
           <h1 className="text-5xl font-bold text-foreground">
             Private OTC Trading
           </h1>
