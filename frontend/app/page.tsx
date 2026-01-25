@@ -320,11 +320,12 @@ export default function HomePage() {
         <div className="relative z-10 max-w-6xl mx-auto px-6 w-full mt-16 pointer-events-none">
           <div className="max-w-2xl space-y-6 pointer-events-auto">
             <h1 className="text-5xl font-bold text-foreground">
-              Peer-to-peer, private OTC trading
+              Private peer-to-peer OTC trading
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Execute large trades with complete privacy. No slippage, no
-              front-running, no information leakage.
+              Execute large trades with complete privacy.
+              <br />
+              No slippage, no front-running, no information leakage.
             </p>
             <div className="pt-2">
               <Link
@@ -345,21 +346,24 @@ export default function HomePage() {
       <section id="how-it-works" className="pt-44 pb-20">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
-            Why Veil OTC?
+            The OTC desk without third parties
           </h2>
           <p className="text-muted-foreground text-center mb-16">
-            Trade large blocks privately and securely
+            Veil OTC enables you to create deals and offers in a fully trustless and self-custodial manner.
           </p>
           <div className="space-y-16">
             {/* Feature 1 */}
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">
-                  Complete Privacy
+                  Typical OTC trading requires trust
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Encrypted order matching. Your trade intentions stay hidden
-                  until execution.
+                  Typical OTC trading requires a third party (usually a
+                  centralized exchange) to hold custody of your funds. If you
+                  wanted to make a private trade, you had to trust that the
+                  third party has your best interests at heart, and that they
+                  will not disclose information - now or ever.
                 </p>
               </div>
               <div className="bg-secondary rounded-xl aspect-video" />
@@ -369,11 +373,14 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">
-                  Zero Slippage
+                  Direct, private trading without a trusted desk
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  Fixed price execution. No price impact, no MEV, no
-                  front-running.
+                  Veil OTC allows you to trade on-chain without the need for a
+                  third party. You are in full control of your funds at all
+                  times, and all your deal and offer details are only ever
+                  visible to you. Execution is also encrypted, preventing
+                  front-running and information leakage.
                 </p>
               </div>
               <div className="bg-secondary rounded-xl aspect-video" />
