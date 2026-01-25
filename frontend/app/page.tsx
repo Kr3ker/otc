@@ -310,7 +310,7 @@ export default function HomePage() {
         <div className="relative z-10 max-w-6xl mx-auto px-6 w-full mt-16 pointer-events-none">
           <div className="max-w-2xl space-y-6 pointer-events-auto">
             <h1 className="text-4xl font-bold text-foreground">
-              Private OTC Trading
+              Peer-to-peer, private OTC trading
             </h1>
             <p className="text-base text-muted-foreground leading-relaxed">
               Execute large trades with complete privacy. No slippage, no
