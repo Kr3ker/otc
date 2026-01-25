@@ -35,7 +35,7 @@ The frontend is currently a fully-functional UI with **mock data only**. This do
 
 | Component | Purpose |
 |-----------|---------|
-| Wallet connection | Connect Phantom/Solflare |
+| ~~Wallet connection~~ | ~~Connect Phantom/Solflare~~ ✅ |
 | Key derivation | Derive controller + encryption keys from wallet signatures |
 | Anchor program | Create deals and submit offers on-chain |
 | Supabase client | Read deals/offers from database |
@@ -46,7 +46,7 @@ The frontend is currently a fully-functional UI with **mock data only**. This do
 
 ## Implementation Phases
 
-### Phase 1: Dependencies & Wallet Connection
+### Phase 1: Dependencies & Wallet Connection ✅ COMPLETE
 **Effort: Small**
 
 1. **Install dependencies** in `frontend/package.json`:
@@ -460,12 +460,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
 
 ## Testing Checklist
 
-### Phase 1: Wallet Connection
-- [ ] Phantom wallet detected
-- [ ] Can connect wallet
-- [ ] Can disconnect wallet
-- [ ] Address shown in Navbar
-- [ ] Auto-reconnect on refresh
+### Phase 1: Wallet Connection ✅
+- [x] Phantom wallet detected
+- [x] Can connect wallet
+- [x] Can disconnect wallet
+- [x] Address shown in Navbar
+- [x] Auto-reconnect on refresh
 
 ### Phase 2: Key Derivation
 - [ ] Prompts for signature when needed
@@ -573,9 +573,10 @@ yarn workspace @otc/cranker start
 
 ## Next Steps
 
-1. **Start with Phase 1**: Install dependencies and set up wallet connection
-2. **Create the layout.tsx** file to establish provider hierarchy early
-3. **Generate database types** from Supabase before writing hooks
-4. **Copy IDL** from `target/idl/otc.json` after running `arcium build`
+1. ~~**Start with Phase 1**: Install dependencies and set up wallet connection~~ ✅
+2. **Phase 2**: Key derivation system (encryption.ts, useDerivedKeys, DerivedKeysProvider)
+3. **Phase 3 + 3.5**: OTC Program + Supabase integration (can be done in parallel)
+4. **Generate database types** from Supabase before writing hooks
+5. **Copy IDL** from `target/idl/otc.json` after running `arcium build`
 
-Ready to begin implementation.
+Phase 1 complete. Ready for Phase 2.
