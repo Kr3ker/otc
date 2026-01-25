@@ -347,8 +347,8 @@ export default function HomePage() {
       </section>
 
       {/* How it works Section */}
-      <section id="how-it-works" className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section id="how-it-works" className="py-20">
+        <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-20">
             Why Veil OTC?
           </h2>
@@ -398,8 +398,8 @@ export default function HomePage() {
       </section>
 
       {/* Security Section */}
-      <section id="security" className="py-32 px-6 bg-card">
-        <div className="max-w-6xl mx-auto">
+      <section id="security" className="py-32 bg-card">
+        <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-6">
             Built for Security
           </h2>
@@ -465,8 +465,8 @@ export default function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-32 px-6">
-        <div className="max-w-3xl mx-auto">
+      <section id="faq" className="py-32">
+        <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-6">
             FAQ
           </h2>
@@ -486,8 +486,8 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-20 px-6">
-        <div className="max-w-6xl mx-auto">
+      <footer className="border-t border-border py-20">
+        <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             {/* Brand */}
             <div className="md:col-span-1">
