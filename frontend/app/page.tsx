@@ -174,7 +174,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
       >
         <span className="font-medium text-foreground">{question}</span>
         <svg
-          className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ease-out ${
+          className={`w-4 h-4 text-primary transition-transform duration-300 ease-out ${
             isOpen ? "rotate-180" : ""
           }`}
           fill="none"
@@ -309,17 +309,17 @@ export default function HomePage() {
         {/* Hero Content - aligned with navbar container */}
         <div className="relative z-10 max-w-6xl mx-auto px-6 w-full mt-16 pointer-events-none">
           <div className="max-w-2xl space-y-6 pointer-events-auto">
-            <h1 className="text-4xl font-bold text-foreground">
+            <h1 className="text-5xl font-bold text-foreground">
               Peer-to-peer, private OTC trading
             </h1>
-            <p className="text-base text-muted-foreground leading-relaxed">
+            <p className="text-lg text-muted-foreground leading-relaxed">
               Execute large trades with complete privacy. No slippage, no
               front-running, no information leakage.
             </p>
             <div className="pt-2">
               <Link
                 href="/otc"
-                className="btn-primary-glow text-primary-foreground px-4 py-2 rounded-lg font-medium text-sm inline-flex items-center gap-2 group"
+                className="btn-primary-glow text-primary-foreground px-4 py-2 rounded-lg font-medium text-base inline-flex items-center gap-2 group"
               >
                 Start Trading
                 <span className="text-base transition-transform duration-200 group-hover:translate-x-1">
