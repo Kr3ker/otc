@@ -331,52 +331,55 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How it works Section */}
+      {/* Why Veil OTC Section */}
       <section id="how-it-works" className="pt-44 pb-20">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-foreground text-center mb-20">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             Why Veil OTC?
           </h2>
-          <div className="grid md:grid-cols-3 gap-10">
+          <p className="text-muted-foreground text-center mb-16">
+            Trade large blocks privately and securely
+          </p>
+          <div className="space-y-16">
             {/* Feature 1 */}
-            <div className="bg-card border border-border rounded-xl p-10">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <span className="text-primary text-2xl">🔒</span>
+            <div className="grid md:grid-cols-2 gap-10 items-center">
+              <div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">
+                  Complete Privacy
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Encrypted order matching. Your trade intentions stay hidden
+                  until execution.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Complete Privacy
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Encrypted order matching. Your trade intentions stay hidden
-                until execution.
-              </p>
+              <div className="bg-secondary rounded-xl aspect-video" />
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-card border border-border rounded-xl p-10">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <span className="text-primary text-2xl">⚡</span>
+            <div className="grid md:grid-cols-2 gap-10 items-center">
+              <div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">
+                  Zero Slippage
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Fixed price execution. No price impact, no MEV, no
+                  front-running.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Zero Slippage
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Fixed price execution. No price impact, no MEV, no
-                front-running.
-              </p>
+              <div className="bg-secondary rounded-xl aspect-video" />
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-card border border-border rounded-xl p-10">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <span className="text-primary text-2xl">🔗</span>
+            <div className="grid md:grid-cols-2 gap-10 items-center">
+              <div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">
+                  Trustless Settlement
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  On-chain atomic swaps. No counterparty risk, no custodians.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Trustless Settlement
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                On-chain atomic swaps. No counterparty risk, no custodians.
-              </p>
+              <div className="bg-secondary rounded-xl aspect-video" />
             </div>
           </div>
         </div>
