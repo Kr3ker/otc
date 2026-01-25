@@ -11,7 +11,8 @@
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
     "@otc/supabase": "*",
-    "@solana/web3.js": "^1.98.0"
+    "@solana/web3.js": "^1.98.0",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
