@@ -1,3 +1,5 @@
+import { WalletButton } from "./WalletButton";
+
 export const Navbar = () => {
   return (
     <nav className="border-b border-border bg-card/50 shrink-0">
@@ -33,9 +35,7 @@ export const Navbar = () => {
             </a>
           </div>
         </div>
-        <button className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 px-3 py-1.5 rounded-md font-medium text-sm transition-colors">
-          Connect Wallet
-        </button>
+        <WalletButton />
       </div>
     </nav>
   );

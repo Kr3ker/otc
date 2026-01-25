@@ -1,4 +1,4 @@
-# OTC Project Status - 2026-01-23
+# OTC Project Status - 2026-01-24
 
 ## Current State
 
@@ -8,9 +8,9 @@
 | **Encrypted Instructions** | Done | Arcis circuits for MPC |
 | **Frontend UI** | Done (mock) | Full UI, mock data only |
 | **Tests** | Done | All passing |
-| **Indexer** | Not started | Architecture in `vibes/indexer/` |
-| **Cranker** | Not started | Architecture in `vibes/cranker/` |
-| **Frontend Integration** | Not started | Plan in `vibes/frontend/004-*` |
+| **Indexer** | Done | `packages/indexer/` with .env defaults |
+| **Cranker** | Done | `packages/cranker/` with .env defaults |
+| **Frontend Integration** | In progress | Phases 1-3 done, see `vibes/frontend/004-*` |
 
 ---
 
@@ -26,16 +26,21 @@ Done. Added `created_at: i64` to `DealCreated` and `submitted_at: i64` to `Offer
 
 ---
 
-### Add token registry + pair formatting
+### ~~Add token registry + pair formatting~~ ✅
 
-Create a token registry and derive display strings from mints:
-- **First:** Determine source for initial token list (~200 most popular Solana tokens). Options:
-  - Jupiter token list API
-  - Solana token list repo
-  - CoinGecko Solana tokens
-- `frontend/app/otc/_lib/tokens.ts` - Token registry mapping mint addresses to symbols/decimals
-- `formatPair(baseMint, quoteMint)` - Returns "META/USDC" style string for display
-- Remove hardcoded `pair: string` fields from types - derive at render time
+Done. Created `frontend/app/otc/_lib/tokens.ts` with:
+- `TOKEN_REGISTRY` - Mint → symbol/decimals/name mapping (~20 popular tokens)
+- `SUPPORTED_MINTS` / `MINTS` - UI dropdown tokens (SOL, USDC, ETH, META)
+- `getTokenSymbol()`, `formatPair()`, `getTokenInfo()` helpers
+- Mint-first refactor: all components now use mint addresses as source of truth
+
+See: `vibes/frontend/005-mint-first-refactor-resolved.md`
+
+---
+
+### ~~Add `settled_at` to OfferSettled event~~ ✅
+
+Done. Added `settled_at: i64` to `OfferSettled` event for consistency with `DealSettled`. Timestamp emitted via `Clock::get()?.unix_timestamp` in callback.
 
 ---
 
@@ -55,30 +60,28 @@ Complete. Covers on-chain accounts, events, database schema, frontend types, and
 
 ---
 
-### 3. Supabase Setup
+### ~~3. Supabase Setup~~ ✅
 
-- Create project
-- Create schema (from data model)
-- Enable Realtime
-- Generate TypeScript types
+Done. Local Supabase running with:
+- `deals`, `offers`, `raw_events` tables
+- All indexes including `encryption_key` for "my deals/offers" queries
+- RLS enabled (anon: read-only, service_role: full access)
+- Realtime enabled for `deals` and `offers`
+
+Migrations: `supabase/migrations/`
 
 ---
 
-### 4. Implement Indexer
+### ~~4. Implement Indexer~~ ✅
 
-**Create:** `indexer/` workspace
-
-Captures on-chain events and stores in Supabase. Required before frontend integration.
-
-Components:
-- `parser.ts` - Anchor EventParser + IDL
-- `adapters/rpc.ts` - RPC subscription
-- `storage/supabase.ts` - Insert/upsert functions
-- `handler.ts` - Route events to storage
-- `index.ts` - Entry point
-- `backfill.ts` - Historical backfill
-
-Architecture: `vibes/indexer/000-indexer-architecture.md`
+Done. `packages/indexer/` with:
+- `parser.ts` - Anchor BorshCoder event parsing
+- `adapters/rpc.ts` - Real-time log subscription
+- `storage/supabase.ts` - Upserts with slot-based idempotency
+- `handler.ts` - Routes events to storage
+- `index.ts` - Entry point (`yarn start`)
+- `backfill.ts` - Historical backfill (`yarn backfill`)
+- `.env` support with localnet defaults
 
 ---
 
@@ -86,34 +89,31 @@ Architecture: `vibes/indexer/000-indexer-architecture.md`
 
 **8 phases** documented in `vibes/frontend/004-solana-anchor-integration-plan.md`
 
-| Phase | Description |
-|-------|-------------|
-| 1 | Wallet connection (SolanaProvider, WalletButton) |
-| 2 | Key derivation (encryption.ts, useDerivedKeys) |
-| 3 | OTC Program (OtcProvider, accounts.ts) |
-| 3.5 | Supabase integration (SupabaseProvider, useMarketDeals) |
-| 4 | Deal creation (useCreateDeal) |
-| 5 | Offer submission (useSubmitOffer) |
-| 6 | User's offers (useMyOffers) |
-| 7 | Data flow (wire up providers, replace mock data) |
-| 8 | Error handling & UX |
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | Wallet connection (SolanaProvider, WalletButton) | ✅ |
+| 2 | Key derivation (encryption.ts, useDerivedKeys) | ✅ |
+| 3 | OTC Program (OtcProvider, accounts.ts) | ✅ |
+| 3.5 | Supabase integration (SupabaseProvider, useMarketDeals) | |
+| 4 | Deal creation (useCreateDeal) | |
+| 5 | Offer submission (useSubmitOffer) | |
+| 6 | User's offers (useMyOffers) | |
+| 7 | Data flow (wire up providers, replace mock data) | |
+| 8 | Error handling & UX | |
 
 ---
 
-### 6. Implement Cranker (Parallel with #5)
+### ~~6. Implement Cranker~~ ✅
 
-**Create:** `cranker/` workspace
+Done. `packages/cranker/` with:
+- `queries.ts` - Supabase queries for expired deals + open offers on settled deals
+- `transactions.ts` - Build crank instruction accounts using `@arcium-hq/client`
+- `execute.ts` - Send tx + `awaitComputationFinalization`
+- `cranker.ts` - Main polling loop (deals first, then offers)
+- `index.ts` - Entry point with graceful shutdown
+- `.env` support with localnet defaults
 
-Polls Supabase for expired deals, calls `crank_deal` and `crank_offer`.
-
-Components:
-- `queries.ts` - Supabase queries for crankable items
-- `transactions.ts` - Build crank instructions
-- `execute.ts` - Send + await finalization
-- `cranker.ts` - Main loop
-- `index.ts` - Entry point
-
-Architecture: `vibes/cranker/000-cranker-architecture.md`
+Run: `yarn workspace @otc/cranker start`
 
 ---
 
@@ -124,15 +124,17 @@ Architecture: `vibes/cranker/000-cranker-architecture.md`
 2. Define data model ✅
         │
         ▼
-3. Supabase setup  ◄── You are here
+3. Supabase setup ✅
         │
         ▼
-4. Indexer
+4. Indexer ✅
         │
    ┌────┴────┐
    │         │
    ▼         ▼
-5. Frontend  6. Cranker
+5. Frontend  6. Cranker ✅
+   (phases 1-3 ✅)
+   ◄── You are here
 ```
 
 ---

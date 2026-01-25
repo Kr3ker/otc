@@ -1,7 +1,7 @@
 # OTC Data Model - Initial Draft
 
 **Date:** 2026-01-23
-**Status:** Complete (all questions resolved)
+**Status:** Complete
 
 ---
 
@@ -156,6 +156,7 @@ pub const FAILED: u8 = 2;
 | `deal` | `Pubkey` | No | Parent deal address |
 | `offer` | `Pubkey` | No | Offer PDA address |
 | `offer_index` | `u32` | No | FIFO sequence number |
+| `settled_at` | `i64` | No | Settlement timestamp |
 | `encryption_key` | `[u8; 32]` | No | Offeror's x25519 pubkey |
 | `nonce` | `[u8; 16]` | - | Encryption nonce |
 | `ciphertexts` | `[[u8; 32]; 3]` | Yes | outcome (u8), executed_amt (u64), refund_amt (u64) |
@@ -199,6 +200,7 @@ CREATE TABLE deals (
 CREATE INDEX idx_deals_status ON deals(status);
 CREATE INDEX idx_deals_mints ON deals(base_mint, quote_mint);
 CREATE INDEX idx_deals_expires_at ON deals(expires_at);
+CREATE INDEX idx_deals_encryption_key ON deals(encryption_key);  -- For "my deals" queries
 ```
 
 ### offers
@@ -234,6 +236,7 @@ CREATE TABLE offers (
 
 CREATE INDEX idx_offers_deal ON offers(deal_address);
 CREATE INDEX idx_offers_status ON offers(status);
+CREATE INDEX idx_offers_encryption_key ON offers(encryption_key);  -- For "my offers" queries
 ```
 
 ### raw_events (optional audit trail)
@@ -423,6 +426,7 @@ interface Offer {
 |------------|-----------|-----------|
 | `offer` | (lookup key) | `.toBase58()` |
 | - | `status` | set to `'settled'` |
+| `settled_at` | `settled_at` | Unix → ISO |
 | `encryption_key` | `settlement_encryption_key` | direct (BYTEA) |
 | `nonce` | `settlement_nonce` | direct (BYTEA) |
 | `ciphertexts` | `settlement_ciphertexts` | flatten (BYTEA) |
@@ -506,12 +510,60 @@ Changed files:
 
 ### 6. Bytes Encoding Format - ✅ RESOLVED
 
-**Decision:** Keep `BYTEA`. Supabase auto-encodes as base64 over the wire. Frontend decodes:
+**Decision:** Keep `BYTEA`. PostgreSQL BYTEA uses hex format (`\xDEADBEEF`), and Supabase JS client requires specific handling.
+
+#### Inserting BYTEA Data
+
+The Supabase JS client requires hex format with escaped backslash:
 
 ```typescript
-// Supabase returns BYTEA as base64
-function base64ToBytes(base64: string): Uint8Array {
-  return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+// Convert Uint8Array to PostgreSQL hex format for INSERT
+function bytesToHex(src: Uint8Array): string {
+  return "\\x" + Array.from(src).reduce(
+    (s, n) => s + n.toString(16).padStart(2, '0'),
+    ""
+  );
+}
+
+// Usage: inserting a deal
+await supabase.from('deals').insert({
+  encryption_key: bytesToHex(encryptionPubkey),  // "\\xab12cd34..."
+  nonce: bytesToHex(nonce),
+  ciphertexts: bytesToHex(flattenedCiphertexts),
+  // ... other fields
+});
+```
+
+#### Querying BYTEA with `.eq()`
+
+BYTEA columns support equality comparison using the same hex format:
+
+```typescript
+// Query deals by encryption_key (for "my deals")
+const myPubkeyHex = bytesToHex(myEncryptionPubkey);
+
+const { data } = await supabase
+  .from('deals')
+  .select('*')
+  .eq('encryption_key', myPubkeyHex);  // Uses idx_deals_encryption_key index
+```
+
+This is efficient because PostgreSQL BYTEA supports the `=` operator natively, and we have indexes on `encryption_key`.
+
+**Reference:** [PostgreSQL BYTEA Documentation](https://www.postgresql.org/docs/current/datatype-binary.html)
+
+#### Reading BYTEA Data
+
+Supabase returns BYTEA as hex string (without the `\x` prefix in responses). Convert back to bytes:
+
+```typescript
+// Convert hex string from Supabase response to Uint8Array
+function hexToBytes(hex: string): Uint8Array {
+  // Handle both "\xABCD" and "ABCD" formats
+  const hexStr = hex.startsWith('\\x') ? hex.slice(2) : hex;
+  return new Uint8Array(
+    hexStr.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
+  );
 }
 
 // Split ciphertexts into 32-byte chunks for decryption
@@ -524,7 +576,53 @@ function splitCiphertexts(bytes: Uint8Array, chunkSize = 32): Uint8Array[] {
 }
 ```
 
-We need byte manipulation for decryption anyway, so BYTEA is the cleanest approach.
+**Reference:** [Supabase Discussion: Storing Uint8Arrays](https://github.com/orgs/supabase/discussions/2441)
+
+### 7. User/Wallet Association - ✅ RESOLVED
+
+**Question:** How does the frontend know which deals/offers belong to the connected wallet?
+
+**Answer:** The system uses **deterministic key derivation** from wallet signatures. The actual wallet address is never stored (for privacy).
+
+```
+Wallet signs "otc:controller:v1"  →  Controller keypair (ed25519) → on-chain authorization
+Wallet signs "otc:encryption:v1" →  Encryption keypair (x25519)  → stored as `encryption_key`
+```
+
+The `encryption_key` field in both tables is the user's derived x25519 public key. To find "my deals":
+
+```typescript
+// 1. Derive encryption keypair from wallet signature
+const encryptionKeypair = await deriveEncryptionKey(wallet, "otc:encryption:v1");
+
+// 2. Query deals where encryption_key matches
+const myPubkeyHex = bytesToHex(encryptionKeypair.publicKey);
+const { data: myDeals } = await supabase
+  .from('deals')
+  .select('*')
+  .eq('encryption_key', myPubkeyHex);
+
+// 3. Query offers where encryption_key matches
+const { data: myOffers } = await supabase
+  .from('offers')
+  .select('*, deals(*)')
+  .eq('encryption_key', myPubkeyHex);
+```
+
+This breaks the on-chain link between wallet address and deals/offers, preserving privacy.
+
+**Reference:** `vibes/program/ideation/001_deterministic-encryption-keys.md`
+
+### 8. OfferSettled Timestamp - ✅ RESOLVED
+
+**Issue:** `OfferSettled` event didn't include a `settled_at` timestamp (unlike `DealSettled`).
+
+**Decision:** Added `settled_at: i64` to the `OfferSettled` event for consistency.
+
+**Implementation complete:**
+- `programs/otc/src/events.rs` - Added `settled_at: i64` field to `OfferSettled` struct
+- `programs/otc/src/instructions/crank_offer.rs` - Emits `Clock::get()?.unix_timestamp`
+- Database schema already has `settled_at TIMESTAMPTZ` column in offers table
 
 ---
 
@@ -606,10 +704,16 @@ enum OfferStatus {
 
 ## 10. Next Steps
 
-All open questions resolved. Ready to proceed:
-
 1. ~~**Program changes:** Add `created_at` to `DealCreated` and `submitted_at` to `OfferCreated` events~~ ✅
-2. **Supabase setup:** Create project and apply schema from Section 3
-3. **Generate types:** `supabase gen types typescript`
-4. **Frontend tasks:** Remove buy/sell, add token registry (see `vibes/today.md`)
+2. ~~**Program change:** Add `settled_at` to `OfferSettled` event~~ ✅
+3. **Supabase setup:** Create project and apply schema from Section 3
+4. **Generate types:** `supabase gen types typescript`
 5. **Indexer:** Implement using schema and field mappings from this document
+
+---
+
+## References
+
+- [PostgreSQL BYTEA Documentation](https://www.postgresql.org/docs/current/datatype-binary.html)
+- [Supabase Discussion: Storing Uint8Arrays](https://github.com/orgs/supabase/discussions/2441)
+- [Supabase .eq() API Reference](https://supabase.com/docs/reference/javascript/eq)

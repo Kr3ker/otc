@@ -84,6 +84,7 @@ pub fn callback_handler(
         deal: offer.deal,
         offer: offer.key(),
         offer_index: offer.offer_index,
+        settled_at: Clock::get()?.unix_timestamp,
         encryption_key: shared_blob.encryption_key,
         nonce: shared_blob.nonce.to_le_bytes(),
         ciphertexts: shared_blob.ciphertexts,

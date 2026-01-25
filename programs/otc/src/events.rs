@@ -67,6 +67,7 @@ pub struct OfferSettled {
     pub deal: Pubkey,
     pub offer: Pubkey,
     pub offer_index: u32,
+    pub settled_at: i64,
 
     // Encrypted blob (decryptable by offeror)
     /// The x25519 public key used for encryption (echoed back)
