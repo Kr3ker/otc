@@ -349,7 +349,8 @@ export default function HomePage() {
             The OTC desk without third parties
           </h2>
           <p className="text-muted-foreground text-center mb-16">
-            Veil OTC enables you to create deals and offers in a fully trustless and self-custodial manner.
+            Veil OTC enables you to create deals and offers in a fully trustless
+            and self-custodial manner.
           </p>
           <div className="space-y-16">
             {/* Feature 1 */}
@@ -396,7 +397,7 @@ export default function HomePage() {
             How It Works
           </h2>
           <p className="text-muted-foreground text-center mb-16">
-            Posting, matching and settlement - all private.
+            Posting, matching, and settlement - everything is encrypted.
           </p>
 
           <div className="grid md:grid-cols-2 gap-16">
@@ -411,9 +412,8 @@ export default function HomePage() {
                     Post your deal
                   </h4>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Define your trade: assets (buying and selling), amount, and
-                    your price. Deposit funds. Everything is encrypted before it
-                    leaves your wallet.
+                    Define your trade: assets, size, and your price. Deposit
+                    funds. Everything is encrypted before it leaves your wallet.
                   </p>
                 </div>
                 <div>
@@ -423,7 +423,7 @@ export default function HomePage() {
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     Counterparties submit offers without seeing your price or
                     size. Offers that don&apos;t meet your threshold are
-                    rejected inside the MPC — no information leaks.
+                    rejected without information leaks.
                   </p>
                 </div>
                 <div>
@@ -451,7 +451,7 @@ export default function HomePage() {
                   </h4>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     See available deals and their assets. You won&apos;t see
-                    price or size — only what you need to decide if you&apos;re
+                    price or size, only what you need to decide if you&apos;re
                     interested.
                   </p>
                 </div>
