@@ -7,32 +7,42 @@ const faqs = [
   {
     question: "What is Veil OTC?",
     answer:
-      "Veil OTC is a private over-the-counter trading platform built on Solana. It uses Arcium's confidential computing network to enable encrypted order matching—your trade intentions stay completely private until execution.",
+      "Veil OTC is a private over-the-counter trading platform built on Solana. It uses Arcium's confidential computing network to enable encrypted order matching—your trade intentions stay completely private, even during execution.",
   },
   {
     question: "How does the privacy work?",
     answer:
-      "Your trade data is encrypted end-to-end using multi-party computation (MPC). No single party—not even the network operators—can see your order details. Only when both parties agree does the trade execute on-chain.",
+      "Your trade data is encrypted end-to-end using Arcium's multi-party computation (MPC). No single party—not even the network operators—can see your order details.",
   },
   {
     question: "What tokens can I trade?",
     answer:
-      "You can trade any SPL token on Solana. Simply specify the token mint address when creating a deal.",
+      "You can trade any SPL token on Solana. If you can't find your token in the list, you can simply specify its mint address, also known as Token Address (TA) or Contract Address (CA), when creating a deal.",
   },
   {
     question: "Is there a minimum trade size?",
     answer:
-      "There's no minimum trade size, but Veil OTC is designed for larger trades where privacy and zero slippage matter most.",
+      "There's no minimum trade size, but Veil OTC is designed for larger trades where privacy and zero price impact matter most.",
   },
   {
     question: "How are trades settled?",
     answer:
-      "Trades settle via atomic on-chain swaps. Both parties' tokens are exchanged in a single transaction—either the trade completes fully or it doesn't happen at all. No counterparty risk.",
+      "Trades settle through encrypted execution inside the MPC network. Shared pool user balances are updated, and users may withdraw their funds at any time.",
   },
   {
     question: "How do I get started?",
     answer:
       "Connect your Solana wallet, then either create a new deal with your terms or browse and accept existing deals from other traders.",
+  },
+  {
+    question: "How are my on-chain accounts created privately?",
+    answer:
+      "All deal, deposit, and balance accounts are created using deterministically derived private addresses paired with random keypairs for frontrunning protection. Accounts on mainnet will be created through a private SOL pre-deposit scheme using Privacy Cash.",
+  },
+  {
+    question: "Can veil also do RFQ?",
+    answer:
+      "Veil OTC is our first step towards fully private OTC trading. We are building an RFQ system on top of Veil that will allow you to make and receive quotes through a fully private market structure. Coming soon.",
   },
 ];
 
@@ -468,24 +478,25 @@ export default function HomePage() {
       <section id="security" className="py-32">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-6">
-            Built for Security
+            End-to-end privacy and security
           </h2>
           <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-20">
             Powered by Arcium&apos;s confidential computing network. Your trades
             are encrypted and processed using multi-party computation—no single
             party ever sees your data.
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
             {/* Security Item 1 */}
             <div className="text-center">
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <span className="text-primary text-xl">🛡️</span>
               </div>
               <h3 className="font-semibold text-foreground mb-2">
-                MPC Protected
+                Private by design
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Multi-party computation ensures no single point of failure
+                Veil enables fully on-chain, non-custodial trading that never
+                ties back to your wallet.
               </p>
             </div>
 
@@ -495,36 +506,25 @@ export default function HomePage() {
                 <span className="text-primary text-xl">🔐</span>
               </div>
               <h3 className="font-semibold text-foreground mb-2">
-                End-to-End Encrypted
+                Everything is encrypted
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Data encrypted from submission to settlement
+                Deals, offers, balances - data and execution is end-to-end
+                encrypted by Arcium&apos;s MPC network.
               </p>
             </div>
 
             {/* Security Item 3 */}
             <div className="text-center">
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
-                <span className="text-primary text-xl">📜</span>
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">
-                Open Source
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Fully auditable contracts on Solana
-              </p>
-            </div>
-
-            {/* Security Item 4 */}
-            <div className="text-center">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
                 <span className="text-primary text-xl">🔑</span>
               </div>
               <h3 className="font-semibold text-foreground mb-2">
-                Non-Custodial
+                Full self-custody
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                You control your assets at all times
+                All funds are escrowed on-chain through private shared pools,
+                always retrievable.
               </p>
             </div>
           </div>
