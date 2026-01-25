@@ -186,10 +186,29 @@ Dark theme with CSS variables in `globals.css`:
 | `TabNavigation` | Tab switcher with animated underline |
 | `FAQPanel` | Right sidebar FAQ accordion |
 
+### Wallet Adapter CSS Customizations
+
+The Solana wallet adapter (`@solana/wallet-adapter-react-ui`) requires CSS overrides to match our dark theme. All customizations are in `frontend/app/globals.css` under the "Wallet Adapter Overrides" section.
+
+**Key classes to know:**
+- `.wallet-adapter-button-trigger` - Main "Select Wallet" / connected button in navbar
+- `.wallet-adapter-modal` - Fullscreen backdrop overlay
+- `.wallet-adapter-modal-wrapper` - The actual modal dialog box
+- `.wallet-adapter-modal-container` - Centering container (should have NO background)
+- `.wallet-adapter-modal-list .wallet-adapter-button` - Wallet list items in modal
+- `.wallet-adapter-dropdown-list-item` - Dropdown menu items (after connected)
+
+**Current customizations:**
+- Navbar button styled with orange primary color, no wallet icon
+- Modal styled to match dark theme
+- "Copy address" button hidden from dropdown (first item)
+
+When modifying wallet adapter styles, always check the original CSS in `node_modules/@solana/wallet-adapter-react-ui/styles.css` to find correct class names.
+
 ### Current Integration Status
 
 - **Mock data only** - All data in `_lib/constants.ts`
-- **No Solana/Arcium integration yet** - Wallet connect is placeholder
+- **Wallet connection working** - Via `@solana/wallet-adapter-react` with Phantom/Solflare support
 - **"Coming Soon"** - Private Negotiation Chat feature
 
 ## Key Dependencies

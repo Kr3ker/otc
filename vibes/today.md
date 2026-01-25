@@ -9,7 +9,7 @@
 | **Frontend UI** | Done (mock) | Full UI, mock data only |
 | **Tests** | Done | All passing |
 | **Indexer** | Done | `packages/indexer/` with .env defaults |
-| **Cranker** | Not started | Architecture in `vibes/cranker/` |
+| **Cranker** | Done | `packages/cranker/` with .env defaults |
 | **Frontend Integration** | Not started | Plan in `vibes/frontend/004-*` |
 
 ---
@@ -103,20 +103,17 @@ Done. `packages/indexer/` with:
 
 ---
 
-### 6. Implement Cranker (Parallel with #5)
+### ~~6. Implement Cranker~~ ✅
 
-**Create:** `cranker/` workspace
+Done. `packages/cranker/` with:
+- `queries.ts` - Supabase queries for expired deals + open offers on settled deals
+- `transactions.ts` - Build crank instruction accounts using `@arcium-hq/client`
+- `execute.ts` - Send tx + `awaitComputationFinalization`
+- `cranker.ts` - Main polling loop (deals first, then offers)
+- `index.ts` - Entry point with graceful shutdown
+- `.env` support with localnet defaults
 
-Polls Supabase for expired deals, calls `crank_deal` and `crank_offer`.
-
-Components:
-- `queries.ts` - Supabase queries for crankable items
-- `transactions.ts` - Build crank instructions
-- `execute.ts` - Send + await finalization
-- `cranker.ts` - Main loop
-- `index.ts` - Entry point
-
-Architecture: `vibes/cranker/000-cranker-architecture.md`
+Run: `yarn workspace @otc/cranker start`
 
 ---
 
@@ -135,7 +132,8 @@ Architecture: `vibes/cranker/000-cranker-architecture.md`
    ┌────┴────┐
    │         │
    ▼         ▼
-5. Frontend  6. Cranker  ◄── You are here (parallel)
+5. Frontend  6. Cranker ✅
+   ◄── You are here
 ```
 
 ---
