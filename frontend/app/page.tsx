@@ -382,8 +382,98 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-32 bg-card">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-foreground text-center mb-2">
+            How It Works
+          </h2>
+          <p className="text-muted-foreground text-center mb-16">
+            Post. Match. Settle.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-16">
+            {/* For Deal Creators */}
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-8">
+                For Deal Creators
+              </h3>
+              <div className="space-y-8">
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Step 1 — Post your deal
+                  </h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Define your trade: asset pair, direction, and your price.
+                    Deposit funds. Everything is encrypted before it leaves your
+                    device.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Step 2 — Receive blind offers
+                  </h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Counterparties submit offers without seeing your price or
+                    size. Offers that don&apos;t meet your threshold are
+                    rejected inside the MPC — no information leaks.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Step 3 — Execute when ready
+                  </h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Once enough valid offers arrive, execute the trade.
+                    Settlement is on-chain, atomic, and final. Offerors always
+                    get their price or better.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* For Offerors */}
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-8">
+                For Offerors (Makers)
+              </h3>
+              <div className="space-y-8">
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Step 1 — Browse open deals
+                  </h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    See available pairs and directions. You won&apos;t see price
+                    or size — only what you need to decide if you&apos;re
+                    interested.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Step 2 — Submit your price
+                  </h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Make a blind offer with your price parameters. If your offer
+                    passes the creator&apos;s threshold, it goes into the pool.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Step 3 — Get matched
+                  </h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    If the deal executes, you receive exactly your price or
+                    better. If it doesn&apos;t, your funds are returned.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Security Section */}
-      <section id="security" className="py-32 bg-card">
+      <section id="security" className="py-32">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-6">
             Built for Security
