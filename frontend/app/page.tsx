@@ -497,7 +497,7 @@ export default function HomePage() {
             Posting, matching, and settlement - everything is encrypted.
           </p>
 
-          <div className="space-y-10">
+          <div className="space-y-12">
             {/* Headers Row */}
             <div className="grid md:grid-cols-2 gap-16">
               <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
