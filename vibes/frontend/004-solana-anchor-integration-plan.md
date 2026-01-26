@@ -1671,7 +1671,26 @@ export function useOffersForDeal(dealAddress: string | null) {
 
 ---
 
-## Phase 7: Data Flow Integration
+## Phase 7: Data Flow Integration ✅
+
+**Implemented:** 2026-01-25
+
+**Files created/modified:**
+- `frontend/app/otc/_components/ConnectPrompt.tsx` - Wallet/key derivation prompt
+- `frontend/app/otc/_components/MarketTable.tsx` - Added empty state
+- `frontend/app/otc/_hooks/useMarketDeals.ts` - Added Realtime subscription
+- `frontend/app/otc/_hooks/useMyDeals.ts` - Added Realtime subscription
+- `frontend/app/otc/_hooks/useMyOffers.ts` - Added Realtime subscription
+- `frontend/app/otc/page.tsx` - Replaced mock data with hooks, added loading/error states
+- `frontend/.env.example` - Documented all env vars including `NEXT_PUBLIC_USE_MOCK_DATA`
+
+**Key features:**
+- Mock data toggle via `NEXT_PUBLIC_USE_MOCK_DATA` env var
+- Loading spinners during data fetch
+- Error messages on fetch failure
+- ConnectPrompt for Deals/Offers tabs when not authenticated
+- Market tab works without wallet (public data)
+- Supabase Realtime subscriptions for live updates
 
 ### Task 7.1: Create DerivedKeysProvider
 
@@ -1845,8 +1864,8 @@ export function KeyDerivationModal({ isOpen, onSign, onCancel }: KeyDerivationMo
 | Phase 4: Deal Creation | High | Phase 2, 3 | ✅ Done |
 | Phase 5: Offer Submission | High | Phase 2, 3 | ✅ Done |
 | Phase 6: User's Offers | Medium | Phase 3.5 | ✅ Done |
-| Phase 7: Data Flow | Medium | Phase 3.5, 4, 5, 6 | ◄── Next |
-| Phase 8: Error Handling | Medium | All above | Pending |
+| Phase 7: Data Flow | Medium | Phase 3.5, 4, 5, 6 | ✅ Done |
+| Phase 8: Error Handling | Medium | All above | ◄── Next |
 
 **Prerequisites:**
 1. **Indexer must be deployed** - The frontend reads from Supabase, which is populated by the indexer
@@ -1857,7 +1876,7 @@ export function KeyDerivationModal({ isOpen, onSign, onCancel }: KeyDerivationMo
 
 ## Environment Variables
 
-Add to `.env.local`:
+Add to `.env.local` (see `frontend/.env.example`):
 
 ```bash
 # Solana RPC endpoint
@@ -1867,11 +1886,14 @@ NEXT_PUBLIC_RPC_URL=https://api.devnet.solana.com
 NEXT_PUBLIC_OTC_PROGRAM_ID=<your_program_id>
 
 # Arcium cluster offset (leave empty for localnet default)
-NEXT_PUBLIC_ARCIUM_CLUSTER_OFFSET=
+NEXT_PUBLIC_CLUSTER_OFFSET=
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# Use mock data instead of Supabase (for development without backend)
+NEXT_PUBLIC_USE_MOCK_DATA=false
 ```
 
 ---
@@ -1893,25 +1915,25 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ### Supabase Integration
 - [x] Market deals load from Supabase
 - [x] New deals appear via Realtime subscription
-- [ ] Deal status updates reflected in UI (needs data flow)
+- [x] Deal status updates reflected in UI
 - [x] User's deals filtered and decrypted correctly
 - [x] User's offers filtered and decrypted correctly
 
 ### Deal Creation
 - [x] Form validation works
 - [x] Transaction submits successfully
-- [ ] Deal appears in "Your Deals" tab (needs data flow)
-- [ ] Deal amount/price decrypted correctly (needs data flow)
+- [x] Deal appears in "Your Deals" tab
+- [x] Deal amount/price decrypted correctly
 
 ### Offer Submission
 - [x] Can submit offer to market deal
 - [x] Transaction submits successfully
-- [ ] Offer appears in "Your Offers" tab (needs data flow)
-- [ ] Offer amount/price decrypted correctly (needs data flow)
+- [x] Offer appears in "Your Offers" tab
+- [x] Offer amount/price decrypted correctly
 
 ### Error Handling
-- [ ] Wallet not connected → shows connect message
-- [ ] Keys not derived → prompts for signature
+- [x] Wallet not connected → shows connect message (ConnectPrompt)
+- [x] Keys not derived → prompts for signature (ConnectPrompt)
 - [ ] Transaction fails → shows error message
 - [ ] Insufficient balance → shows error
 - [ ] Supabase unavailable → graceful degradation

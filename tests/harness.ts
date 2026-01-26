@@ -103,7 +103,7 @@ export function readKpJson(path: string): anchor.web3.Keypair {
 export async function getMXEPublicKeyWithRetry(
   provider: anchor.AnchorProvider,
   programId: PublicKey,
-  maxRetries: number = 20,
+  maxRetries: number = 3,
   retryDelayMs: number = 500
 ): Promise<Uint8Array> {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -683,4 +683,38 @@ export async function initCrankOfferCompDef(
     await finalizeCompDefWithRetry(provider, offset, program.programId, owner);
   }
   return sig;
+}
+
+/**
+ * Initializes a comp_def, gracefully handling "already exists" errors.
+ * Returns tx signature if initialized, null if already exists.
+ */
+export async function initCompDefIfNeeded(
+  initFn: () => Promise<string>,
+  displayName: string
+): Promise<string | null> {
+  try {
+    const sig = await initFn();
+    console.log(`[${displayName}] Initialized:`, sig);
+    return sig;
+  } catch (error: any) {
+    const msg = error.message || "";
+    const logs = error.logs || [];
+
+    // Check for "already initialized" type errors
+    if (
+      msg.includes("already in use") ||
+      msg.includes("already initialized") ||
+      logs.some(
+        (log: string) =>
+          log.includes("already in use") || log.includes("already initialized")
+      )
+    ) {
+      console.log(`[${displayName}] Already initialized, skipping`);
+      return null;
+    }
+
+    // Re-throw unexpected errors
+    throw error;
+  }
 }

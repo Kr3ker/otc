@@ -7,10 +7,11 @@
 | **Solana Program** | Done | 4 OTC instructions + callbacks |
 | **Encrypted Instructions** | Done | Arcis circuits for MPC |
 | **Frontend UI** | Done (mock) | Full UI, mock data only |
-| **Tests** | Done | All passing |
+| **Tests** | Done | All passing (localnet) |
 | **Indexer** | Done | `packages/indexer/` with .env defaults |
 | **Cranker** | Done | `packages/cranker/` with .env defaults |
-| **Frontend Integration** | In progress | Phases 1-6 done, Phase 7 (data flow) next |
+| **Frontend Integration** | In progress | Phases 1-7 done, Phase 8 (error handling) next |
+| **Devnet Deployment** | Blocked | MXE key not populated, contacted Arcium team |
 
 ---
 
@@ -98,8 +99,8 @@ Done. `packages/indexer/` with:
 | 4 | Deal creation (useCreateDeal) | ✅ |
 | 5 | Offer submission (useSubmitOffer) | ✅ |
 | 6 | User's offers (useMyOffers) | ✅ |
-| 7 | Data flow (wire up providers, replace mock data) | ◄── Next |
-| 8 | Error handling & UX | |
+| 7 | Data flow (wire up providers, replace mock data) | ✅ |
+| 8 | Error handling & UX | ◄── Next |
 
 ---
 
@@ -114,6 +115,21 @@ Done. `packages/cranker/` with:
 - `.env` support with localnet defaults
 
 Run: `yarn workspace @otc/cranker start`
+
+---
+
+### 7. Devnet Deployment ⏳ Blocked
+
+**Status:** Waiting on Arcium team
+
+**Issue:** `getMXEPublicKey()` returns `null` on devnet. The MXE account exists but utility public keys are not set:
+- MXE Account: `A3J6FReTAcNCsaPsnqBP6chcS5FsKs8WxwG1vohQpWG4`
+- Program ID: `8wCCLUv68ofgoNg3AKbahgeqZitorLcgbRXQeHj7FpMd`
+- Node confirmations: `[false, false]` - neither Arcium node has submitted key shares
+
+**Action:** Contacted Arcium team for support.
+
+**Details:** See `vibes/deploy/002_devnet-mxe-key-issue.md`
 
 ---
 
@@ -133,10 +149,10 @@ Run: `yarn workspace @otc/cranker start`
    │         │
    ▼         ▼
 5. Frontend  6. Cranker ✅
-   (phases 1-6 ✅)
+   (phases 1-7 ✅)
         │
         ▼
-   7. Data flow
+   8. Error handling & UX
    ◄── You are here
 ```
 
