@@ -353,11 +353,11 @@ export default function HomePage() {
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Traditional OTC Card */}
-            <div className="bg-background border border-border rounded-xl p-8">
+            <div className="bg-card border border-border rounded-2xl p-8">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
                   <svg
-                    className="w-5 h-5 text-destructive"
+                    className="w-5 h-5 text-muted-foreground"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -377,7 +377,7 @@ export default function HomePage() {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <svg
-                    className="w-5 h-5 text-destructive shrink-0 mt-0.5"
+                    className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -395,7 +395,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <svg
-                    className="w-5 h-5 text-destructive shrink-0 mt-0.5"
+                    className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -413,7 +413,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <svg
-                    className="w-5 h-5 text-destructive shrink-0 mt-0.5"
+                    className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -434,16 +434,17 @@ export default function HomePage() {
 
             {/* Veil OTC Card */}
             <div
-              className="bg-background border border-success rounded-xl p-8"
+              className="border border-primary rounded-2xl p-8"
               style={{
+                background: "linear-gradient(180deg, rgba(249, 115, 22, 0.12) 0%, rgba(249, 115, 22, 0.04) 40%, #171717 100%)",
                 boxShadow:
-                  "0 0 20px rgba(0, 157, 130, 0.15), 0 0 40px rgba(0, 157, 130, 0.05)",
+                  "0 0 20px rgba(249, 115, 22, 0.15), 0 0 40px rgba(249, 115, 22, 0.05)",
               }}
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                   <svg
-                    className="w-5 h-5 text-success"
+                    className="w-5 h-5 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -463,7 +464,7 @@ export default function HomePage() {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <svg
-                    className="w-5 h-5 text-success shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -481,7 +482,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <svg
-                    className="w-5 h-5 text-success shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -499,7 +500,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <svg
-                    className="w-5 h-5 text-success shrink-0 mt-0.5"
+                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
