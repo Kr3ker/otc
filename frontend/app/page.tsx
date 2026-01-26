@@ -770,6 +770,17 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
+
+              {/* Link */}
+              <a
+                href="#"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mt-8 group text-sm"
+              >
+                <span>Protocol details</span>
+                <span className="transition-transform duration-200 group-hover:translate-x-1">
+                  &rarr;
+                </span>
+              </a>
             </div>
 
             {/* Right column - placeholder for illustration */}
