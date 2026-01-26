@@ -210,6 +210,7 @@ function OTCPageContent() {
                         hasDerivedKeys={hasDerivedKeys}
                         onDeriveKeys={deriveKeysFromWallet}
                         isDerivingKeys={isDerivingKeys}
+                        mxeKeyLoading={connected && hasDerivedKeys && mxePublicKey === null}
                       />
                     ))}
                   {state.view === "market" &&
@@ -239,6 +240,7 @@ function OTCPageContent() {
                         hasDerivedKeys={hasDerivedKeys}
                         onDeriveKeys={deriveKeysFromWallet}
                         isDerivingKeys={isDerivingKeys}
+                        mxeKeyLoading={connected && hasDerivedKeys && mxePublicKey === null}
                       />
                     ))}
                 </div>
