@@ -502,13 +502,13 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 gap-24">
               <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
                 <div></div>
-                <h3 className="text-lg font-semibold text-foreground">
+                <h3 className="text-xl font-semibold text-foreground">
                   For Deal Creators
                 </h3>
               </div>
               <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
                 <div></div>
-                <h3 className="text-lg font-semibold text-foreground">
+                <h3 className="text-xl font-semibold text-foreground">
                   For Offerors (Makers)
                 </h3>
               </div>
