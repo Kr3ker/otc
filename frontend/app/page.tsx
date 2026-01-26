@@ -539,14 +539,13 @@ export default function HomePage() {
               </h3>
               <div className="space-y-8">
                 <div className="flex gap-4">
-                  <div className="flex flex-col items-center gap-1 pt-1">
+                  <div className="flex items-start gap-1 pt-1">
                     <div
-                      className="w-0.5 h-10 bg-primary rounded-full"
+                      className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
                         boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
                       }}
                     />
-                    <span className="text-primary text-xs font-medium">I</span>
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground mb-2">
@@ -560,14 +559,19 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex flex-col items-center gap-1 pt-1">
+                  <div className="flex items-start gap-1 pt-1">
                     <div
-                      className="w-0.5 h-10 bg-primary rounded-full"
+                      className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
                         boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
                       }}
                     />
-                    <span className="text-primary text-xs font-medium">II</span>
+                    <div
+                      className="w-0.5 h-8 bg-primary rounded-full"
+                      style={{
+                        boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                      }}
+                    />
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground mb-2">
@@ -581,16 +585,25 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex flex-col items-center gap-1 pt-1">
+                  <div className="flex items-start gap-1 pt-1">
                     <div
-                      className="w-0.5 h-10 bg-primary rounded-full"
+                      className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
                         boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
                       }}
                     />
-                    <span className="text-primary text-xs font-medium">
-                      III
-                    </span>
+                    <div
+                      className="w-0.5 h-8 bg-primary rounded-full"
+                      style={{
+                        boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                      }}
+                    />
+                    <div
+                      className="w-0.5 h-8 bg-primary rounded-full"
+                      style={{
+                        boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                      }}
+                    />
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground mb-2">
@@ -613,14 +626,13 @@ export default function HomePage() {
               </h3>
               <div className="space-y-8">
                 <div className="flex gap-4">
-                  <div className="flex flex-col items-center gap-1 pt-1">
+                  <div className="flex items-start gap-1 pt-1">
                     <div
-                      className="w-0.5 h-10 bg-primary rounded-full"
+                      className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
                         boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
                       }}
                     />
-                    <span className="text-primary text-xs font-medium">I</span>
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground mb-2">
@@ -634,14 +646,19 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex flex-col items-center gap-1 pt-1">
+                  <div className="flex items-start gap-1 pt-1">
                     <div
-                      className="w-0.5 h-10 bg-primary rounded-full"
+                      className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
                         boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
                       }}
                     />
-                    <span className="text-primary text-xs font-medium">II</span>
+                    <div
+                      className="w-0.5 h-8 bg-primary rounded-full"
+                      style={{
+                        boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                      }}
+                    />
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground mb-2">
@@ -655,16 +672,25 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex flex-col items-center gap-1 pt-1">
+                  <div className="flex items-start gap-1 pt-1">
                     <div
-                      className="w-0.5 h-10 bg-primary rounded-full"
+                      className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
                         boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
                       }}
                     />
-                    <span className="text-primary text-xs font-medium">
-                      III
-                    </span>
+                    <div
+                      className="w-0.5 h-8 bg-primary rounded-full"
+                      style={{
+                        boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                      }}
+                    />
+                    <div
+                      className="w-0.5 h-8 bg-primary rounded-full"
+                      style={{
+                        boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                      }}
+                    />
                   </div>
                   <div>
                     <h4 className="font-medium text-foreground mb-2">
