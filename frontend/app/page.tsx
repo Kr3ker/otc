@@ -343,17 +343,17 @@ export default function HomePage() {
       </section>
 
       {/* OTC Comparison Section */}
-      <section id="how-it-works" className="pt-44 pb-20">
+      <section id="how-it-works" className="pt-80 pb-32">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             The OTC desk without third parties
           </h2>
-          <p className="text-muted-foreground text-center mb-16">
+          <p className="text-muted-foreground text-center mb-24">
             Trustless and self-custodial trading
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Traditional OTC Card */}
-            <div className="bg-card border border-border rounded-xl p-8">
+            <div className="bg-background border border-border rounded-xl p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
                   <svg
@@ -434,7 +434,7 @@ export default function HomePage() {
 
             {/* Veil OTC Card */}
             <div
-              className="bg-card border border-success rounded-xl p-8"
+              className="bg-background border border-success rounded-xl p-8"
               style={{
                 boxShadow:
                   "0 0 20px rgba(0, 157, 130, 0.15), 0 0 40px rgba(0, 157, 130, 0.05)",
