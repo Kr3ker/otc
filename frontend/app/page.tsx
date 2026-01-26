@@ -538,8 +538,8 @@ export default function HomePage() {
                 For Deal Creators
               </h3>
               <div className="space-y-8">
-                <div className="flex gap-4">
-                  <div className="flex items-start gap-1 pt-1">
+                <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                  <div className="flex justify-end items-start gap-1 pt-1">
                     <div
                       className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
@@ -558,8 +558,8 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex items-start gap-1 pt-1">
+                <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                  <div className="flex justify-end items-start gap-1 pt-1">
                     <div
                       className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
@@ -584,8 +584,8 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex items-start gap-1 pt-1">
+                <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                  <div className="flex justify-end items-start gap-1 pt-1">
                     <div
                       className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
@@ -625,8 +625,8 @@ export default function HomePage() {
                 For Offerors (Makers)
               </h3>
               <div className="space-y-8">
-                <div className="flex gap-4">
-                  <div className="flex items-start gap-1 pt-1">
+                <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                  <div className="flex justify-end items-start gap-1 pt-1">
                     <div
                       className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
@@ -645,8 +645,8 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex items-start gap-1 pt-1">
+                <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                  <div className="flex justify-end items-start gap-1 pt-1">
                     <div
                       className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
@@ -671,8 +671,8 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex items-start gap-1 pt-1">
+                <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                  <div className="flex justify-end items-start gap-1 pt-1">
                     <div
                       className="w-0.5 h-8 bg-primary rounded-full"
                       style={{
