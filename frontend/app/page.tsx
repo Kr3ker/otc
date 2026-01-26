@@ -180,12 +180,12 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     <div className="border-b border-border">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full py-6 flex items-center justify-between text-left"
+        className="w-full py-6 flex items-center justify-between text-left group"
       >
         <span className="font-medium text-foreground">{question}</span>
         <svg
-          className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ease-out ${
-            isOpen ? "rotate-180" : ""
+          className={`w-4 h-4 transition-all duration-300 ease-out group-hover:text-primary ${
+            isOpen ? "rotate-180 text-primary" : "text-muted-foreground"
           }`}
           fill="none"
           viewBox="0 0 24 24"
