@@ -499,7 +499,7 @@ export default function HomePage() {
 
           <div className="space-y-12">
             {/* Headers Row */}
-            <div className="grid md:grid-cols-2 gap-16">
+            <div className="grid md:grid-cols-2 gap-24">
               <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
                 <div></div>
                 <h3 className="text-lg font-semibold text-foreground">
@@ -515,7 +515,7 @@ export default function HomePage() {
             </div>
 
             {/* Step 1 Row */}
-            <div className="grid md:grid-cols-2 gap-16">
+            <div className="grid md:grid-cols-2 gap-24">
               <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
                 <div className="flex justify-end items-start gap-1">
                   <div
@@ -559,7 +559,7 @@ export default function HomePage() {
             </div>
 
             {/* Step 2 Row */}
-            <div className="grid md:grid-cols-2 gap-16">
+            <div className="grid md:grid-cols-2 gap-24">
               <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
                 <div className="flex justify-end items-start gap-1">
                   <div
@@ -615,7 +615,7 @@ export default function HomePage() {
             </div>
 
             {/* Step 3 Row */}
-            <div className="grid md:grid-cols-2 gap-16">
+            <div className="grid md:grid-cols-2 gap-24">
               <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
                 <div className="flex justify-end items-start gap-1">
                   <div
@@ -688,7 +688,7 @@ export default function HomePage() {
       {/* Security Section */}
       <section id="security" className="py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-start">
+          <div className="grid md:grid-cols-2 gap-24 items-start">
             {/* Left column - text content */}
             <div>
               <h2 className="text-3xl font-bold text-foreground mb-6">
