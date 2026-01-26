@@ -351,9 +351,9 @@ export default function HomePage() {
           <p className="text-muted-foreground text-center mb-24">
             Trustless and self-custodial trading
           </p>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 max-w-[1230px] mx-auto">
             {/* Traditional OTC Card */}
-            <div className="bg-card border border-border rounded-2xl p-8 pb-6">
+            <div className="bg-card border border-border rounded-2xl p-10 min-h-[395px]">
               <h3 className="text-xl font-semibold text-foreground mb-6">
                 Traditional OTC
               </h3>
@@ -417,7 +417,7 @@ export default function HomePage() {
 
             {/* Veil OTC Card */}
             <div
-              className="bg-card border border-primary rounded-2xl p-8 pb-6"
+              className="bg-card border border-primary rounded-2xl p-10 min-h-[395px]"
               style={{
                 boxShadow:
                   "0 0 20px rgba(249, 115, 22, 0.15), 0 0 40px rgba(249, 115, 22, 0.05)",
@@ -804,8 +804,8 @@ export default function HomePage() {
         <div
           className="w-full h-24"
           style={{
-            backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.4) 0px, rgba(255,255,255,0.4) 1px, transparent 1px, transparent 14px)',
-            backgroundSize: '14px 100%'
+            backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.4) 0px, rgba(255,255,255,0.4) 1px, transparent 1px, transparent 18px)',
+            backgroundSize: '18px 100%'
           }}
         />
       </div>
