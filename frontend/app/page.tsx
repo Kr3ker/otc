@@ -342,49 +342,180 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Veil OTC Section */}
+      {/* OTC Comparison Section */}
       <section id="how-it-works" className="pt-44 pb-20">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             The OTC desk without third parties
           </h2>
           <p className="text-muted-foreground text-center mb-16">
-            Veil OTC enables you to create deals and offers in a fully trustless
-            and self-custodial manner.
+            Trustless and self-custodial trading
           </p>
-          <div className="space-y-16">
-            {/* Feature 1 */}
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
-                  Typical OTC trading requires trust
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Traditional OTC Card */}
+            <div className="bg-card border border-border rounded-xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-destructive"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">
+                  Traditional OTC
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Typical OTC trading requires a third party (usually a
-                  centralized exchange) to hold custody of your funds. If you
-                  wanted to make a private trade, you had to trust that the
-                  third party has your best interests at heart, and that they
-                  will not disclose information - now or ever.
-                </p>
               </div>
-              <div className="bg-secondary rounded-xl aspect-video" />
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-destructive shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span className="text-muted-foreground">
+                    Third party holds your funds
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-destructive shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span className="text-muted-foreground">
+                    Requires trust in intermediaries
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-destructive shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span className="text-muted-foreground">
+                    Risk of information disclosure
+                  </span>
+                </li>
+              </ul>
             </div>
 
-            {/* Feature 2 */}
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
-                  Direct, private trading without a trusted desk
+            {/* Veil OTC Card */}
+            <div
+              className="bg-card border border-success rounded-xl p-8"
+              style={{
+                boxShadow:
+                  "0 0 20px rgba(0, 157, 130, 0.15), 0 0 40px rgba(0, 157, 130, 0.05)",
+              }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-success"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">
+                  Veil OTC
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Veil OTC allows you to trade on-chain without the need for a
-                  third party. You are in full control of your funds at all
-                  times, and all your deal and offer details are only ever
-                  visible to you. Execution is also encrypted, preventing
-                  front-running and information leakage.
-                </p>
               </div>
-              <div className="bg-secondary rounded-xl aspect-video" />
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-success shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-foreground">
+                    Full control of your funds
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-success shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-foreground">
+                    Trustless on-chain trading
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-success shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-foreground">
+                    Encrypted, private execution
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
