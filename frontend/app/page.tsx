@@ -354,26 +354,9 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-6">
             {/* Traditional OTC Card */}
             <div className="bg-card border border-border rounded-2xl p-8 pb-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-muted-foreground"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">
-                  Traditional OTC
-                </h3>
-              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-6">
+                Traditional OTC
+              </h3>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <svg
@@ -434,33 +417,15 @@ export default function HomePage() {
 
             {/* Veil OTC Card */}
             <div
-              className="border border-primary rounded-2xl p-8 pb-6"
+              className="bg-card border border-primary rounded-2xl p-8 pb-6"
               style={{
-                background: "linear-gradient(180deg, rgba(249, 115, 22, 0.12) 0%, rgba(249, 115, 22, 0.04) 40%, #171717 100%)",
                 boxShadow:
                   "0 0 20px rgba(249, 115, 22, 0.15), 0 0 40px rgba(249, 115, 22, 0.05)",
               }}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-foreground">
-                  Veil OTC
-                </h3>
-              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-6">
+                Veil OTC
+              </h3>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <svg
