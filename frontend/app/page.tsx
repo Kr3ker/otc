@@ -7,12 +7,12 @@ const faqs = [
   {
     question: "What is Veil OTC?",
     answer:
-      "Veil OTC is a private over-the-counter trading platform built on Solana. It uses Arcium's confidential computing network to enable encrypted order matching—your trade intentions stay completely private, even during execution.",
+      "Veil OTC is a private over-the-counter trading platform built on Solana. It uses Arcium's confidential computing network to enable encrypted order matching. Your trade intentions stay completely private, even during execution.",
   },
   {
     question: "How does the privacy work?",
     answer:
-      "Your trade data is encrypted end-to-end using Arcium's multi-party computation (MPC). No single party—not even the network operators—can see your order details.",
+      "Your trade data is encrypted end-to-end using Arcium's multi-party computation (MPC). No single party, not even the network operators, can see your order details.",
   },
   {
     question: "What tokens can I trade?",
