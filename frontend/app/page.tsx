@@ -354,13 +354,13 @@ export default function HomePage() {
           <p className="text-muted-foreground text-center mb-24">
             Trustless and self-custodial trading
           </p>
-          <div className="grid md:grid-cols-2 gap-6 max-w-[1230px] mx-auto">
-            {/* Traditional OTC Card */}
-            <div className="bg-card border border-border rounded-2xl p-10 min-h-[395px]">
+          <div className="grid md:grid-cols-[1fr_auto_1fr] gap-12 max-w-[900px] mx-auto">
+            {/* Traditional OTC */}
+            <div className="text-center">
               <h3 className="text-2xl font-semibold text-foreground mb-8">
                 Traditional OTC
               </h3>
-              <ul className="space-y-4">
+              <ul className="space-y-4 inline-block text-left">
                 <li className="flex items-start gap-3">
                   <svg
                     className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
@@ -418,18 +418,15 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Veil OTC Card */}
-            <div
-              className="bg-card border border-primary rounded-2xl p-10 min-h-[395px]"
-              style={{
-                boxShadow:
-                  "0 0 20px rgba(249, 115, 22, 0.15), 0 0 40px rgba(249, 115, 22, 0.05)",
-              }}
-            >
+            {/* Vertical Divider */}
+            <div className="hidden md:block w-px bg-border"></div>
+
+            {/* Veil OTC */}
+            <div className="text-center">
               <h3 className="text-2xl font-semibold text-foreground mb-8">
                 Veil OTC
               </h3>
-              <ul className="space-y-4">
+              <ul className="space-y-4 inline-block text-left">
                 <li className="flex items-start gap-3">
                   <svg
                     className="w-5 h-5 text-primary shrink-0 mt-0.5"
