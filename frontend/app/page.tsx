@@ -542,7 +542,7 @@ export default function HomePage() {
                   <h4 className="font-medium text-foreground mb-2">
                     Post your deal
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     Define your trade: assets, size, and your price. Deposit
                     funds. Everything is encrypted before it leaves your wallet.
                   </p>
@@ -551,7 +551,7 @@ export default function HomePage() {
                   <h4 className="font-medium text-foreground mb-2">
                     Receive blind offers
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     Counterparties submit offers without seeing your price or
                     size. Offers that don&apos;t meet your threshold are
                     rejected without information leaks.
@@ -561,7 +561,7 @@ export default function HomePage() {
                   <h4 className="font-medium text-foreground mb-2">
                     Execute the deal
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     Once enough valid offers arrive, the trade is executed.
                     Settlement is on-chain and private. You always get your
                     price or better.
@@ -580,7 +580,7 @@ export default function HomePage() {
                   <h4 className="font-medium text-foreground mb-2">
                     Browse open deals
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     See available deals and their assets. You won&apos;t see
                     price or size, only what you need to decide if you&apos;re
                     interested.
@@ -590,7 +590,7 @@ export default function HomePage() {
                   <h4 className="font-medium text-foreground mb-2">
                     Submit your offer
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     Make a blind offer with your desired price and size. If your
                     offer passes the creator&apos;s threshold, it gets silently
                     added to the deal.
@@ -600,7 +600,7 @@ export default function HomePage() {
                   <h4 className="font-medium text-foreground mb-2">
                     Get matched
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     If the deal executes and your offer matches, you receive
                     exactly your desired price or better. If it doesn&apos;t,
                     your funds are returned.
