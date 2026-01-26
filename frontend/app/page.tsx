@@ -319,6 +319,9 @@ export default function HomePage() {
         {/* Hero Content - aligned with navbar container */}
         <div className="relative z-10 max-w-6xl mx-auto px-6 w-full mt-16 pointer-events-none">
           <div className="max-w-2xl space-y-6 pointer-events-auto">
+            <p className="text-sm text-muted-foreground">
+              Powered by Arcium
+            </p>
             <h1 className="text-5xl font-bold text-foreground">
               Private peer-to-peer OTC trading
             </h1>
@@ -342,49 +345,146 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Veil OTC Section */}
-      <section id="how-it-works" className="pt-44 pb-20">
+      {/* OTC Comparison Section */}
+      <section id="how-it-works" className="pt-80 pb-32">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             The OTC desk without third parties
           </h2>
-          <p className="text-muted-foreground text-center mb-16">
-            Veil OTC enables you to create deals and offers in a fully trustless
-            and self-custodial manner.
+          <p className="text-muted-foreground text-center mb-24">
+            Trustless and self-custodial trading
           </p>
-          <div className="space-y-16">
-            {/* Feature 1 */}
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
-                  Typical OTC trading requires trust
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Typical OTC trading requires a third party (usually a
-                  centralized exchange) to hold custody of your funds. If you
-                  wanted to make a private trade, you had to trust that the
-                  third party has your best interests at heart, and that they
-                  will not disclose information - now or ever.
-                </p>
-              </div>
-              <div className="bg-secondary rounded-xl aspect-video" />
+          <div className="grid md:grid-cols-2 gap-6 max-w-[1230px] mx-auto">
+            {/* Traditional OTC Card */}
+            <div className="bg-card border border-border rounded-2xl p-10 min-h-[395px]">
+              <h3 className="text-2xl font-semibold text-foreground mb-8">
+                Traditional OTC
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span className="text-muted-foreground">
+                    Third party holds your funds
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span className="text-muted-foreground">
+                    Requires trust in intermediaries
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span className="text-muted-foreground">
+                    Risk of information disclosure
+                  </span>
+                </li>
+              </ul>
             </div>
 
-            {/* Feature 2 */}
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
-                  Direct, private trading without a trusted desk
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  Veil OTC allows you to trade on-chain without the need for a
-                  third party. You are in full control of your funds at all
-                  times, and all your deal and offer details are only ever
-                  visible to you. Execution is also encrypted, preventing
-                  front-running and information leakage.
-                </p>
-              </div>
-              <div className="bg-secondary rounded-xl aspect-video" />
+            {/* Veil OTC Card */}
+            <div
+              className="bg-card border border-primary rounded-2xl p-10 min-h-[395px]"
+              style={{
+                boxShadow:
+                  "0 0 20px rgba(249, 115, 22, 0.15), 0 0 40px rgba(249, 115, 22, 0.05)",
+              }}
+            >
+              <h3 className="text-2xl font-semibold text-foreground mb-8">
+                Veil OTC
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-foreground">
+                    Full control of your funds
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-foreground">
+                    Trustless on-chain trading
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span className="text-foreground">
+                    Encrypted, private execution
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -396,80 +496,187 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             How It Works
           </h2>
-          <p className="text-muted-foreground text-center mb-16">
+          <p className="text-muted-foreground text-center mb-12">
             Posting, matching, and settlement - everything is encrypted.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-16">
-            {/* For Deal Creators */}
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-8">
-                For Deal Creators
-              </h3>
-              <div className="space-y-8">
+          <div className="space-y-12">
+            {/* Headers Row */}
+            <div className="grid md:grid-cols-2 gap-24">
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div></div>
+                <h3 className="text-xl font-semibold text-foreground">
+                  For Deal Creators
+                </h3>
+              </div>
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div></div>
+                <h3 className="text-xl font-semibold text-foreground">
+                  For Offerors (Makers)
+                </h3>
+              </div>
+            </div>
+
+            {/* Step 1 Row */}
+            <div className="grid md:grid-cols-2 gap-24">
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div className="flex justify-end items-start gap-1">
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-2">
                     Post your deal
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     Define your trade: assets, size, and your price. Deposit
-                    funds. Everything is encrypted before it leaves your wallet.
+                    funds. Everything is encrypted before it leaves your
+                    wallet.
                   </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div className="flex justify-end items-start gap-1">
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Browse open deals
+                  </h4>
+                  <p className="text-muted-foreground text-base leading-relaxed">
+                    See available deals and their assets. You won&apos;t see
+                    price or size, only what you need to decide if you&apos;re
+                    interested.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2 Row */}
+            <div className="grid md:grid-cols-2 gap-24">
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div className="flex justify-end items-start gap-1">
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-2">
                     Receive blind offers
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     Counterparties submit offers without seeing your price or
                     size. Offers that don&apos;t meet your threshold are
                     rejected without information leaks.
                   </p>
                 </div>
+              </div>
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div className="flex justify-end items-start gap-1">
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                </div>
+                <div>
+                  <h4 className="font-medium text-foreground mb-2">
+                    Submit your offer
+                  </h4>
+                  <p className="text-muted-foreground text-base leading-relaxed">
+                    Make a blind offer with your desired price and size. If
+                    your offer passes the creator&apos;s threshold, it gets
+                    silently added to the deal.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3 Row */}
+            <div className="grid md:grid-cols-2 gap-24">
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div className="flex justify-end items-start gap-1">
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-2">
                     Execute the deal
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     Once enough valid offers arrive, the trade is executed.
                     Settlement is on-chain and private. You always get your
                     price or better.
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* For Offerors */}
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-8">
-                For Offerors (Makers)
-              </h3>
-              <div className="space-y-8">
-                <div>
-                  <h4 className="font-medium text-foreground mb-2">
-                    Browse open deals
-                  </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    See available deals and their assets. You won&apos;t see
-                    price or size, only what you need to decide if you&apos;re
-                    interested.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-medium text-foreground mb-2">
-                    Submit your offer
-                  </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Make a blind offer with your desired price and size. If your
-                    offer passes the creator&apos;s threshold, it gets silently
-                    added to the deal.
-                  </p>
+              <div className="grid grid-cols-[24px_1fr] gap-4 items-start">
+                <div className="flex justify-end items-start gap-1">
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
+                  <div
+                    className="w-0.5 h-8 bg-primary rounded-full"
+                    style={{
+                      boxShadow: "0 0 8px #f97316, 0 0 16px #f97316",
+                    }}
+                  />
                 </div>
                 <div>
                   <h4 className="font-medium text-foreground mb-2">
                     Get matched
                   </h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     If the deal executes and your offer matches, you receive
                     exactly your desired price or better. If it doesn&apos;t,
                     your funds are returned.
@@ -484,56 +691,113 @@ export default function HomePage() {
       {/* Security Section */}
       <section id="security" className="py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-foreground text-center mb-6">
-            End-to-end privacy and security
-          </h2>
-          <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-20">
-            Powered by Arcium&apos;s confidential computing network. Your trades
-            are encrypted and processed using multi-party computation—no single
-            party ever sees your data.
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {/* Security Item 1 */}
-            <div className="text-center">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
-                <span className="text-primary text-xl">🛡️</span>
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">
-                Private by design
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Veil enables fully on-chain, non-custodial trading that never
-                ties back to your wallet.
+          <div className="grid md:grid-cols-2 gap-24 items-start">
+            {/* Left column - text content */}
+            <div>
+              <h2 className="text-3xl font-bold text-foreground mb-6">
+                End-to-end privacy and security
+              </h2>
+              <p className="text-muted-foreground mb-12">
+                Powered by Arcium&apos;s confidential computing network. Your
+                trades are encrypted and processed using multi-party
+                computation. <span className="text-foreground">No single party ever sees your data.</span>
               </p>
+
+              {/* Feature cards */}
+              <div className="space-y-4">
+                {/* Feature 1 */}
+                <div className="flex items-start gap-4 bg-card border border-primary/30 rounded-xl p-4">
+                  <div className="w-6 h-6 shrink-0 mt-0.5">
+                    <svg
+                      className="w-6 h-6 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-foreground text-base leading-relaxed">
+                    <span className="font-medium">Private by design.</span>{" "}
+                    <span className="text-muted-foreground">
+                      Fully on-chain, non-custodial trading that never ties back
+                      to your wallet.
+                    </span>
+                  </p>
+                </div>
+
+                {/* Feature 2 */}
+                <div className="flex items-start gap-4 bg-card border border-primary/30 rounded-xl p-4">
+                  <div className="w-6 h-6 shrink-0 mt-0.5">
+                    <svg
+                      className="w-6 h-6 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-foreground text-base leading-relaxed">
+                    <span className="font-medium">Everything is encrypted.</span>{" "}
+                    <span className="text-muted-foreground">
+                      Deals, offers, balances — all data and execution is
+                      end-to-end encrypted by Arcium&apos;s MPC network.
+                    </span>
+                  </p>
+                </div>
+
+                {/* Feature 3 */}
+                <div className="flex items-start gap-4 bg-card border border-primary/30 rounded-xl p-4">
+                  <div className="w-6 h-6 shrink-0 mt-0.5">
+                    <svg
+                      className="w-6 h-6 text-primary"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-foreground text-base leading-relaxed">
+                    <span className="font-medium">Full self-custody.</span>{" "}
+                    <span className="text-muted-foreground">
+                      All funds are escrowed on-chain through private shared
+                      pools, always retrievable.
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Link */}
+              <a
+                href="#"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mt-8 group text-sm"
+              >
+                <span>Protocol details</span>
+                <span className="transition-transform duration-200 group-hover:translate-x-1">
+                  &rarr;
+                </span>
+              </a>
             </div>
 
-            {/* Security Item 2 */}
-            <div className="text-center">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
-                <span className="text-primary text-xl">🔐</span>
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">
-                Everything is encrypted
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Deals, offers, balances - data and execution is end-to-end
-                encrypted by Arcium&apos;s MPC network.
-              </p>
-            </div>
-
-            {/* Security Item 3 */}
-            <div className="text-center">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-6">
-                <span className="text-primary text-xl">🔑</span>
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">
-                Full self-custody
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                All funds are escrowed on-chain through private shared pools,
-                always retrievable.
-              </p>
-            </div>
+            {/* Right column - placeholder for illustration */}
+            <div>{/* Illustration will go here later */}</div>
           </div>
         </div>
       </section>
@@ -559,27 +823,40 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Line Divider */}
+      <div className="w-full py-16">
+        <div
+          className="w-full h-24"
+          style={{
+            backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.4) 0px, rgba(255,255,255,0.4) 1px, transparent 1px, transparent 18px)',
+            backgroundSize: '18px 100%'
+          }}
+        />
+      </div>
+
       {/* Footer */}
-      <footer className="border-t border-border py-20">
+      <footer className="py-20">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
+          <div className="flex justify-between mb-12 items-start">
             {/* Brand */}
-            <div className="md:col-span-1">
+            <div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-primary text-xl">⬡</span>
                 <span className="text-foreground font-semibold text-lg">
                   Veil OTC
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 Private OTC trading on Solana
               </p>
             </div>
 
+            {/* Links */}
+            <div className="flex gap-16">
             {/* Product Links */}
             <div>
-              <h4 className="font-semibold text-foreground mb-6">Product</h4>
-              <ul className="space-y-3 text-sm text-muted-foreground">
+              <h4 className="font-semibold text-foreground mb-4">Product</h4>
+              <ul className="space-y-3 text-base text-muted-foreground">
                 <li>
                   <a
                     href="#how-it-works"
@@ -609,8 +886,8 @@ export default function HomePage() {
 
             {/* Resources Links */}
             <div>
-              <h4 className="font-semibold text-foreground mb-6">Resources</h4>
-              <ul className="space-y-3 text-sm text-muted-foreground">
+              <h4 className="font-semibold text-foreground mb-4">Resources</h4>
+              <ul className="space-y-3 text-base text-muted-foreground">
                 <li>
                   <a
                     href="#"
@@ -629,10 +906,11 @@ export default function HomePage() {
                 </li>
               </ul>
             </div>
+            </div>
           </div>
 
           {/* Bottom bar */}
-          <div className="pt-12 border-t border-border text-sm text-muted-foreground">
+          <div className="pt-12 border-t border-border text-base text-muted-foreground text-right">
             <p>© 2025 Veil OTC</p>
           </div>
         </div>
