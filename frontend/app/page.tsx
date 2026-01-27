@@ -237,7 +237,7 @@ function MPCFlowDiagram() {
 
         {/* Connection: Deals to MPC (curves down-right) */}
         <path
-          d="M 85 72 L 85 110 Q 85 130 105 130 L 140 130"
+          d="M 85 84 L 85 110 Q 85 130 105 130 L 140 130"
           fill="none"
           stroke={activeStep === 0 ? "#f97316" : "#404040"}
           strokeWidth="1"
@@ -261,7 +261,7 @@ function MPCFlowDiagram() {
 
         {/* Connection: Offers to MPC (curves down-left) */}
         <path
-          d="M 255 72 L 255 110 Q 255 130 235 130 L 200 130"
+          d="M 255 84 L 255 110 Q 255 130 235 130 L 200 130"
           fill="none"
           stroke={activeStep === 1 ? "#f97316" : "#404040"}
           strokeWidth="1"
@@ -291,57 +291,28 @@ function MPCFlowDiagram() {
           }}
         >
           <rect
-            x="45"
+            x="60"
             y="34"
-            width="80"
-            height="38"
-            rx="6"
+            width="50"
+            height="50"
+            rx="8"
             fill={activeStep === 0 ? "#1a1a1a" : "#141414"}
             stroke={activeStep === 0 ? "#f97316" : "#333"}
             strokeWidth={activeStep === 0 ? "2" : "1"}
             style={{ transition: "all 0.5s ease" }}
           />
-          {/* Document icon */}
-          <g transform="translate(73, 41)">
-            <rect
-              x="0"
-              y="0"
-              width="16"
-              height="20"
-              rx="2"
-              fill="none"
-              stroke={activeStep === 0 ? "#f97316" : "#666"}
-              strokeWidth="1.5"
-              style={{ transition: "stroke 0.5s ease" }}
-            />
-            <line
-              x1="4"
-              y1="6"
-              x2="12"
-              y2="6"
-              stroke={activeStep === 0 ? "#f97316" : "#666"}
-              strokeWidth="1.5"
-              style={{ transition: "stroke 0.5s ease" }}
-            />
-            <line
-              x1="4"
-              y1="10"
-              x2="12"
-              y2="10"
-              stroke={activeStep === 0 ? "#f97316" : "#666"}
-              strokeWidth="1.5"
-              style={{ transition: "stroke 0.5s ease" }}
-            />
-            <line
-              x1="4"
-              y1="14"
-              x2="9"
-              y2="14"
-              stroke={activeStep === 0 ? "#f97316" : "#666"}
-              strokeWidth="1.5"
-              style={{ transition: "stroke 0.5s ease" }}
-            />
-          </g>
+          {/* Dollar sign */}
+          <text
+            x="85"
+            y="67"
+            textAnchor="middle"
+            fontSize="22"
+            fontWeight="300"
+            fill={activeStep === 0 ? "#f97316" : "#666"}
+            style={{ transition: "fill 0.5s ease", fontFamily: "Inter, sans-serif" }}
+          >
+            $
+          </text>
         </g>
 
         {/* Offers box (top right) */}
@@ -352,34 +323,28 @@ function MPCFlowDiagram() {
           }}
         >
           <rect
-            x="215"
+            x="230"
             y="34"
-            width="80"
-            height="38"
-            rx="6"
+            width="50"
+            height="50"
+            rx="8"
             fill={activeStep === 1 ? "#1a1a1a" : "#141414"}
             stroke={activeStep === 1 ? "#f97316" : "#333"}
             strokeWidth={activeStep === 1 ? "2" : "1"}
             style={{ transition: "all 0.5s ease" }}
           />
-          {/* Tag/offer icon */}
-          <g transform="translate(243, 41)">
-            <path
-              d="M 2 4 L 2 12 L 12 20 L 20 12 L 12 4 Z"
-              fill="none"
-              stroke={activeStep === 1 ? "#f97316" : "#666"}
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-              style={{ transition: "stroke 0.5s ease" }}
-            />
-            <circle
-              cx="7"
-              cy="9"
-              r="2"
-              fill={activeStep === 1 ? "#f97316" : "#666"}
-              style={{ transition: "fill 0.5s ease" }}
-            />
-          </g>
+          {/* Dollar sign */}
+          <text
+            x="255"
+            y="67"
+            textAnchor="middle"
+            fontSize="22"
+            fontWeight="300"
+            fill={activeStep === 1 ? "#f97316" : "#666"}
+            style={{ transition: "fill 0.5s ease", fontFamily: "Inter, sans-serif" }}
+          >
+            $
+          </text>
         </g>
 
         {/* Large MPC Network box (bottom) */}
