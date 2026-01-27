@@ -7,12 +7,12 @@ const faqs = [
   {
     question: "What is Veil OTC?",
     answer:
-      "Veil OTC is a private over-the-counter trading platform built on Solana. It uses Arcium's confidential computing network to enable encrypted order matching—your trade intentions stay completely private, even during execution.",
+      "Veil OTC is a private over-the-counter trading platform built on Solana. It uses Arcium's confidential computing network to enable encrypted order matching. Your trade intentions stay completely private, even during execution.",
   },
   {
     question: "How does the privacy work?",
     answer:
-      "Your trade data is encrypted end-to-end using Arcium's multi-party computation (MPC). No single party—not even the network operators—can see your order details.",
+      "Your trade data is encrypted end-to-end using Arcium's multi-party computation (MPC). No single party, not even the network operators, can see your order details.",
   },
   {
     question: "What tokens can I trade?",
@@ -177,15 +177,15 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   }, [answer]);
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
+    <div className="border-b border-border">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-8 py-6 flex items-center justify-between text-left"
+        className="w-full py-6 flex items-center justify-between text-left group"
       >
         <span className="font-medium text-foreground">{question}</span>
         <svg
-          className={`w-4 h-4 text-primary transition-transform duration-300 ease-out ${
-            isOpen ? "rotate-180" : ""
+          className={`w-4 h-4 transition-all duration-300 ease-out group-hover:text-primary ${
+            isOpen ? "rotate-180 text-primary" : "text-muted-foreground"
           }`}
           fill="none"
           viewBox="0 0 24 24"
@@ -204,7 +204,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         className="overflow-hidden transition-all duration-300 ease-out"
         style={{ maxHeight: isOpen ? contentHeight : 0 }}
       >
-        <div className="px-8 pb-6 text-muted-foreground text-sm">{answer}</div>
+        <div className="pb-6 text-muted-foreground text-base">{answer}</div>
       </div>
     </div>
   );
@@ -346,22 +346,22 @@ export default function HomePage() {
       </section>
 
       {/* OTC Comparison Section */}
-      <section id="how-it-works" className="pt-80 pb-32">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="how-it-works" className="pt-80 pb-32 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             The OTC desk without third parties
           </h2>
           <p className="text-muted-foreground text-center mb-24">
-            Trustless and self-custodial trading
+            Don't rely on others to execute large trades for you.<br/>Veil OTC makes private deals possible without the middlemen.
           </p>
-          <div className="grid md:grid-cols-2 gap-6 max-w-[1230px] mx-auto">
-            {/* Traditional OTC Card */}
-            <div className="bg-card border border-border rounded-2xl p-10 min-h-[395px]">
+          <div className="grid md:grid-cols-[1fr_auto_1fr] gap-12 max-w-[900px] mx-auto">
+            {/* Traditional OTC */}
+            <div className="text-center">
               <h3 className="text-2xl font-semibold text-foreground mb-8">
                 Traditional OTC
               </h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
+              <ul className="inline-block text-left">
+                <li className="flex items-start gap-3 py-4 border-b border-border/50">
                   <svg
                     className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
@@ -376,10 +376,10 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-muted-foreground">
-                    Third party holds your funds
+                    <span className="text-foreground/70">Third parties</span> hold your funds
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4 border-b border-border/50">
                   <svg
                     className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
@@ -394,10 +394,10 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-muted-foreground">
-                    Requires trust in intermediaries
+                    Requires <span className="text-foreground/70">trust in intermediaries</span>
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4">
                   <svg
                     className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
@@ -412,25 +412,37 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-muted-foreground">
-                    Risk of information disclosure
+                    Risk of <span className="text-foreground/70">information disclosure</span>
                   </span>
                 </li>
               </ul>
             </div>
 
-            {/* Veil OTC Card */}
-            <div
-              className="bg-card border border-primary rounded-2xl p-10 min-h-[395px]"
-              style={{
-                boxShadow:
-                  "0 0 20px rgba(249, 115, 22, 0.15), 0 0 40px rgba(249, 115, 22, 0.05)",
-              }}
-            >
+            {/* Vertical Divider - Gradient with glow */}
+            <div className="hidden md:flex flex-col items-center">
+              <div
+                className="w-px h-full"
+                style={{
+                  background: 'linear-gradient(to bottom, rgba(249,115,22,0.15), rgba(249,115,22,0.5) 15%, rgba(249,115,22,0.5) 85%, rgba(249,115,22,0.15))',
+                  boxShadow: '0 0 8px rgba(249,115,22,0.3), 0 0 16px rgba(249,115,22,0.2)',
+                }}
+              />
+            </div>
+
+            {/* Veil OTC - with subtle glow background */}
+            <div className="text-center relative">
+              {/* Ambient glow background */}
+              <div
+                className="absolute -inset-8 -z-10 rounded-3xl"
+                style={{
+                  background: 'radial-gradient(ellipse at center, rgba(249,115,22,0.08) 0%, transparent 70%)',
+                }}
+              />
               <h3 className="text-2xl font-semibold text-foreground mb-8">
                 Veil OTC
               </h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
+              <ul className="inline-block text-left">
+                <li className="flex items-start gap-3 py-4 border-b border-primary/20">
                   <svg
                     className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
@@ -445,10 +457,10 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-foreground">
-                    Full control of your funds
+                    <span className="text-primary">Full control</span> of your funds
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4 border-b border-primary/20">
                   <svg
                     className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
@@ -463,10 +475,10 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-foreground">
-                    Trustless on-chain trading
+                    <span className="text-primary">Trustless</span> on-chain trading
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4">
                   <svg
                     className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
@@ -481,7 +493,7 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-foreground">
-                    Encrypted, private execution
+                    <span className="text-primary">Encrypted</span>, private execution
                   </span>
                 </li>
               </ul>
@@ -703,10 +715,10 @@ export default function HomePage() {
                 computation. <span className="text-foreground">No single party ever sees your data.</span>
               </p>
 
-              {/* Feature cards */}
-              <div className="space-y-4">
+              {/* Feature list */}
+              <div className="border-t border-border">
                 {/* Feature 1 */}
-                <div className="flex items-start gap-4 bg-card border border-primary/30 rounded-xl p-4">
+                <div className="flex items-start gap-4 border-b border-border py-6">
                   <div className="w-6 h-6 shrink-0 mt-0.5">
                     <svg
                       className="w-6 h-6 text-primary"
@@ -722,17 +734,17 @@ export default function HomePage() {
                       />
                     </svg>
                   </div>
-                  <p className="text-foreground text-base leading-relaxed">
-                    <span className="font-medium">Private by design.</span>{" "}
-                    <span className="text-muted-foreground">
+                  <div>
+                    <p className="font-medium text-foreground">Private by design.</p>
+                    <p className="text-muted-foreground text-base mt-1">
                       Fully on-chain, non-custodial trading that never ties back
                       to your wallet.
-                    </span>
-                  </p>
+                    </p>
+                  </div>
                 </div>
 
                 {/* Feature 2 */}
-                <div className="flex items-start gap-4 bg-card border border-primary/30 rounded-xl p-4">
+                <div className="flex items-start gap-4 border-b border-border py-6">
                   <div className="w-6 h-6 shrink-0 mt-0.5">
                     <svg
                       className="w-6 h-6 text-primary"
@@ -748,17 +760,17 @@ export default function HomePage() {
                       />
                     </svg>
                   </div>
-                  <p className="text-foreground text-base leading-relaxed">
-                    <span className="font-medium">Everything is encrypted.</span>{" "}
-                    <span className="text-muted-foreground">
-                      Deals, offers, balances — all data and execution is
+                  <div>
+                    <p className="font-medium text-foreground">Everything is encrypted.</p>
+                    <p className="text-muted-foreground text-base mt-1">
+                      Deals, offers, balances: all data and execution is
                       end-to-end encrypted by Arcium&apos;s MPC network.
-                    </span>
-                  </p>
+                    </p>
+                  </div>
                 </div>
 
                 {/* Feature 3 */}
-                <div className="flex items-start gap-4 bg-card border border-primary/30 rounded-xl p-4">
+                <div className="flex items-start gap-4 border-b border-border py-6">
                   <div className="w-6 h-6 shrink-0 mt-0.5">
                     <svg
                       className="w-6 h-6 text-primary"
@@ -774,13 +786,13 @@ export default function HomePage() {
                       />
                     </svg>
                   </div>
-                  <p className="text-foreground text-base leading-relaxed">
-                    <span className="font-medium">Full self-custody.</span>{" "}
-                    <span className="text-muted-foreground">
+                  <div>
+                    <p className="font-medium text-foreground">Full self-custody.</p>
+                    <p className="text-muted-foreground text-base mt-1">
                       All funds are escrowed on-chain through private shared
                       pools, always retrievable.
-                    </span>
-                  </p>
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -811,7 +823,7 @@ export default function HomePage() {
           <p className="text-muted-foreground text-center mb-16">
             Everything you need to know about Veil OTC
           </p>
-          <div className="space-y-6">
+          <div className="border-t border-border">
             {faqs.map((faq, index) => (
               <FAQItem
                 key={index}
