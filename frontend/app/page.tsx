@@ -346,13 +346,13 @@ export default function HomePage() {
       </section>
 
       {/* OTC Comparison Section */}
-      <section id="how-it-works" className="pt-80 pb-32">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="how-it-works" className="pt-80 pb-32 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             The OTC desk without third parties
           </h2>
           <p className="text-muted-foreground text-center mb-24">
-            Trustless and self-custodial trading
+            Don't rely on others to execute large trades for you. Veil OTC makes private deals possible without the middlemen.
           </p>
           <div className="grid md:grid-cols-[1fr_auto_1fr] gap-12 max-w-[900px] mx-auto">
             {/* Traditional OTC */}
@@ -376,7 +376,7 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-muted-foreground">
-                    Third party holds your funds
+                    <span className="text-foreground/70">Third parties</span> hold your funds
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -394,7 +394,7 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-muted-foreground">
-                    Requires trust in intermediaries
+                    Requires <span className="text-foreground/70">trust in intermediaries</span>
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -412,17 +412,32 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-muted-foreground">
-                    Risk of information disclosure
+                    Risk of <span className="text-foreground/70">information disclosure</span>
                   </span>
                 </li>
               </ul>
             </div>
 
-            {/* Vertical Divider */}
-            <div className="hidden md:block w-px bg-border"></div>
+            {/* Vertical Divider - Gradient with glow */}
+            <div className="hidden md:flex flex-col items-center">
+              <div
+                className="w-px h-full"
+                style={{
+                  background: 'linear-gradient(to bottom, transparent, rgba(249,115,22,0.5) 30%, rgba(249,115,22,0.5) 70%, transparent)',
+                  boxShadow: '0 0 8px rgba(249,115,22,0.3), 0 0 16px rgba(249,115,22,0.2)',
+                }}
+              />
+            </div>
 
-            {/* Veil OTC */}
-            <div className="text-center">
+            {/* Veil OTC - with subtle glow background */}
+            <div className="text-center relative">
+              {/* Ambient glow background */}
+              <div
+                className="absolute -inset-8 -z-10 rounded-3xl"
+                style={{
+                  background: 'radial-gradient(ellipse at center, rgba(249,115,22,0.08) 0%, transparent 70%)',
+                }}
+              />
               <h3 className="text-2xl font-semibold text-foreground mb-8">
                 Veil OTC
               </h3>
@@ -442,7 +457,7 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-foreground">
-                    Full control of your funds
+                    <span className="text-primary">Full control</span> of your funds
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -460,7 +475,7 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-foreground">
-                    Trustless on-chain trading
+                    <span className="text-primary">Trustless</span> on-chain trading
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -478,7 +493,7 @@ export default function HomePage() {
                     />
                   </svg>
                   <span className="text-foreground">
-                    Encrypted, private execution
+                    <span className="text-primary">Encrypted</span>, private execution
                   </span>
                 </li>
               </ul>
