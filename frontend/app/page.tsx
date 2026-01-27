@@ -177,10 +177,10 @@ function MPCFlowDiagram() {
   }, []);
 
   return (
-    <div className="relative w-full h-full min-h-[340px] flex items-center justify-center">
+    <div className="relative w-full h-full min-h-[400px] flex items-center justify-center">
       <svg
         viewBox="0 0 340 300"
-        className="w-full h-full max-w-[340px]"
+        className="w-full h-full max-w-[400px]"
         style={{ overflow: "visible" }}
       >
         <defs>
@@ -1024,7 +1024,7 @@ export default function HomePage() {
       {/* Security Section */}
       <section id="security" className="py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-24 items-start">
+          <div className="grid md:grid-cols-2 gap-24 items-center">
             {/* Left column - text content */}
             <div>
               <h2 className="text-3xl font-bold text-foreground mb-6">
