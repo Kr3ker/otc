@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Localnet wallet to airdrop SOL to
+LOCALNET_WALLET="D2vay1cNFWQmiDGUY4m5c6JmpzjmHxHwXiCypqZL8eZk"
+
 clear
 
 # Clean up any existing processes
@@ -92,6 +95,12 @@ trap 'arcium_ready=1' USR2
                 auto_hidden=1
                 show=0
                 echo -e "${DIM}[arcium output auto-hidden - press 'a' to show]${NC}"
+                # Airdrop SOL to localnet wallet after 1 second
+                if [ -n "$LOCALNET_WALLET" ]; then
+                    sleep 1
+                    solana airdrop 5 "$LOCALNET_WALLET" -u l >/dev/null 2>&1 && \
+                        echo -e "${DIM}Airdropped 5 SOL to $LOCALNET_WALLET${NC}"
+                fi
                 # Signal main script that arcium is ready
                 kill -USR2 "$main_pid" 2>/dev/null
             fi
@@ -108,22 +117,22 @@ done
 echo -e "${DIM}Arcium ready, starting other services...${NC}"
 
 # Now start other processes (except cranker)
-run_with_prefix "$CYAN"    "indexer " bash -c "cd ./packages/indexer && ARCIUM_CLUSTER_OFFSET= yarn start" &
+run_with_prefix "$CYAN"    "indexer " bash -c "cd ./packages/indexer && ARCIUM_CLUSTER_OFFSET=0 yarn start" &
 run_with_prefix "$MAGENTA" "supabase" supabase start &
 run_with_prefix "$BLUE"    "frontend" yarn dev &
 
 # Run tests, then start cranker after tests finish
 (
-    sleep 5
+    sleep 20
     echo -e "${DIM}[test    ]${NC} Running anchor test..."
-    ARCIUM_CLUSTER_OFFSET= anchor test --skip-build --skip-deploy --skip-local-validator 2>&1 | while IFS= read -r line; do
+    ARCIUM_CLUSTER_OFFSET=0 anchor test --skip-build --skip-deploy --skip-local-validator 2>&1 | while IFS= read -r line; do
         echo -e "${DIM}[test    ]${NC} $line"
     done
     echo -e "${DIM}[test    ]${NC} Anchor test finished"
 
     # Start cranker after tests
     echo -e "${DIM}Starting cranker...${NC}"
-    run_with_prefix "$YELLOW" "cranker " bash -c "cd ./packages/cranker && ARCIUM_CLUSTER_OFFSET= yarn start"
+    run_with_prefix "$YELLOW" "cranker " bash -c "cd ./packages/cranker && ARCIUM_CLUSTER_OFFSET=0 yarn start"
 ) &
 
 # Keyboard listener

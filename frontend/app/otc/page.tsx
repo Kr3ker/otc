@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { MOCK_DEALS, MOCK_MARKET_DEALS, MOCK_OFFERS } from "./_lib/constants";
-import type { Deal, MarketDeal } from "./_lib/types";
+import type { Deal, MarketDeal, Offer } from "./_lib/types";
 import { FAQPanel } from "./_components/FAQPanel";
 import { TabNavigation } from "./_components/TabNavigation";
 import { Navbar } from "./_components/Navbar";
@@ -113,9 +113,26 @@ function OTCPageContent() {
 
   const [baseMintFilter, setBaseMintFilter] = useState<string | null>(null);
 
-  // Derive selected deal from URL
-  const selectedMarketDeal = state.dealId
-    ? marketDeals.find((d) => d.id === state.dealId) ?? null
+  // Check if selected deal is user's own deal (for showing decrypted data)
+  const selectedUserDeal = state.dealId
+    ? deals.find((d) => d.id === state.dealId)
+    : undefined;
+
+  // Derive selected deal from URL - check marketDeals first, then user's deals
+  const selectedMarketDeal: MarketDeal | null = state.dealId
+    ? marketDeals.find((d) => d.id === state.dealId) ??
+      // If not in market (e.g., executed/expired), create from user's deal
+      (selectedUserDeal
+        ? {
+            id: selectedUserDeal.id,
+            baseMint: selectedUserDeal.baseMint,
+            quoteMint: selectedUserDeal.quoteMint,
+            expiresAt: selectedUserDeal.expiresAt,
+            createdAt: selectedUserDeal.createdAt,
+            allowPartial: selectedUserDeal.allowPartial,
+            offerCount: selectedUserDeal.offerCount,
+          }
+        : null)
     : null;
 
   // Check if deal ID is in URL but deal not found
@@ -139,6 +156,14 @@ function OTCPageContent() {
   // Handle row click
   const handleMarketDealClick = (deal: MarketDeal) => {
     navigateToDeal(deal.id);
+  };
+
+  const handleDealClick = (deal: Deal) => {
+    navigateToDeal(deal.id);
+  };
+
+  const handleOfferClick = (offer: Offer) => {
+    navigateToDeal(offer.dealId);
   };
 
   // Collapse back to table
@@ -189,7 +214,11 @@ function OTCPageContent() {
             {dealNotFound ? (
               <DealNotFound dealId={state.dealId!} onBack={handleCollapse} />
             ) : selectedMarketDeal ? (
-              <DealDetails deal={selectedMarketDeal} onBack={handleCollapse} />
+              <DealDetails
+                deal={selectedMarketDeal}
+                userDeal={selectedUserDeal}
+                onBack={handleCollapse}
+              />
             ) : (
               <>
                 {/* Tab Navigation */}
@@ -203,7 +232,7 @@ function OTCPageContent() {
                     ) : dealsLoading ? (
                       <LoadingSpinner />
                     ) : canViewPrivateData ? (
-                      <DealsTable deals={deals} />
+                      <DealsTable deals={deals} onDealClick={handleDealClick} />
                     ) : (
                       <ConnectPrompt
                         connected={connected}
@@ -233,7 +262,7 @@ function OTCPageContent() {
                     ) : offersLoading ? (
                       <LoadingSpinner />
                     ) : canViewPrivateData ? (
-                      <OffersTable offers={offers} />
+                      <OffersTable offers={offers} onOfferClick={handleOfferClick} />
                     ) : (
                       <ConnectPrompt
                         connected={connected}

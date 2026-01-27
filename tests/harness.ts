@@ -37,18 +37,32 @@ export {
 } from "@arcium-hq/client";
 
 // Cluster configuration
-// For localnet testing: null (uses ARCIUM_CLUSTER_PUBKEY from env)
-// For devnet/testnet: specific cluster offset
-const CLUSTER_OFFSET: number | null = null;
+// Read from env var, or default to 0 for localnet
+const CLUSTER_OFFSET: number = process.env.ARCIUM_CLUSTER_OFFSET
+  ? parseInt(process.env.ARCIUM_CLUSTER_OFFSET, 10)
+  : 0;
 
 /**
- * Gets the cluster account address based on configuration.
- * - If CLUSTER_OFFSET is set: Uses getClusterAccAddress (devnet/testnet)
- * - If null: Uses getArciumEnv().arciumClusterOffset (localnet)
+ * Gets the cluster account address.
  */
 export function getClusterAccount(): PublicKey {
-  const offset = CLUSTER_OFFSET ?? getArciumEnv().arciumClusterOffset;
-  return getClusterAccAddress(offset);
+  return getClusterAccAddress(CLUSTER_OFFSET);
+}
+
+/**
+ * Safely gets arcium env, or creates a minimal fallback for localnet.
+ */
+function getArciumEnvSafe(): ReturnType<typeof getArciumEnv> {
+  try {
+    return getArciumEnv();
+  } catch {
+    // Fallback for when running outside of `arcium test`
+    // (e.g., via local.sh with arcium localnet running separately)
+    console.log("[harness] Using fallback arciumEnv with CLUSTER_OFFSET:", CLUSTER_OFFSET);
+    return {
+      arciumClusterOffset: CLUSTER_OFFSET,
+    } as ReturnType<typeof getArciumEnv>;
+  }
 }
 
 export interface TestHarness {
@@ -73,7 +87,7 @@ export function getTestHarness(): TestHarness {
   const program = anchor.workspace.Otc as Program<Otc>;
   const provider = anchor.getProvider() as anchor.AnchorProvider;
   const owner = readKpJson(`${os.homedir()}/.config/solana/id.json`);
-  const arciumEnv = getArciumEnv();
+  const arciumEnv = getArciumEnvSafe();
   const clusterAccount = getClusterAccount();
 
   cachedHarness = {

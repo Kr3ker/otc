@@ -58,23 +58,6 @@ function toBaseUnits(amount: number, decimals: number): bigint {
  * 2. Encrypt amount and price with MXE shared secret
  * 3. Queue create_deal computation via Arcium
  * 4. Await finalization
- *
- * @example
- * ```tsx
- * const { createDeal, isCreating, error } = useCreateDeal();
- *
- * const handleCreate = async () => {
- *   const dealAddress = await createDeal({
- *     baseMint: "META111...",
- *     quoteMint: "EPjFWdd5...",
- *     amount: 100,
- *     price: 5.0,
- *     expiresInSeconds: 3600,
- *     allowPartial: true,
- *   });
- *   console.log("Deal created:", dealAddress);
- * };
- * ```
  */
 export function useCreateDeal(): UseCreateDealReturn {
   const { program, provider, programId, mxePublicKey, arciumAccounts } =
@@ -142,22 +125,16 @@ export function useCreateDeal(): UseCreateDealReturn {
         );
 
         // 10. Submit create_deal transaction
-        console.log("Submitting create_deal transaction...");
-        console.log("  Deal address:", dealAddress.toBase58());
-        console.log("  Base mint:", input.baseMint);
-        console.log("  Quote mint:", input.quoteMint);
-        console.log("  Expires at:", expiresAt.toNumber());
-
         const queueSig = await program.methods
           .createDeal(
             computationOffset,
-            derivedKeys.controller.publicKey, // controller
-            Array.from(derivedKeys.encryption.publicKey), // encryption_pubkey
-            nonceToU128(nonce), // nonce as u128
+            derivedKeys.controller.publicKey,
+            Array.from(derivedKeys.encryption.publicKey),
+            nonceToU128(nonce),
             expiresAt,
             input.allowPartial,
-            Array.from(ciphertext[0]), // encrypted_amount
-            Array.from(ciphertext[1]) // encrypted_price
+            Array.from(ciphertext[0]),
+            Array.from(ciphertext[1])
           )
           .accountsPartial({
             createKey: createKey.publicKey,
@@ -178,7 +155,6 @@ export function useCreateDeal(): UseCreateDealReturn {
         console.log("Queue create_deal sig:", queueSig);
 
         // 11. Await computation finalization
-        console.log("Awaiting computation finalization...");
         const finalizeSig = await awaitComputationFinalization(
           provider,
           computationOffset,

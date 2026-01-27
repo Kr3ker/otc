@@ -10,9 +10,15 @@ import {
   initCrankDealCompDef,
   initCrankOfferCompDef,
 } from "./harness";
+import { setupTestMints } from "./setup-mints";
 
 describe("OTC Setup", () => {
   const { program, provider, owner } = getTestHarness();
+
+  it("creates test mints", async () => {
+    const mints = await setupTestMints();
+    console.log("Test mints created:", mints);
+  });
 
   it("initializes add_together comp def", async () => {
     await initCompDefIfNeeded(
