@@ -180,7 +180,7 @@ function MPCFlowDiagram() {
     <div className="relative w-full h-full min-h-[400px] flex items-center justify-center">
       <svg
         viewBox="0 0 340 300"
-        className="w-full h-full max-w-[400px]"
+        className="w-full h-full max-w-[400px] mx-auto"
         style={{ overflow: "visible" }}
       >
         <defs>
@@ -403,7 +403,7 @@ function MPCFlowDiagram() {
 
           {/* MPC Node Row - 4 nodes */}
           {[0, 1, 2, 3].map((i) => (
-            <g key={i} transform={`translate(${50 + i * 70}, 150)`}>
+            <g key={i} transform={`translate(${40 + i * 70}, 165)`}>
               <rect
                 x="0"
                 y="0"
@@ -459,10 +459,10 @@ function MPCFlowDiagram() {
           {[0, 1, 2].map((i) => (
             <line
               key={`conn-${i}`}
-              x1={100 + i * 70}
-              y1="175"
-              x2={120 + i * 70}
-              y2="175"
+              x1={90 + i * 70}
+              y1="190"
+              x2={110 + i * 70}
+              y2="190"
               stroke={activeStep === 2 ? "#f97316" : "#404040"}
               strokeWidth="1.5"
               strokeDasharray="4 3"
