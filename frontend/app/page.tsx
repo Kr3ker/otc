@@ -736,15 +736,9 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Vertical Divider - Gradient with glow */}
+            {/* Vertical Divider */}
             <div className="hidden md:flex flex-col items-center">
-              <div
-                className="w-px h-full"
-                style={{
-                  background: 'linear-gradient(to bottom, rgba(249,115,22,0.15), rgba(249,115,22,0.5) 15%, rgba(249,115,22,0.5) 85%, rgba(249,115,22,0.15))',
-                  boxShadow: '0 0 8px rgba(249,115,22,0.3), 0 0 16px rgba(249,115,22,0.2)',
-                }}
-              />
+              <div className="w-px h-full bg-border" />
             </div>
 
             {/* Undesk - with subtle glow background */}
