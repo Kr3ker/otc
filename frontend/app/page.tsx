@@ -227,8 +227,8 @@ function MPCFlowDiagram() {
           d="M 85 72 L 85 110 Q 85 130 105 130 L 140 130"
           fill="none"
           stroke={activeStep === 0 ? "#f97316" : "#404040"}
-          strokeWidth="2"
-          strokeDasharray="6 4"
+          strokeWidth="1"
+          strokeDasharray="4 3"
           strokeLinecap="round"
           style={{
             filter: activeStep === 0 ? "url(#glow)" : "none",
@@ -251,8 +251,8 @@ function MPCFlowDiagram() {
           d="M 255 72 L 255 110 Q 255 130 235 130 L 200 130"
           fill="none"
           stroke={activeStep === 1 ? "#f97316" : "#404040"}
-          strokeWidth="2"
-          strokeDasharray="6 4"
+          strokeWidth="1"
+          strokeDasharray="4 3"
           strokeLinecap="round"
           style={{
             filter: activeStep === 1 ? "url(#glow)" : "none",
@@ -452,8 +452,8 @@ function MPCFlowDiagram() {
               x2={110 + i * 70}
               y2="190"
               stroke={activeStep === 2 ? "#f97316" : "#404040"}
-              strokeWidth="2"
-              strokeDasharray="6 4"
+              strokeWidth="1"
+              strokeDasharray="4 3"
               style={{ transition: "all 0.5s ease" }}
             >
               {activeStep === 2 && (
