@@ -352,7 +352,7 @@ export default function HomePage() {
             The OTC desk without third parties
           </h2>
           <p className="text-muted-foreground text-center mb-24">
-            Don't rely on others to execute large trades for you. Veil OTC makes private deals possible without the middlemen.
+            Don't rely on others to execute large trades for you.<br/>Veil OTC makes private deals possible without the middlemen.
           </p>
           <div className="grid md:grid-cols-[1fr_auto_1fr] gap-12 max-w-[900px] mx-auto">
             {/* Traditional OTC */}
@@ -360,8 +360,8 @@ export default function HomePage() {
               <h3 className="text-2xl font-semibold text-foreground mb-8">
                 Traditional OTC
               </h3>
-              <ul className="space-y-4 inline-block text-left">
-                <li className="flex items-start gap-3">
+              <ul className="inline-block text-left">
+                <li className="flex items-start gap-3 py-4 border-b border-border/50">
                   <svg
                     className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
@@ -379,7 +379,7 @@ export default function HomePage() {
                     <span className="text-foreground/70">Third parties</span> hold your funds
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4 border-b border-border/50">
                   <svg
                     className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
@@ -397,7 +397,7 @@ export default function HomePage() {
                     Requires <span className="text-foreground/70">trust in intermediaries</span>
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4">
                   <svg
                     className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5"
                     fill="none"
@@ -423,7 +423,7 @@ export default function HomePage() {
               <div
                 className="w-px h-full"
                 style={{
-                  background: 'linear-gradient(to bottom, transparent, rgba(249,115,22,0.5) 30%, rgba(249,115,22,0.5) 70%, transparent)',
+                  background: 'linear-gradient(to bottom, rgba(249,115,22,0.15), rgba(249,115,22,0.5) 15%, rgba(249,115,22,0.5) 85%, rgba(249,115,22,0.15))',
                   boxShadow: '0 0 8px rgba(249,115,22,0.3), 0 0 16px rgba(249,115,22,0.2)',
                 }}
               />
@@ -441,8 +441,8 @@ export default function HomePage() {
               <h3 className="text-2xl font-semibold text-foreground mb-8">
                 Veil OTC
               </h3>
-              <ul className="space-y-4 inline-block text-left">
-                <li className="flex items-start gap-3">
+              <ul className="inline-block text-left">
+                <li className="flex items-start gap-3 py-4 border-b border-primary/20">
                   <svg
                     className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
@@ -460,7 +460,7 @@ export default function HomePage() {
                     <span className="text-primary">Full control</span> of your funds
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4 border-b border-primary/20">
                   <svg
                     className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
@@ -478,7 +478,7 @@ export default function HomePage() {
                     <span className="text-primary">Trustless</span> on-chain trading
                   </span>
                 </li>
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 py-4">
                   <svg
                     className="w-5 h-5 text-primary shrink-0 mt-0.5"
                     fill="none"
