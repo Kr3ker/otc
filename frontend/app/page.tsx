@@ -165,6 +165,327 @@ function BackgroundPattern({ activeLines }: { activeLines: Set<string> }) {
   );
 }
 
+function MPCFlowDiagram() {
+  const [activeStep, setActiveStep] = useState(0);
+
+  // Cycle through animation steps: 0=deals flow down, 1=offers flow down, 2=MPC processing
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % 3);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative w-full h-full min-h-[340px] flex items-center justify-center">
+      <svg
+        viewBox="0 0 340 300"
+        className="w-full h-full max-w-[340px]"
+        style={{ overflow: "visible" }}
+      >
+        <defs>
+          {/* Glow filter */}
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          {/* Stronger glow for active elements */}
+          <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Labels */}
+        <text
+          x="85"
+          y="24"
+          className="fill-muted-foreground text-[11px] font-medium"
+          textAnchor="middle"
+        >
+          Deals
+        </text>
+        <text
+          x="255"
+          y="24"
+          className="fill-muted-foreground text-[11px] font-medium"
+          textAnchor="middle"
+        >
+          Offers
+        </text>
+
+        {/* Connection: Deals to MPC (curves down-right) */}
+        <path
+          d="M 85 72 L 85 110 Q 85 130 105 130 L 140 130"
+          fill="none"
+          stroke={activeStep === 0 ? "#f97316" : "#404040"}
+          strokeWidth="2"
+          strokeDasharray="6 4"
+          strokeLinecap="round"
+          style={{
+            filter: activeStep === 0 ? "url(#glow)" : "none",
+            transition: "stroke 0.5s ease",
+          }}
+        >
+          {activeStep === 0 && (
+            <animate
+              attributeName="stroke-dashoffset"
+              from="30"
+              to="0"
+              dur="1.2s"
+              repeatCount="indefinite"
+            />
+          )}
+        </path>
+
+        {/* Connection: Offers to MPC (curves down-left) */}
+        <path
+          d="M 255 72 L 255 110 Q 255 130 235 130 L 200 130"
+          fill="none"
+          stroke={activeStep === 1 ? "#f97316" : "#404040"}
+          strokeWidth="2"
+          strokeDasharray="6 4"
+          strokeLinecap="round"
+          style={{
+            filter: activeStep === 1 ? "url(#glow)" : "none",
+            transition: "stroke 0.5s ease",
+          }}
+        >
+          {activeStep === 1 && (
+            <animate
+              attributeName="stroke-dashoffset"
+              from="30"
+              to="0"
+              dur="1.2s"
+              repeatCount="indefinite"
+            />
+          )}
+        </path>
+
+        {/* Deals box (top left) */}
+        <g
+          style={{
+            filter: activeStep === 0 ? "url(#strongGlow)" : "none",
+            transition: "filter 0.5s ease",
+          }}
+        >
+          <rect
+            x="45"
+            y="34"
+            width="80"
+            height="38"
+            rx="6"
+            fill={activeStep === 0 ? "#1a1a1a" : "#141414"}
+            stroke={activeStep === 0 ? "#f97316" : "#333"}
+            strokeWidth={activeStep === 0 ? "2" : "1"}
+            style={{ transition: "all 0.5s ease" }}
+          />
+          {/* Document icon */}
+          <g transform="translate(73, 41)">
+            <rect
+              x="0"
+              y="0"
+              width="16"
+              height="20"
+              rx="2"
+              fill="none"
+              stroke={activeStep === 0 ? "#f97316" : "#666"}
+              strokeWidth="1.5"
+              style={{ transition: "stroke 0.5s ease" }}
+            />
+            <line
+              x1="4"
+              y1="6"
+              x2="12"
+              y2="6"
+              stroke={activeStep === 0 ? "#f97316" : "#666"}
+              strokeWidth="1.5"
+              style={{ transition: "stroke 0.5s ease" }}
+            />
+            <line
+              x1="4"
+              y1="10"
+              x2="12"
+              y2="10"
+              stroke={activeStep === 0 ? "#f97316" : "#666"}
+              strokeWidth="1.5"
+              style={{ transition: "stroke 0.5s ease" }}
+            />
+            <line
+              x1="4"
+              y1="14"
+              x2="9"
+              y2="14"
+              stroke={activeStep === 0 ? "#f97316" : "#666"}
+              strokeWidth="1.5"
+              style={{ transition: "stroke 0.5s ease" }}
+            />
+          </g>
+        </g>
+
+        {/* Offers box (top right) */}
+        <g
+          style={{
+            filter: activeStep === 1 ? "url(#strongGlow)" : "none",
+            transition: "filter 0.5s ease",
+          }}
+        >
+          <rect
+            x="215"
+            y="34"
+            width="80"
+            height="38"
+            rx="6"
+            fill={activeStep === 1 ? "#1a1a1a" : "#141414"}
+            stroke={activeStep === 1 ? "#f97316" : "#333"}
+            strokeWidth={activeStep === 1 ? "2" : "1"}
+            style={{ transition: "all 0.5s ease" }}
+          />
+          {/* Tag/offer icon */}
+          <g transform="translate(243, 41)">
+            <path
+              d="M 2 4 L 2 12 L 12 20 L 20 12 L 12 4 Z"
+              fill="none"
+              stroke={activeStep === 1 ? "#f97316" : "#666"}
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+              style={{ transition: "stroke 0.5s ease" }}
+            />
+            <circle
+              cx="7"
+              cy="9"
+              r="2"
+              fill={activeStep === 1 ? "#f97316" : "#666"}
+              style={{ transition: "fill 0.5s ease" }}
+            />
+          </g>
+        </g>
+
+        {/* Large MPC Network box (bottom) */}
+        <g
+          style={{
+            filter: activeStep === 2 ? "url(#strongGlow)" : "none",
+            transition: "filter 0.5s ease",
+          }}
+        >
+          {/* Main container */}
+          <rect
+            x="20"
+            y="100"
+            width="300"
+            height="180"
+            rx="12"
+            fill={activeStep === 2 ? "#0f0f0f" : "#0a0a0a"}
+            stroke={activeStep === 2 ? "#f97316" : "#333"}
+            strokeWidth={activeStep === 2 ? "2" : "1"}
+            style={{ transition: "all 0.5s ease" }}
+          />
+
+          {/* "Encrypted Matching" label at top of box */}
+          <text
+            x="170"
+            y="125"
+            className="fill-muted-foreground text-[10px]"
+            textAnchor="middle"
+            opacity={activeStep === 2 ? 0.9 : 0.5}
+            style={{ transition: "opacity 0.5s ease" }}
+          >
+            Encrypted Matching
+          </text>
+
+          {/* MPC Node Row - 4 nodes */}
+          {[0, 1, 2, 3].map((i) => (
+            <g key={i} transform={`translate(${50 + i * 70}, 150)`}>
+              <rect
+                x="0"
+                y="0"
+                width="50"
+                height="50"
+                rx="8"
+                fill={activeStep === 2 ? "#1a1a1a" : "#141414"}
+                stroke={activeStep === 2 ? "#f97316" : "#404040"}
+                strokeWidth="1.5"
+                style={{ transition: "all 0.5s ease" }}
+              />
+              {/* Node icon - concentric circles */}
+              <circle
+                cx="25"
+                cy="25"
+                r="14"
+                fill="none"
+                stroke={activeStep === 2 ? "#f97316" : "#555"}
+                strokeWidth="1.5"
+                opacity={activeStep === 2 ? 1 : 0.7}
+                style={{ transition: "all 0.5s ease" }}
+              />
+              <circle
+                cx="25"
+                cy="25"
+                r="8"
+                fill="none"
+                stroke={activeStep === 2 ? "#f97316" : "#555"}
+                strokeWidth="1.5"
+                opacity={activeStep === 2 ? 0.8 : 0.5}
+                style={{ transition: "all 0.5s ease" }}
+              />
+              <circle
+                cx="25"
+                cy="25"
+                r="3"
+                fill={activeStep === 2 ? "#f97316" : "#555"}
+                style={{ transition: "fill 0.5s ease" }}
+              >
+                {activeStep === 2 && (
+                  <animate
+                    attributeName="r"
+                    values="3;4;3"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  />
+                )}
+              </circle>
+            </g>
+          ))}
+
+          {/* Connection lines between nodes */}
+          {[0, 1, 2].map((i) => (
+            <line
+              key={`conn-${i}`}
+              x1={100 + i * 70}
+              y1="175"
+              x2={120 + i * 70}
+              y2="175"
+              stroke={activeStep === 2 ? "#f97316" : "#404040"}
+              strokeWidth="1.5"
+              strokeDasharray="4 3"
+              opacity={activeStep === 2 ? 0.8 : 0.4}
+              style={{ transition: "all 0.5s ease" }}
+            >
+              {activeStep === 2 && (
+                <animate
+                  attributeName="stroke-dashoffset"
+                  from={i % 2 === 0 ? "14" : "0"}
+                  to={i % 2 === 0 ? "0" : "14"}
+                  dur="0.8s"
+                  repeatCount="indefinite"
+                />
+              )}
+            </line>
+          ))}
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -811,8 +1132,10 @@ export default function HomePage() {
               </a>
             </div>
 
-            {/* Right column - placeholder for illustration */}
-            <div>{/* Illustration will go here later */}</div>
+            {/* Right column - MPC flow diagram */}
+            <div className="flex items-center justify-center">
+              <MPCFlowDiagram />
+            </div>
           </div>
         </div>
       </section>
