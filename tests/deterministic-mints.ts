@@ -10,10 +10,7 @@ export function deriveMintKeypair(
   symbol: string
 ): Keypair {
   const seed = sha256(
-    Buffer.concat([
-      walletPubkey.toBuffer(),
-      Buffer.from(`otc:mint:${symbol}`),
-    ])
+    Buffer.concat([walletPubkey.toBuffer(), Buffer.from(`otc:mint:${symbol}`)])
   );
   return Keypair.fromSeed(seed);
 }
@@ -21,7 +18,9 @@ export function deriveMintKeypair(
 /**
  * Derives deterministic mint addresses for all supported tokens.
  */
-export function deriveMintAddresses(walletPubkey: PublicKey): Record<string, string> {
+export function deriveMintAddresses(
+  walletPubkey: PublicKey
+): Record<string, string> {
   const symbols = ["META", "USDC", "ETH", "SOL"];
   const mints: Record<string, string> = {};
 

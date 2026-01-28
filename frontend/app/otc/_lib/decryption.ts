@@ -151,3 +151,29 @@ export function decryptOfferSettlementData(
     refundAmt: decrypted[2],
   };
 }
+
+export interface DecryptedDealSettlement {
+  totalFilled: bigint; // Total amount filled across all offers (base token, raw)
+  creatorReceives: bigint; // Quote tokens the creator receives
+  creatorRefund: bigint; // Base tokens refunded to creator (unfilled)
+}
+
+/**
+ * Decrypts deal settlement data from database ciphertexts.
+ * Field order: [total_filled (u64), creator_receives (u64), creator_refund (u64)]
+ */
+export function decryptDealSettlementData(
+  ciphertextsHex: string,
+  nonceHex: string,
+  cipher: RescueCipher
+): DecryptedDealSettlement {
+  const ciphertexts = parseCiphertexts(ciphertextsHex, 3);
+  const nonce = hexToBytes(nonceHex);
+  const decrypted = cipher.decrypt(ciphertexts, nonce);
+
+  return {
+    totalFilled: decrypted[0],
+    creatorReceives: decrypted[1],
+    creatorRefund: decrypted[2],
+  };
+}

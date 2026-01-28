@@ -58,7 +58,10 @@ function getArciumEnvSafe(): ReturnType<typeof getArciumEnv> {
   } catch {
     // Fallback for when running outside of `arcium test`
     // (e.g., via local.sh with arcium localnet running separately)
-    console.log("[harness] Using fallback arciumEnv with CLUSTER_OFFSET:", CLUSTER_OFFSET);
+    console.log(
+      "[harness] Using fallback arciumEnv with CLUSTER_OFFSET:",
+      CLUSTER_OFFSET
+    );
     return {
       arciumClusterOffset: CLUSTER_OFFSET,
     } as ReturnType<typeof getArciumEnv>;

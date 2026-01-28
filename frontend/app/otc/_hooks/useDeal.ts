@@ -8,7 +8,7 @@ import type { DealWithDetails } from "../_lib/types";
 import {
   createDecryptionCipher,
   decryptDealData,
-  bytesToHex,
+  decryptDealSettlementData,
   isOwnedByUser,
 } from "../_lib/decryption";
 import { toHumanAmount } from "../_lib/format";
@@ -56,7 +56,7 @@ export function useDeal(dealId: string | null): UseDealReturn {
       const { data: dealData, error: dealError } = await supabase
         .from("deals")
         .select(
-          "address, base_mint, quote_mint, status, expires_at, created_at, allow_partial, encryption_key, ciphertexts, nonce"
+          "address, base_mint, quote_mint, status, expires_at, created_at, allow_partial, encryption_key, ciphertexts, nonce, settlement_ciphertexts, settlement_nonce"
         )
         .eq("address", dealId)
         .single();
@@ -90,7 +90,8 @@ export function useDeal(dealId: string | null): UseDealReturn {
 
       // Check ownership
       const isOwner =
-        userPubKey !== null && isOwnedByUser(dealData.encryption_key, userPubKey);
+        userPubKey !== null &&
+        isOwnedByUser(dealData.encryption_key, userPubKey);
 
       // Build base deal object with public data
       const baseDeal: DealWithDetails = {
@@ -123,12 +124,49 @@ export function useDeal(dealId: string | null): UseDealReturn {
           const humanAmount = toHumanAmount(amount, dealData.base_mint);
           const total = humanAmount * price;
 
-          setDeal({
+          const dealWithPrivateData: DealWithDetails = {
             ...baseDeal,
             amount,
             price,
             total,
-          });
+          };
+
+          // If deal is settled and settlement data exists, decrypt it
+          if (
+            dealData.status !== "open" &&
+            dealData.settlement_ciphertexts &&
+            dealData.settlement_nonce
+          ) {
+            try {
+              const settlement = decryptDealSettlementData(
+                dealData.settlement_ciphertexts,
+                dealData.settlement_nonce,
+                cipher
+              );
+
+              dealWithPrivateData.totalFilled = toHumanAmount(
+                Number(settlement.totalFilled),
+                dealData.base_mint
+              );
+              dealWithPrivateData.creatorReceives = toHumanAmount(
+                Number(settlement.creatorReceives),
+                dealData.quote_mint
+              );
+              dealWithPrivateData.creatorRefund = toHumanAmount(
+                Number(settlement.creatorRefund),
+                dealData.base_mint
+              );
+            } catch (settlementError) {
+              console.error(
+                "Failed to decrypt deal settlement data:",
+                dealId,
+                settlementError
+              );
+              // Continue without settlement data
+            }
+          }
+
+          setDeal(dealWithPrivateData);
         } catch (decryptError) {
           console.error("Failed to decrypt deal data:", dealId, decryptError);
           // Return without private data if decryption fails

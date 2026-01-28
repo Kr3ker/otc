@@ -59,4 +59,8 @@ export interface DealWithDetails extends MarketDeal {
   amount?: number; // Decrypted, in raw units
   price?: number; // Decrypted, human-readable
   total?: number; // Calculated: toHumanAmount(amount) * price
+  // Settlement data (only when status !== "open" and isOwner)
+  totalFilled?: number; // Human-readable (base token)
+  creatorReceives?: number; // Human-readable (quote token)
+  creatorRefund?: number; // Human-readable (base token)
 }

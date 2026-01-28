@@ -1,7 +1,11 @@
 import * as anchor from "@coral-xyz/anchor";
 import { createMint, getMint } from "@solana/spl-token";
 import { getTestHarness } from "./harness";
-import { deriveMintKeypair, deriveMintAddresses, TOKEN_DECIMALS } from "./deterministic-mints";
+import {
+  deriveMintKeypair,
+  deriveMintAddresses,
+  TOKEN_DECIMALS,
+} from "./deterministic-mints";
 
 /**
  * Creates deterministic test mints derived from the owner wallet.
@@ -10,7 +14,10 @@ import { deriveMintKeypair, deriveMintAddresses, TOKEN_DECIMALS } from "./determ
 export async function setupTestMints() {
   const { provider, owner } = getTestHarness();
 
-  console.log("Setting up deterministic mints for wallet:", owner.publicKey.toBase58());
+  console.log(
+    "Setting up deterministic mints for wallet:",
+    owner.publicKey.toBase58()
+  );
 
   const mints = deriveMintAddresses(owner.publicKey);
   console.log("Expected mint addresses:", mints);

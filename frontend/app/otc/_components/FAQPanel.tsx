@@ -12,10 +12,8 @@ export const FAQPanel = () => {
         {/* Content */}
         <div className="p-4 space-y-6">
           {/* Header */}
-          <div className="flex items-center gap-2">
-            <h4 className="text-foreground font-medium">
-              Private Negotiation Chat
-            </h4>
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-foreground font-medium">Private Negotiation</h4>
             <span className="px-2 py-0.5 rounded text-xs font-medium bg-secondary text-muted-foreground border border-border">
               Coming Soon
             </span>

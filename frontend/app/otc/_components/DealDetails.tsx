@@ -150,20 +150,108 @@ export const DealDetails = ({ deal, onBack }: DealDetailsProps) => {
           </div>
         )}
 
+        {/* Settlement Details - only for owner's settled deals */}
+        {deal.isOwner &&
+          deal.status !== "open" &&
+          deal.totalFilled !== undefined && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-foreground">
+                Settlement Details
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-secondary/30 rounded-lg p-4">
+                  <p className="text-muted-foreground text-sm mb-1">
+                    Total Filled
+                  </p>
+                  <p
+                    className={`text-lg font-medium ${
+                      deal.totalFilled > 0 ? "text-success" : "text-foreground"
+                    }`}
+                  >
+                    {formatNumber(deal.totalFilled)}{" "}
+                    {getTokenSymbol(deal.baseMint)}
+                  </p>
+                </div>
+                <div className="bg-secondary/30 rounded-lg p-4">
+                  <p className="text-muted-foreground text-sm mb-1">
+                    You Received
+                  </p>
+                  <p
+                    className={`text-lg font-medium ${
+                      (deal.creatorReceives ?? 0) > 0
+                        ? "text-success"
+                        : "text-foreground"
+                    }`}
+                  >
+                    {formatNumber(deal.creatorReceives ?? 0)}{" "}
+                    {getTokenSymbol(deal.quoteMint)}
+                  </p>
+                </div>
+                {(deal.creatorRefund ?? 0) > 0 && (
+                  <div className="bg-secondary/30 rounded-lg p-4">
+                    <p className="text-muted-foreground text-sm mb-1">
+                      Refunded
+                    </p>
+                    <p className="text-lg font-medium text-yellow-400">
+                      {formatNumber(deal.creatorRefund ?? 0)}{" "}
+                      {getTokenSymbol(deal.baseMint)}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
         {/* Info box */}
         <div className="bg-secondary/30 rounded-md p-4 text-sm text-muted-foreground">
           {deal.isOwner ? (
-            <>
-              <p className="font-medium text-foreground mb-2">Your Deal</p>
-              <ul className="space-y-1 list-disc list-inside">
-                <li>This is your deal - you can see full details</li>
-                <li>Offers can now be submitted until the deal expires</li>
-                <li>
-                  The deal will execute automatically using best offers once it
-                  expires
-                </li>
-              </ul>
-            </>
+            deal.status === "open" ? (
+              <>
+                <p className="font-medium text-foreground mb-2">Your Deal</p>
+                <ul className="space-y-1 list-disc list-inside">
+                  <li>This is your deal - you can see full details</li>
+                  <li>Offers can now be submitted until the deal expires</li>
+                  <li>
+                    The deal will execute automatically using best offers once
+                    it expires
+                  </li>
+                </ul>
+              </>
+            ) : deal.status === "executed" ? (
+              <>
+                <p className="font-medium text-success mb-2">Deal Executed</p>
+                <p>
+                  Your deal was filled! You received{" "}
+                  {formatNumber(deal.creatorReceives ?? 0)}{" "}
+                  {getTokenSymbol(deal.quoteMint)} for{" "}
+                  {formatNumber(deal.totalFilled ?? 0)}{" "}
+                  {getTokenSymbol(deal.baseMint)}.
+                </p>
+              </>
+            ) : (deal.totalFilled ?? 0) > 0 ? (
+              <>
+                <p className="font-medium text-yellow-400 mb-2">
+                  Deal Expired (Partial Fill)
+                </p>
+                <p>
+                  Your deal expired with partial fill. You received{" "}
+                  {formatNumber(deal.creatorReceives ?? 0)}{" "}
+                  {getTokenSymbol(deal.quoteMint)} and{" "}
+                  {formatNumber(deal.creatorRefund ?? 0)}{" "}
+                  {getTokenSymbol(deal.baseMint)} was refunded.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-medium text-muted-foreground mb-2">
+                  Deal Expired
+                </p>
+                <p>
+                  Your deal expired without any matching offers. Your{" "}
+                  {getTokenSymbol(deal.baseMint)} has been refunded.
+                </p>
+              </>
+            )
           ) : (
             <>
               <p className="font-medium text-foreground mb-2">How it works</p>
