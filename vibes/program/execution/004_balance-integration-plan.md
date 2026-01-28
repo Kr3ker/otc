@@ -1090,7 +1090,6 @@ Note: `OfferState` and `OfferAccount` remain unchanged (3 fields). `quote_commit
 - [ ] `OfferCreatedBlob` decryption: UNCHANGED (still 2 fields - no execution info shown)
 - [ ] Update `OfferSettledBlob` decryption to handle 4 fields (breaking change: field order/meaning changed)
 - [ ] Display `quote_paid` and `quote_refund` from `OfferSettled` events
-- [ ] Update UI to clarify that execution details are only available after settlement
 
 ---
 
