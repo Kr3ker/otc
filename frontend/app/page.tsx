@@ -506,7 +506,7 @@ export default function HomePage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-32 bg-card">
+      <section className="pt-32 bg-card">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-foreground text-center mb-2">
             How It Works
@@ -700,6 +700,18 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* Line Divider */}
+        <div className="w-full pt-16">
+          <div
+            className="w-full h-24"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(90deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 1px, transparent 1px, transparent 18px)",
+              backgroundSize: "18px 100%",
+            }}
+          />
+        </div>
       </section>
 
       {/* Security Section */}
@@ -859,7 +871,7 @@ export default function HomePage() {
           className="w-full h-24"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(90deg, rgba(255,255,255,0.4) 0px, rgba(255,255,255,0.4) 1px, transparent 1px, transparent 18px)",
+              "repeating-linear-gradient(90deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 1px, transparent 1px, transparent 18px)",
             backgroundSize: "18px 100%",
           }}
         />
