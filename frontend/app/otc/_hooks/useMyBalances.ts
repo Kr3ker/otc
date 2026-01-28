@@ -95,9 +95,7 @@ export function useMyBalances(): UseMyBalancesReturn {
 
       setBalances(decrypted);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch balances"
-      );
+      setError(err instanceof Error ? err.message : "Failed to fetch balances");
     } finally {
       setIsLoading(false);
     }

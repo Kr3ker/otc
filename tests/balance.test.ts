@@ -304,9 +304,7 @@ describe("Balance", () => {
     const balanceUpdatedEvent = await balanceUpdatedPromise;
     console.log("BalanceUpdated event received (second mint)");
 
-    expect(balanceUpdatedEvent.mint.toBase58()).to.equal(
-      secondMint.toBase58()
-    );
+    expect(balanceUpdatedEvent.mint.toBase58()).to.equal(secondMint.toBase58());
 
     // Decrypt the blob
     const decrypted = cipher.decrypt(

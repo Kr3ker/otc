@@ -23,6 +23,7 @@ export const COMP_DEF_NAMES = {
   SUBMIT_OFFER: "submit_offer",
   CRANK_DEAL: "crank_deal",
   CRANK_OFFER: "crank_offer",
+  TOP_UP: "top_up",
 } as const;
 
 // Mint addresses for mock data

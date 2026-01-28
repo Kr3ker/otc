@@ -89,10 +89,7 @@ export function useCreateDeal(): UseCreateDealReturn {
 
       try {
         // 1. Create cipher from derived encryption key and MXE public key
-        const cipher = createCipher(
-          keys.encryption.privateKey,
-          mxePublicKey
-        );
+        const cipher = createCipher(keys.encryption.privateKey, mxePublicKey);
 
         // 2. Generate nonce for encryption
         const nonce = generateNonce();
