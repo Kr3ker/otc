@@ -177,3 +177,27 @@ export function decryptDealSettlementData(
     creatorRefund: decrypted[2],
   };
 }
+
+export interface DecryptedBalanceData {
+  amount: bigint; // Available balance amount
+  committedAmount: bigint; // Amount committed to open deals/offers
+}
+
+/**
+ * Decrypts balance data from database ciphertexts.
+ * Field order: [amount (u64), committed_amount (u64)]
+ */
+export function decryptBalanceData(
+  ciphertextsHex: string,
+  nonceHex: string,
+  cipher: RescueCipher
+): DecryptedBalanceData {
+  const ciphertexts = parseCiphertexts(ciphertextsHex, 2);
+  const nonce = hexToBytes(nonceHex);
+  const decrypted = cipher.decrypt(ciphertexts, nonce);
+
+  return {
+    amount: decrypted[0],
+    committedAmount: decrypted[1],
+  };
+}

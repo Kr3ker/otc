@@ -105,6 +105,28 @@ mod circuits {
     }
 
     // ============================================
+    // BALANCE STRUCTS
+    // ============================================
+
+    /// Balance state stored on-chain (MXE-encrypted)
+    #[derive(Copy, Clone)]
+    pub struct BalanceState {
+        /// Available balance amount
+        amount: u64,
+        /// Amount committed to open deals/offers (locked)
+        committed_amount: u64,
+    }
+
+    /// Event blob sealed to owner (emitted on BalanceUpdated)
+    #[derive(Copy, Clone)]
+    pub struct BalanceUpdatedBlob {
+        /// Current available balance
+        amount: u64,
+        /// Current committed balance
+        committed_amount: u64,
+    }
+
+    // ============================================
     // INSTRUCTIONS
     // ============================================
 
@@ -308,5 +330,41 @@ mod circuits {
         let shared_ctxt = Shared::new(pubkey);
 
         (recipient.from_arcis(counter), shared_ctxt.from_arcis(counter))
+    }
+
+    /// Top up a balance account.
+    /// Takes existing MXE-encrypted balance state (by reference), owner marker for event blob,
+    /// plaintext amount to add, and is_new flag to handle init_if_needed pattern.
+    /// Returns updated MXE-encrypted state and Shared-encrypted blob for owner.
+    #[instruction]
+    pub fn top_up(
+        balance_state: Enc<Mxe, &BalanceState>,
+        owner: Shared,
+        amount: u64,
+        is_new: bool,
+    ) -> (Enc<Mxe, BalanceState>, Enc<Shared, BalanceUpdatedBlob>) {
+        let state = if is_new {
+            BalanceState {
+                amount: 0,
+                committed_amount: 0,
+            }
+        } else {
+            *(balance_state.to_arcis())
+        };
+
+        let new_state = BalanceState {
+            amount: state.amount + amount,
+            committed_amount: state.committed_amount,
+        };
+
+        let blob = BalanceUpdatedBlob {
+            amount: new_state.amount,
+            committed_amount: new_state.committed_amount,
+        };
+
+        (
+            balance_state.owner.from_arcis(new_state),
+            owner.from_arcis(blob),
+        )
     }
 }

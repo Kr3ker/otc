@@ -6,6 +6,7 @@ pub mod get_counter;
 pub mod increment_counter;
 pub mod init_counter;
 pub mod submit_offer;
+pub mod top_up;
 
 // Re-export account structs and events (not handlers to avoid name conflicts)
 pub use add_together::{
@@ -32,6 +33,9 @@ pub use init_counter::{
 };
 pub use submit_offer::{
     InitSubmitOfferCompDef, SubmitOffer, SubmitOfferCallback, SubmitOfferOutput,
+};
+pub use top_up::{
+    InitTopUpCompDef, TopUp, TopUpCallback, TopUpOutput,
 };
 
 // Re-export the hidden __client_accounts_* modules that anchor's #[program] macro expects at crate root
@@ -83,3 +87,9 @@ pub(crate) use submit_offer::__client_accounts_submit_offer;
 pub(crate) use submit_offer::__client_accounts_submit_offer_callback;
 #[doc(hidden)]
 pub(crate) use submit_offer::__client_accounts_init_submit_offer_comp_def;
+#[doc(hidden)]
+pub(crate) use top_up::__client_accounts_top_up;
+#[doc(hidden)]
+pub(crate) use top_up::__client_accounts_top_up_callback;
+#[doc(hidden)]
+pub(crate) use top_up::__client_accounts_init_top_up_comp_def;

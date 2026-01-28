@@ -702,6 +702,55 @@ export async function initCrankOfferCompDef(
   return sig;
 }
 
+export async function initTopUpCompDef(
+  program: Program<Otc>,
+  provider: anchor.AnchorProvider,
+  owner: anchor.web3.Keypair,
+  uploadRawCircuit: boolean = false,
+  offchainSource: boolean = false
+): Promise<string> {
+  const baseSeedCompDefAcc = getArciumAccountBaseSeed(
+    "ComputationDefinitionAccount"
+  );
+  const offset = getCompDefAccOffset("top_up");
+
+  const compDefPDA = PublicKey.findProgramAddressSync(
+    [baseSeedCompDefAcc, program.programId.toBuffer(), offset],
+    getArciumProgramId()
+  )[0];
+
+  console.log("Top Up comp def pda is ", compDefPDA);
+
+  const sig = await program.methods
+    .initTopUpCompDef()
+    .accounts({
+      compDefAccount: compDefPDA,
+      payer: owner.publicKey,
+      mxeAccount: getMXEAccAddress(program.programId),
+    })
+    .signers([owner])
+    .rpc({
+      commitment: "confirmed",
+    });
+  console.log("Init Top Up computation definition transaction", sig);
+
+  if (uploadRawCircuit) {
+    const { uploadCircuit } = await import("@arcium-hq/client");
+    const rawCircuit = fs.readFileSync("build/top_up.arcis");
+
+    await uploadCircuit(
+      provider,
+      "top_up",
+      program.programId,
+      rawCircuit,
+      true
+    );
+  } else if (!offchainSource) {
+    await finalizeCompDefWithRetry(provider, offset, program.programId, owner);
+  }
+  return sig;
+}
+
 /**
  * Initializes a comp_def, gracefully handling "already exists" errors.
  * Returns tx signature if initialized, null if already exists.

@@ -77,3 +77,21 @@ pub struct OfferSettled {
     /// Encrypted OfferSettledBlob: outcome (u8), executed_amt (u64), refund_amt (u64)
     pub ciphertexts: [[u8; 32]; 3],
 }
+
+/// Emitted when a balance is updated (created or topped up).
+/// Contains public metadata and an encrypted blob
+/// decryptable only by the balance owner.
+#[event]
+pub struct BalanceUpdated {
+    pub balance: Pubkey,
+    pub controller: Pubkey,
+    pub mint: Pubkey,
+
+    // Encrypted blob (decryptable by owner)
+    /// The x25519 public key used for encryption (echoed back)
+    pub encryption_key: [u8; 32],
+    /// Nonce used for encryption
+    pub nonce: [u8; 16],
+    /// Encrypted BalanceUpdatedBlob: amount (u64), committed_amount (u64)
+    pub ciphertexts: [[u8; 32]; 2],
+}

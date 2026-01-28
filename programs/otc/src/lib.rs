@@ -230,4 +230,35 @@ pub mod otc {
     ) -> Result<()> {
         instructions::crank_offer::callback_handler(ctx, output)
     }
+
+    // Top Up
+    pub fn init_top_up_comp_def(ctx: Context<InitTopUpCompDef>) -> Result<()> {
+        instructions::top_up::init_comp_def_handler(ctx)
+    }
+
+    pub fn top_up(
+        ctx: Context<TopUp>,
+        computation_offset: u64,
+        controller: Pubkey,
+        encryption_pubkey: [u8; 32],
+        owner_nonce: u128,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::top_up::handler(
+            ctx,
+            computation_offset,
+            controller,
+            encryption_pubkey,
+            owner_nonce,
+            amount,
+        )
+    }
+
+    #[arcium_callback(encrypted_ix = "top_up")]
+    pub fn top_up_callback(
+        ctx: Context<TopUpCallback>,
+        output: SignedComputationOutputs<TopUpOutput>,
+    ) -> Result<()> {
+        instructions::top_up::callback_handler(ctx, output)
+    }
 }

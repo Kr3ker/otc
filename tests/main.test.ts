@@ -9,6 +9,7 @@ import {
   initSubmitOfferCompDef,
   initCrankDealCompDef,
   initCrankOfferCompDef,
+  initTopUpCompDef,
 } from "./harness";
 import { setupTestMints } from "./setup-mints";
 
@@ -73,6 +74,13 @@ describe("OTC Setup", () => {
     await initCompDefIfNeeded(
       () => initCrankOfferCompDef(program, provider, owner, false, false),
       "Crank Offer"
+    );
+  });
+
+  it("initializes top_up comp def", async () => {
+    await initCompDefIfNeeded(
+      () => initTopUpCompDef(program, provider, owner, false, false),
+      "Top Up"
     );
   });
 });
