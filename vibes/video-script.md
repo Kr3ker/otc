@@ -72,7 +72,7 @@
 
 ### [Screen: Fill in and submit]
 
-> "If my price beats the creator's threshold, I get filled. If not, neither of us learns what the other wanted."
+> "Offers get filled on a greedy first-in-first-out basis. If my price beats the creator's threshold, I get filled when the deal expires. If not, neither of us learns what the other wanted."
 
 ### [Screen: Show redirect to "Your Offers" tab, pending status]
 
