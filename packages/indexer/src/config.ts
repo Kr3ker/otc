@@ -15,7 +15,7 @@ export interface Config {
 
 // Localnet defaults
 const DEFAULT_RPC_URL = "http://127.0.0.1:8899";
-const DEFAULT_PROGRAM_ID = "8wCCLUv68ofgoNg3AKbahgeqZitorLcgbRXQeHj7FpMd";
+const DEFAULT_PROGRAM_ID = "otchkwgH55zjvvFp8xGXYArzrmm2cCBKfPmgUfn6cE6";
 const DEFAULT_SUPABASE_URL = "http://127.0.0.1:54321";
 const DEFAULT_SUPABASE_SERVICE_ROLE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";

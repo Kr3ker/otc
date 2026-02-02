@@ -16,7 +16,7 @@ The `getMXEPublicKey()` function from `@arcium-hq/client` returns `null`.
 The MXE account for the program exists on devnet:
 
 ```
-Program ID: 8wCCLUv68ofgoNg3AKbahgeqZitorLcgbRXQeHj7FpMd
+Program ID: otchkwgH55zjvvFp8xGXYArzrmm2cCBKfPmgUfn6cE6
 MXE Account Address: A3J6FReTAcNCsaPsnqBP6chcS5FsKs8WxwG1vohQpWG4
 MXE Account Owner: F3G6Q9tRicyznCqcZLydJ6RxkwDSBeHWM458J7V6aeyk (Arcium Program)
 MXE Account Data Length: 302 bytes
@@ -127,7 +127,7 @@ const { getMXEAccAddress, getArciumProgram } = require('@arcium-hq/client');
 const { PublicKey, Connection } = require('@solana/web3.js');
 const { AnchorProvider } = require('@coral-xyz/anchor');
 
-const programId = new PublicKey('8wCCLUv68ofgoNg3AKbahgeqZitorLcgbRXQeHj7FpMd');
+const programId = new PublicKey('otchkwgH55zjvvFp8xGXYArzrmm2cCBKfPmgUfn6cE6');
 const mxeAddress = getMXEAccAddress(programId);
 const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
 

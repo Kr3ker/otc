@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/otc.json`.
  */
 export type Otc = {
-  "address": "8wCCLUv68ofgoNg3AKbahgeqZitorLcgbRXQeHj7FpMd",
+  "address": "otchkwgH55zjvvFp8xGXYArzrmm2cCBKfPmgUfn6cE6",
   "metadata": {
     "name": "otc",
     "version": "0.1.0",

@@ -4,7 +4,7 @@ import type { Deal, MarketDeal, Offer } from "./types";
 // OTC Program Configuration
 export const OTC_PROGRAM_ID = new PublicKey(
   process.env.NEXT_PUBLIC_OTC_PROGRAM_ID ||
-    "8wCCLUv68ofgoNg3AKbahgeqZitorLcgbRXQeHj7FpMd"
+    "otchkwgH55zjvvFp8xGXYArzrmm2cCBKfPmgUfn6cE6"
 );
 
 // Cluster offset: null = localnet env, number = devnet/testnet

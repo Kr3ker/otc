@@ -124,7 +124,7 @@ Run: `yarn workspace @otc/cranker start`
 
 **Issue:** `getMXEPublicKey()` returns `null` on devnet. The MXE account exists but utility public keys are not set:
 - MXE Account: `A3J6FReTAcNCsaPsnqBP6chcS5FsKs8WxwG1vohQpWG4`
-- Program ID: `8wCCLUv68ofgoNg3AKbahgeqZitorLcgbRXQeHj7FpMd`
+- Program ID: `otchkwgH55zjvvFp8xGXYArzrmm2cCBKfPmgUfn6cE6`
 - Node confirmations: `[false, false]` - neither Arcium node has submitted key shares
 
 **Action:** Contacted Arcium team for support.
