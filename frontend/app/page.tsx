@@ -825,7 +825,7 @@ export default function HomePage() {
                 <ul className="space-y-3 text-base text-muted-foreground">
                   <li>
                     <a
-                      href="#"
+                      href="https://github.com/Kr3ker/otc"
                       className="hover:text-foreground transition-colors"
                     >
                       Documentation
@@ -833,7 +833,7 @@ export default function HomePage() {
                   </li>
                   <li>
                     <a
-                      href="#"
+                      href="https://github.com/Kr3ker/otc"
                       className="hover:text-foreground transition-colors"
                     >
                       GitHub
